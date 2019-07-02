@@ -46,4 +46,4 @@ HostRoleAndUserCreator和TenantRoleAndUserBuilder两个类中添加以下代码：
 var taskPermissions = PermissionFinder.GetAllPermissions(new TaskAuthorizationProvider()).ToList();
 permissions.AddRange(taskPermissions);
 
-当然也可以打开数据库 AbpPermissions 添加记录 Pages.Person
+当然也可以打开数据库 AbpPermissions 添加记录 Pages.Person（好像此法行不通）
