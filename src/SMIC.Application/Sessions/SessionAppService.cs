@@ -3,6 +3,15 @@ using System.Threading.Tasks;
 using Abp.Auditing;
 using SMIC.Sessions.Dto;
 
+/*
+using SMIC.Configuration;
+using SMIC.Web;
+using Microsoft.EntityFrameworkCore;
+using System.Data.SqlClient;
+using SMIC.EntityFrameworkCore;
+using Abp.Timing; // Clock.Now;
+*/
+
 namespace SMIC.Sessions
 {
     public class SessionAppService : SMICAppServiceBase, ISessionAppService
@@ -29,7 +38,24 @@ namespace SMIC.Sessions
             {
                 output.User = ObjectMapper.Map<UserLoginInfoDto>(await GetCurrentUserAsync());
             }
-            //var user = UserManager.FindByIdAsync(AbpSession.GetUserId().ToString());
+
+            /*
+            // Add LastLoginTime
+            // 还需要重写 GetAll
+            //var user = UserManager.FindByIdAsync(AbpSession.UserId.ToString());
+            var builder = new DbContextOptionsBuilder<SMICDbContext>();
+            var configuration = AppConfigurations.Get(WebContentDirectoryFinder.CalculateContentRootFolder());
+            //SMICDbContextConfigurer.Configure(builder, configuration.GetConnectionString(SMICConsts.ConnectionStringName));
+            SMICDbContextConfigurer.Configure(builder, "Server=DEEP-1704241155; Database=SMICDbVue3; Trusted_Connection=True;"); //
+            var context = new SMICDbContext(builder.Options);
+            SqlParameter[] parameters = new[]{
+                new SqlParameter("Id", AbpSession.UserId ),
+                new SqlParameter("LastLoginTime", Clock.Now)
+            };
+            context.Database.ExecuteSqlCommand("update AbpUsers set LastLoginTime=@LastLoginTime where Id=@Id", parameters);            
+            //Logger.Info(user.ToString());
+            */
+
             return output;
         }
     }

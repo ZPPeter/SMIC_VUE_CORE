@@ -10,8 +10,20 @@ update-database
 
 检查 dbo.AbpUsers 表，LastLoginTime 在，OK 
 
-SMICAppServiceBase.cs
-protected virtual Task<User> GetCurrentUserAsync()
-
 SessionAppService.cs
 public async Task<GetCurrentLoginInformationsOutput> GetCurrentLoginInformations()
+
+            // 还需要重写 GetAll
+            //var user = UserManager.FindByIdAsync(AbpSession.UserId.ToString());
+            var builder = new DbContextOptionsBuilder<SMICDbContext>();
+            var configuration = AppConfigurations.Get(WebContentDirectoryFinder.CalculateContentRootFolder());
+            //SMICDbContextConfigurer.Configure(builder, configuration.GetConnectionString(SMICConsts.ConnectionStringName));
+            SMICDbContextConfigurer.Configure(builder, "Server=DEEP-1704241155; Database=SMICDbVue3; Trusted_Connection=True;");            
+            var context = new SMICDbContext(builder.Options);
+            SqlParameter[] parameters = new[]{
+                new SqlParameter("Id", AbpSession.UserId ),
+                new SqlParameter("LastLoginTime", Clock.Now)
+            };
+            context.Database.ExecuteSqlCommand("update AbpUsers set LastLoginTime=@LastLoginTime where Id=@Id", parameters);
+
+ABP 不支持了，可以参考 MemberUser 会员功能加上LastLoginTime字段

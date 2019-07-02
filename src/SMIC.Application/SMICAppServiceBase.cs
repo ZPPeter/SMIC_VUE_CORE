@@ -7,9 +7,6 @@ using Abp.Runtime.Session;
 using SMIC.Authorization.Users;
 using SMIC.MultiTenancy;
 
-//using DapperExtensions;
-using System.Data.SqlClient;
-using Dapper;
 namespace SMIC
 {
     /// <summary>
@@ -33,10 +30,6 @@ namespace SMIC
             {
                 throw new Exception("There is no current user!");
             }
-
-            IDbConnection conn = new SqlConnection("connString");
-            string query = "UPDATE Book SET  Name=@name WHERE id =@id";
-            conn.Execute(query, book);
 
             return user;
         }

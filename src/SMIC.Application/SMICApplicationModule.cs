@@ -2,15 +2,11 @@
 using Abp.Modules;
 using Abp.Reflection.Extensions;
 using SMIC.Authorization;
-using Dapper;
-using System.Reflection;
-using System.Collections.Generic;
 namespace SMIC
 {
     [DependsOn(
         typeof(SMICCoreModule), 
         typeof(AbpAutoMapperModule)
-        //,typeof(AbpDapperModule)
         )]
     public class SMICApplicationModule : AbpModule
     {
@@ -29,8 +25,6 @@ namespace SMIC
                 // Scan the assembly for classes which inherit from AutoMapper.Profile
                 cfg => cfg.AddProfiles(thisAssembly)
             );
-
-            //DapperExtensions.SetMappingAssemblies(new List<Assembly> { typeof(MyModule).GetAssembly() });
         }
     }
 }

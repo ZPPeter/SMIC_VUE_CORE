@@ -8,7 +8,4 @@ https://blog.csdn.net/WuLex/article/details/78454519
 http://localhost:21021/api/services/app/Session/GetCurrentLoginInformations
 public async Task<GetCurrentLoginInformationsOutput> GetCurrentLoginInformations()
 
-abp.dapper + u lastlogintime
-
-https://github.com/tmsmith/Dapper-Extensions
-https://github.com/arbing/DapperDal
+abp.dapper + Task

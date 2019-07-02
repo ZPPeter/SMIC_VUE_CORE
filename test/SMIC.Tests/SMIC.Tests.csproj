@@ -15,7 +15,6 @@
     <ProjectReference Include="..\..\src\SMIC.EntityFrameworkCore\SMIC.EntityFrameworkCore.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Abp.Dapper" Version="4.6.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="NSubstitute" Version="3.1.0" />
     <PackageReference Include="Shouldly" Version="3.0.2" />
