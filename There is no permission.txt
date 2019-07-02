@@ -1,0 +1,49 @@
+There is no permission with name: Pages.Person
+
+当创建了授权提供者之后，我们应该在模块的 PreInitialize 方法中注册它。
+SMICApplicationModule.cs
+PreInitialize
+
+    [DependsOn(
+        typeof(SMICCoreModule), 
+        typeof(AbpAutoMapperModule)
+        )]
+    public class SMICApplicationModule : AbpModule
+    {
+        public override void PreInitialize()
+        {
+            Configuration.Authorization.Providers.Add<SMICAuthorizationProvider>();
+
+            Configuration.Authorization.Providers.Add<PersonAppAuthorizationProvider>();  // SMIC.PhoneBooks.Persons.Authorization
+
+            Configuration.Modules.AbpAutoMapper().Configurators.Add(CustomerPersonMapper.CreateMappings); // SMIC.PhoneBooks.Persons.Dtos.LTMAutoMapper
+
+        }
+... ...
+
+
+权限
+public class PersonAppAuthorizationProvider : AuthorizationProvider
+没有获得“Page.Person”权限的用户不能够查询 Person 列表的
+dbo.AbpPermissions
+
+ABP入门系列（9）——权限管理
+https://www.jianshu.com/p/870938be9ec2
+
+将新增的权限赋予给Admin
+完成了权限的定义和检查，我们如何进行权限设置呢，如何为角色或用户赋予权限呢？
+在ABP模板项目中暂未提供用户角色权限管理功能，但在AbpZero中提供了该功能，支持按用户或角色赋予权限。那咋办呢？
+咱们退而求其次，在数据库初始化的时候，将权限赋给Admin。
+但是我们的数据库已经建立好了啊？
+反正是测试库，删掉重建呗。
+5.1. 删除数据库
+怎么删数据库，自己应该知道吧。
+5.2. 代码中为Admin赋予权限
+打开基础设施层，即以EntityFramework结尾的项目中，定位到Migrations\SeedData文件夹，分别在
+HostRoleAndUserCreator和TenantRoleAndUserBuilder两个类中添加以下代码：
+
+// 将 Task 相关权限赋予给 Admin
+var taskPermissions = PermissionFinder.GetAllPermissions(new TaskAuthorizationProvider()).ToList();
+permissions.AddRange(taskPermissions);
+
+当然也可以打开数据库 AbpPermissions 添加记录 Pages.Person

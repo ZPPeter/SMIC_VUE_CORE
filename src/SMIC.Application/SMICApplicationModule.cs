@@ -2,6 +2,9 @@
 using Abp.Modules;
 using Abp.Reflection.Extensions;
 using SMIC.Authorization;
+
+using SMIC.PhoneBooks.Persons.Authorization;
+using SMIC.PhoneBooks.Persons.Dtos.LTMAutoMapper;
 namespace SMIC
 {
     [DependsOn(
@@ -13,6 +16,11 @@ namespace SMIC
         public override void PreInitialize()
         {
             Configuration.Authorization.Providers.Add<SMICAuthorizationProvider>();
+
+            Configuration.Authorization.Providers.Add<PersonAppAuthorizationProvider>();  // SMIC.PhoneBooks.Persons.Authorization
+
+            Configuration.Modules.AbpAutoMapper().Configurators.Add(CustomerPersonMapper.CreateMappings); // SMIC.PhoneBooks.Persons.Dtos.LTMAutoMapper
+
         }
 
         public override void Initialize()
