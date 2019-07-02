@@ -7,13 +7,11 @@ namespace SMIC.Migrations
     public partial class Upgrade_ABP_4_2_0 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            /*
+        {            
             migrationBuilder.DropColumn(
                 name: "LastLoginTime",
                 table: "AbpUsers");
-            */
-
+         
             migrationBuilder.DropColumn(
                 name: "LastLoginTime",
                 table: "AbpUserAccounts");

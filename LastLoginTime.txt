@@ -26,4 +26,4 @@ public async Task<GetCurrentLoginInformationsOutput> GetCurrentLoginInformations
             };
             context.Database.ExecuteSqlCommand("update AbpUsers set LastLoginTime=@LastLoginTime where Id=@Id", parameters);
 
-ABP 不支持了，可以参考 MemberUser 会员功能加上LastLoginTime字段
+ABP 不支持了，可以+LastLoginTime2字段
