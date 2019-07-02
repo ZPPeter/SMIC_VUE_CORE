@@ -9,7 +9,7 @@ using SMIC.Authorization.Roles;
 using SMIC.Authorization.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-
+using SMIC.PhoneBooks.Persons.Authorization;
 namespace SMIC.EntityFrameworkCore.Seed.Host
 {
     public class HostRoleAndUserCreator
@@ -51,6 +51,10 @@ namespace SMIC.EntityFrameworkCore.Seed.Host
                             !grantedPermissions.Contains(p.Name))
                 .ToList();
 
+            // 将 Task 相关权限赋予给 Admin
+            var taskPermissions = PermissionFinder.GetAllPermissions(new PersonAppAuthorizationProvider()).ToList();
+            permissions.AddRange(taskPermissions);
+
             if (permissions.Any())
             {
                 _context.Permissions.AddRange(
@@ -91,7 +95,7 @@ namespace SMIC.EntityFrameworkCore.Seed.Host
                 _context.UserRoles.Add(new UserRole(null, adminUserForHost.Id, adminRoleForHost.Id));
                 _context.SaveChanges();
 
-                _context.SaveChanges();
+                //_context.SaveChanges(); // ???
             }
         }
     }

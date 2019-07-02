@@ -5,6 +5,7 @@ using SMIC.Authorization;
 
 using SMIC.PhoneBooks.Persons.Authorization;
 using SMIC.PhoneBooks.Persons.Dtos.LTMAutoMapper;
+
 namespace SMIC
 {
     [DependsOn(
@@ -33,6 +34,9 @@ namespace SMIC
                 // Scan the assembly for classes which inherit from AutoMapper.Profile
                 cfg => cfg.AddProfiles(thisAssembly)
             );
+
+            IocManager.RegisterAssemblyByConvention(typeof(SMICApplicationModule).GetAssembly());
+            
         }
     }
 }

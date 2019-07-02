@@ -10,6 +10,8 @@ using SMIC.Authorization;
 using SMIC.Authorization.Roles;
 using SMIC.Authorization.Users;
 
+using SMIC.PhoneBooks.Persons.Authorization;
+
 namespace SMIC.EntityFrameworkCore.Seed.Tenants
 {
     public class TenantRoleAndUserBuilder
@@ -53,6 +55,10 @@ namespace SMIC.EntityFrameworkCore.Seed.Tenants
                             !grantedPermissions.Contains(p.Name))
                 .ToList();
 
+            // 将 Task 相关权限赋予给 Admin
+            var taskPermissions = PermissionFinder.GetAllPermissions(new PersonAppAuthorizationProvider()).ToList();
+            permissions.AddRange(taskPermissions);
+
             if (permissions.Any())
             {
                 _context.Permissions.AddRange(
@@ -66,6 +72,7 @@ namespace SMIC.EntityFrameworkCore.Seed.Tenants
                 );
                 _context.SaveChanges();
             }
+
 
             // Admin user
 
@@ -82,7 +89,8 @@ namespace SMIC.EntityFrameworkCore.Seed.Tenants
 
                 // Assign Admin role to admin user
                 _context.UserRoles.Add(new UserRole(_tenantId, adminUser.Id, adminRole.Id));
-                _context.SaveChanges();
+                _context.SaveChanges();                
+
             }
         }
     }

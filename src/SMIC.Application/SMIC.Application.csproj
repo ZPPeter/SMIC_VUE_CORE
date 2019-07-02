@@ -11,9 +11,10 @@
     <RootNamespace>SMIC</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Abp.Dapper" Version="4.6.0" />
-    <PackageReference Include="Dapper" Version="1.60.6" />
-    <PackageReference Include="DapperExtensions.NetCore" Version="2.0.6" />
+    <Compile Remove="Person.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Abp.Dapper" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SMIC.Core\SMIC.Core.csproj" />

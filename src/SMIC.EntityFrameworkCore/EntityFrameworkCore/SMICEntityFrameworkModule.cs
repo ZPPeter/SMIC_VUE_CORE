@@ -4,11 +4,16 @@ using Abp.Reflection.Extensions;
 using Abp.Zero.EntityFrameworkCore;
 using SMIC.EntityFrameworkCore.Seed;
 
+using Abp.Dapper;
+using System.Reflection;
+using System.Collections.Generic;
+
 namespace SMIC.EntityFrameworkCore
 {
     [DependsOn(
         typeof(SMICCoreModule), 
-        typeof(AbpZeroCoreEntityFrameworkCoreModule))]
+        typeof(AbpZeroCoreEntityFrameworkCoreModule),
+        typeof(AbpDapperModule))]
     public class SMICEntityFrameworkModule : AbpModule
     {
         /* Used it tests to skip dbcontext registration, in order to use in-memory database of EF Core */
@@ -37,6 +42,9 @@ namespace SMIC.EntityFrameworkCore
         public override void Initialize()
         {
             IocManager.RegisterAssemblyByConvention(typeof(SMICEntityFrameworkModule).GetAssembly());
+            DapperExtensions.DapperExtensions.SetMappingAssemblies(new List<Assembly> { typeof(SMICEntityFrameworkModule).GetAssembly() });
+            //使用mysql必须修改，默认是sqlserver
+            //DapperExtensions.DapperExtensions.SqlDialect = new MySqlDialect();
         }
 
         public override void PostInitialize()

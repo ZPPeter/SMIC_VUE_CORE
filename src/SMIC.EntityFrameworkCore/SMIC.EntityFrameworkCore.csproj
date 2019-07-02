@@ -12,8 +12,11 @@
     <Compile Remove="Migrations\20180927062408_test.cs" />
     <Compile Remove="Migrations\20190111071724_Upgraded_To_Abp_v4_1_0.cs" />
     <Compile Remove="Migrations\20190702081007_add_user_lastlogintime2.cs" />
+    <Compile Remove="Migrations\20190702104516_add_phoneBooks.cs" />
+    <Compile Remove="Migrations\20190702133226_add_phoneBooks.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Abp.Dapper" Version="4.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.1">
       <PrivateAssets>all</PrivateAssets>
@@ -23,5 +26,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SMIC.Core\SMIC.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="EntityMapper\" />
   </ItemGroup>
 </Project>

@@ -42,8 +42,15 @@ https://www.jianshu.com/p/870938be9ec2
 打开基础设施层，即以EntityFramework结尾的项目中，定位到Migrations\SeedData文件夹，分别在
 HostRoleAndUserCreator和TenantRoleAndUserBuilder两个类中添加以下代码：
 
-// 将 Task 相关权限赋予给 Admin
+// 将 Task 相关权限赋予给 Admin 
 var taskPermissions = PermissionFinder.GetAllPermissions(new TaskAuthorizationProvider()).ToList();
 permissions.AddRange(taskPermissions);
 
-当然也可以打开数据库 AbpPermissions 添加记录 Pages.Person（好像此法行不通）
+当然也可以打开数据库 AbpPermissions 添加记录 
+Pages
+Pages.Administration
+Pages.Person
+Pages.Person.CreatePerson
+Pages.Person.EditPerson
+Pages.Person.DeletePerson
+Pages.Person.BatchDeletePersons

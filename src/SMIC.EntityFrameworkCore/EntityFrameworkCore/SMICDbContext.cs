@@ -7,6 +7,8 @@ using SMIC.MultiTenancy;
 
 using SMIC.Members;
 using SMIC.MyTasks;
+using SMIC.PhoneBooks.PhoneNumbers;
+using SMIC.PhoneBooks.Persons;
 
 namespace SMIC.EntityFrameworkCore
 {
@@ -15,6 +17,11 @@ namespace SMIC.EntityFrameworkCore
         /* Define a DbSet for each entity of the application */
         public virtual DbSet<MemberUser> MemberUsers { get; set; }
         public virtual DbSet<Task> Tasks { get; set; }
+
+        public virtual DbSet<Person> Persons { get; set;}
+
+        public virtual DbSet<PhoneNumber> PhoneNumbers { get; set; }
+
         public SMICDbContext(DbContextOptions<SMICDbContext> options)
             : base(options)
         {

@@ -12,6 +12,8 @@ namespace SMIC.PhoneBooks.Persons
     /// </summary>
     public interface IPersonAppService : IApplicationService
     {
+        //int GetDapperPersons();
+
         /// <summary>
         /// 获取Person的分页列表信息
         /// </summary>

@@ -14,6 +14,7 @@ using SMIC.PhoneBooks.Persons.DomainServices;
 using SMIC.PhoneBooks.Persons.Dtos;
 using SMIC.PhoneBooks.PhoneNumbers;
 using SMIC.PhoneBooks.PhoneNumbers.Dtos;
+using Abp.Dapper.Repositories;
 
 namespace SMIC.PhoneBooks.Persons
 {
@@ -27,6 +28,8 @@ namespace SMIC.PhoneBooks.Persons
 
         ////BCC/ BEGIN CUSTOM CODE SECTION
         ////ECC/ END CUSTOM CODE SECTION
+        ///
+        private readonly IDapperRepository<Person> _personDapperRepository;
         private readonly IRepository<Person, int> _personRepository;
 
         private readonly IRepository<PhoneNumber, long> _phoneNumbeRepository;
@@ -35,11 +38,18 @@ namespace SMIC.PhoneBooks.Persons
         ///     构造函数
         /// </summary>
         public PersonAppService(IRepository<Person, int> personRepository
-            , IPersonManager personManager, IRepository<PhoneNumber, long> phoneNumbeRepository)
+            , IPersonManager personManager, IRepository<PhoneNumber, long> phoneNumbeRepository, IDapperRepository<Person> personDapperRepository)
         {
             _personRepository = personRepository;
             _personManager = personManager;
             _phoneNumbeRepository = phoneNumbeRepository;
+            _personDapperRepository = personDapperRepository;
+        }
+
+        public IEnumerable<Person> GetDapperPersons()
+        {
+            IEnumerable<Person> persons = _personDapperRepository.Query("select * from Persons");
+            return persons;
         }
 
         /// <summary>

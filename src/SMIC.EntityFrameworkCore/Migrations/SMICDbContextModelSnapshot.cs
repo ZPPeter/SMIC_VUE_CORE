@@ -1117,6 +1117,64 @@ namespace SMIC.Migrations
                     b.ToTable("Tasks");
                 });
 
+            modelBuilder.Entity("SMIC.PhoneBooks.Persons.Person", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(120);
+
+                    b.Property<DateTime>("CreationTime");
+
+                    b.Property<long?>("CreatorUserId");
+
+                    b.Property<long?>("DeleterUserId");
+
+                    b.Property<DateTime?>("DeletionTime");
+
+                    b.Property<string>("EmailAddress")
+                        .HasMaxLength(64);
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastModificationTime");
+
+                    b.Property<long?>("LastModifierUserId");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(32);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Persons");
+                });
+
+            modelBuilder.Entity("SMIC.PhoneBooks.PhoneNumbers.PhoneNumber", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreationTime");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasMaxLength(11);
+
+                    b.Property<int>("PersonId");
+
+                    b.Property<int>("Type");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.ToTable("PhoneNumbers");
+                });
+
             modelBuilder.Entity("Abp.Application.Features.EditionFeatureSetting", b =>
                 {
                     b.HasBaseType("Abp.Application.Features.FeatureSetting");
@@ -1320,6 +1378,14 @@ namespace SMIC.Migrations
                     b.HasOne("SMIC.Authorization.Users.User", "AssignedPerson")
                         .WithMany()
                         .HasForeignKey("AssignedPersonId");
+                });
+
+            modelBuilder.Entity("SMIC.PhoneBooks.PhoneNumbers.PhoneNumber", b =>
+                {
+                    b.HasOne("SMIC.PhoneBooks.Persons.Person", "Person")
+                        .WithMany("PhoneNumbers")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Abp.Application.Features.EditionFeatureSetting", b =>
