@@ -1,0 +1,11 @@
+JWT
+
+ABP的WebApi访问控制
+asp.net zero core是通过IdentityServer4来实现的认证、授权
+
+访问地址 http://localhost:4999/api/TokenAuth/Authenticate 申请Token，提交参数：用户名、密码
+accessToken 就是我们申请的token
+
+使用Token访问api
+在请求头中加入 Authorization， 值为'Bearer ' + token 中间有个空格，请注意
+

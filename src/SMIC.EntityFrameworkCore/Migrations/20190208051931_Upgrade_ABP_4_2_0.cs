@@ -8,9 +8,11 @@ namespace SMIC.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            /*
             migrationBuilder.DropColumn(
                 name: "LastLoginTime",
                 table: "AbpUsers");
+            */
 
             migrationBuilder.DropColumn(
                 name: "LastLoginTime",

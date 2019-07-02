@@ -29,7 +29,7 @@ namespace SMIC.Sessions
             {
                 output.User = ObjectMapper.Map<UserLoginInfoDto>(await GetCurrentUserAsync());
             }
-
+            //var user = UserManager.FindByIdAsync(AbpSession.GetUserId().ToString());
             return output;
         }
     }

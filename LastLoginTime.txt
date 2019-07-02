@@ -1,0 +1,17 @@
+将 20190208051931_Upgrade_ABP_4_2_0.cs
+
+/*
+migrationBuilder.DropColumn(
+    name: "LastLoginTime",
+    table: "AbpUsers");
+*/
+
+update-database
+
+检查 dbo.AbpUsers 表，LastLoginTime 在，OK 
+
+SMICAppServiceBase.cs
+protected virtual Task<User> GetCurrentUserAsync()
+
+SessionAppService.cs
+public async Task<GetCurrentLoginInformationsOutput> GetCurrentLoginInformations()

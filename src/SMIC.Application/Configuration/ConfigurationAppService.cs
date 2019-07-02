@@ -3,6 +3,9 @@ using Abp.Authorization;
 using Abp.Runtime.Session;
 using SMIC.Configuration.Dto;
 
+using SMIC.Authorization.Users;
+
+
 namespace SMIC.Configuration
 {
     [AbpAuthorize]

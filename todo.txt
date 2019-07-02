@@ -1,4 +1,14 @@
-LastLoginTime
-
 https://www.cnblogs.com/personball/p/10138185.html
 https://www.jianshu.com/p/b55bf7b74ab6
+
+在AbpZero中hangfire后台作业的使用——开启hangfire
+https://blog.csdn.net/WuLex/article/details/78454519
+
+版本 生成日期
+http://localhost:21021/api/services/app/Session/GetCurrentLoginInformations
+public async Task<GetCurrentLoginInformationsOutput> GetCurrentLoginInformations()
+
+abp.dapper + u lastlogintime
+
+https://github.com/tmsmith/Dapper-Extensions
+https://github.com/arbing/DapperDal
