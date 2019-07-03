@@ -15,10 +15,9 @@ using SMIC.PhoneBooks.Persons.Dtos;
 using SMIC.PhoneBooks.PhoneNumbers;
 using SMIC.PhoneBooks.PhoneNumbers.Dtos;
 using Abp.Dapper.Repositories;
-
-using System.Data.SqlClient;
+//using System.Data.SqlClient;
 using Abp.Timing; // Clock.Now;
-
+using Newtonsoft.Json;
 namespace SMIC.PhoneBooks.Persons
 {
     /// <summary>
@@ -32,7 +31,7 @@ namespace SMIC.PhoneBooks.Persons
         ////BCC/ BEGIN CUSTOM CODE SECTION
         ////ECC/ END CUSTOM CODE SECTION
         ///
-        private readonly IDapperRepository<Person> _personDapperRepository;
+        private readonly IDapperRepository<MyUser> _personDapperRepository;
         private readonly IRepository<Person, int> _personRepository;
 
         private readonly IRepository<PhoneNumber, long> _phoneNumbeRepository;
@@ -41,7 +40,7 @@ namespace SMIC.PhoneBooks.Persons
         ///     构造函数
         /// </summary>
         public PersonAppService(IRepository<Person, int> personRepository
-            , IPersonManager personManager, IRepository<PhoneNumber, long> phoneNumbeRepository, IDapperRepository<Person> personDapperRepository)
+            , IPersonManager personManager, IRepository<PhoneNumber, long> phoneNumbeRepository, IDapperRepository<MyUser> personDapperRepository)
         {
             _personRepository = personRepository;
             _personManager = personManager;
@@ -49,19 +48,44 @@ namespace SMIC.PhoneBooks.Persons
             _personDapperRepository = personDapperRepository;
         }
 
-        public IEnumerable<Person> GetDapperPersons()
+        //public string GetDapperPersons()
+        //public IEnumerable<Person> GetDapperPersons()
+        public IEnumerable<MyUser> GetDapperPersons()
         {
             //SqlParameter[] parameters = new[]{
             //    new SqlParameter("Id", AbpSession.UserId ),
             //    new SqlParameter("LastLoginTime", Clock.Now)
             //};
-            //_personDapperRepository.Execute("update AbpUsers set LastLoginTime2=@LastLoginTime where Id=@Id", parameters);
-            Logger.Info("update AbpUsers set LastLoginTime2 = '" + Clock.Now + "' where Id = " + AbpSession.UserId);
-            _personDapperRepository.Execute("update AbpUsers set LastLoginTime2='" + Clock.Now + "' where Id=" + AbpSession.UserId);
-            Logger.Info("Update "+ AbpSession.UserId + "OK? Than show it.");
+            //_personDapperRepository.Execute("update AbpUsers set LastLoginTime2=@LastLoginTime where Id=@Id", parameters); // x
 
-            IEnumerable<Person> persons = _personDapperRepository.Query("select * from Persons");
+            Logger.Info("update AbpUsers set LastLoginTime2 = '" + Clock.Now + "' where Id = " + AbpSession.UserId);
+
+            //string sql = "update AbpUsers set LastLoginTime2 = @LastLoginTime WHERE Id = @Id;";
+            //var singleParam = new { Id = AbpSession.UserId, LastLoginTime = Clock.Now };
+            //_personDapperRepository.Execute(sql, singleParam);
+
+            _personDapperRepository.Execute("update AbpUsers set LastLoginTime2 = '" + Clock.Now + "' where Id = " + AbpSession.UserId);
+
+            //Logger.Info("Update "+ AbpSession.UserId + "OK? Than show it.");
+
+            //IEnumerable<Person> persons = _personDapperRepository.Query("select * from Persons");
+            //return persons;
+            //var lst = _personDapperRepository.Query("select LastLoginTime2 from AbpUsers");
+
+            //var lst = _personDapperRepository.Query("select Id,Name,userName,isActive,CreationTime,LastLoginTime2 from AbpUsers");
+            //return JsonConvert.SerializeObject(lst);
+
+            IEnumerable<MyUser> persons = _personDapperRepository.Query("select Id,Name,userName,isActive,CreationTime,LastLoginTime2 LastLoginTime from AbpUsers");
             return persons;
+
+            //await _DapperRepository.QueryAsync("select * from table");
+            //await _DapperRepository.CounAsync(t => t.SysConfigName != "");
+
+            // 分页 
+            // _personDapperRepository.GetAllPaged(...
+            // 参考
+            // https://www.cnblogs.com/seekdream/p/10790615.html
+
         }
 
         /// <summary>

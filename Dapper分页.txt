@@ -1,0 +1,100 @@
+
+dapper 分页代码实现
+https://www.cnblogs.com/seekdream/p/10790615.html
+
+这个部分就结合具体的项目来谈一谈一些细节方面的东西，我们先来看看具体的代码。
+
+public class VehicleOrderPlanDapperRepository : DcsDapperRepositoryBase<VehicleOrderPlan>, IVehicleOrderPlanDapperRepository {
+        public VehicleOrderPlanDapperRepository(IActiveTransactionProvider activeTransactionProvider) : base(activeTransactionProvider) {
+        }
+ 
+        public IEnumerable<WeeklyOrderPlanSummary> GetWeeklyOrderPlanSummary(int? yearOfPlan, int? weekOfPlan, string provinceName,
+            [CanBeNull]VehicleOrderPlanType[] planType, string marketName, PageRequest page) {
+            var sqlParam = new StringBuilder()
+                .AppendIf(yearOfPlan.HasValue, $" AND p.YearOfPlan = :{nameof(yearOfPlan)}")
+                .AppendIf(weekOfPlan.HasValue, $" AND p.WeekOfPlan = :{nameof(weekOfPlan)}")
+                .AppendIf(!provinceName.IsNullOrWhiteSpace(), $@" AND EXISTS ( SELECT 1
+    FROM Company C WHERE c.Id = p.DealerId AND c.Status <> {(int)MasterDataStatus.作废}
+        AND c.ProvinceName like '%' || :{nameof(provinceName)} || '%')");
+ 
+            var planTypes = new[] {
+                VehicleOrderPlanType.周度计划,
+                VehicleOrderPlanType.小品种计划,
+                VehicleOrderPlanType.移库计划
+            };
+            if (planType != null && planType.Length > 0)
+                planTypes = planTypes.Intersect(planType).ToArray();
+ 
+            var departmentParam = string.Empty;
+            if (!marketName.IsNullOrWhiteSpace())
+                departmentParam = $" AND (m.Name LIKE '%' || :{nameof(marketName)} || '%')";
+ 
+            var sql = $@"
+SELECT p.YearOfPlan, p.WeekOfPlan, TRUNC(p.CreateTime) AS CreateTime, TRUNC(p.StartTime) AS StartTime, TRUNC(p.EndTime) AS EndTime,
+       pd.ProductCode, pd.ProductName, pd.ProductType, pd.ProductCategoryCode AS VehicleModelCode, pd.ProductCategoryName AS VehicleModelName,
+       Sum(pd.PlannedQuantity) AS PlannedQuantity, Sum(pd.FirstPlannedQuantity) AS FirstPlannedQuantity,
+       Sum(pd.QuantityOfAssessment) AS QuantityOfAssessment, Sum(pd.ConfirmedQuantity) AS ConfirmedQuantity
+FROM VehicleOrderPlan p
+CROSS JOIN VehicleOrderPlanDetail pd
+WHERE (p.Status <> {(int)VehicleOrderPlanStatus.作废} AND p.Type in {planTypes.ToSqlInParam()} {sqlParam} AND EXISTS (
+    SELECT 1
+    FROM DealerMarketDptRelation dm
+    WHERE (((dm.BranchId = p.BranchId) AND (dm.DealerId = p.DealerId)) AND (dm.Status = {(int)BaseDataStatus.有效})) AND EXISTS (
+        SELECT 1
+        FROM MarketingDepartment m
+        WHERE ((m.BranchCode = {SunlightConsts.DEFAULT_BRANCH_QRSALESLTD}) AND (m.Status = {(int)BaseDataStatus.有效})) {departmentParam}
+            AND (m.Id = dm.MarketId)))) AND (p.Id = pd.VehicleOrderPlanId)
+GROUP BY p.YearOfPlan, p.WeekOfPlan, TRUNC(p.CreateTime), TRUNC(p.StartTime), TRUNC(p.EndTime), pd.ProductCode,
+         pd.ProductName, pd.ProductType, pd.ProductCategoryCode, pd.ProductCategoryName";
+ 
+            return QueryPaged<WeeklyOrderPlanSummary>(sql, page, new {
+                yearOfPlan,
+                weekOfPlan,
+                provinceName,
+                marketName
+            });
+        }
+    }
+
+	这段代码主要是通过具体传入的参数计划年、计划周、省份......等参数到数据库中查询相关的记录，这里我们先看看基类DcsDapperRepositoryBase<VehicleOrderPlan>里面做了些什么？
+
+	public class DcsDapperRepositoryBase<TEntity> : DapperEfRepositoryBase<DcsDbContext, TEntity>
+        where TEntity : class, IEntity<int> {
+        public DcsDapperRepositoryBase(IActiveTransactionProvider activeTransactionProvider) : base(activeTransactionProvider) {
+        }
+ 
+        /// <summary>
+        /// 以分页的形式查询数据
+        /// </summary>
+        /// <typeparam name="TValueObject"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="pageRequest"></param>
+        /// <param name="parameters">参数的匿名对象</param>
+        /// <returns></returns>
+        protected IEnumerable<TValueObject> QueryPaged<TValueObject>(string sql, PageRequest pageRequest, object parameters = null)
+            where TValueObject : ValueObjectBase {
+            var orderCondition = (string.IsNullOrWhiteSpace(pageRequest.Ordering) ? string.Empty : "ORDER BY " + pageRequest.Ordering);
+            orderCondition.SqlInjectionInspect();
+            var pagedSql = $@"WITH ""_data"" AS ({sql}),
+     ""_count"" AS (SELECT COUNT(0) AS OverallCount FROM ""_data"")
+SELECT *
+FROM (SELECT A.*, ROWNUM AS ""RowNum""
+      FROM (SELECT * FROM ""_data""
+            {orderCondition}) A
+      WHERE ROWNUM <= {pageRequest.PageSize * (pageRequest.PageIndex + 1)}) B,
+     ""_count""
+WHERE ""RowNum"" > {pageRequest.PageSize * pageRequest.PageIndex}";
+            return Query<TValueObject>(pagedSql, parameters);
+        }
+    }
+
+	在这个基类中我们继承了ABP中的基类DapperEfRepositoryBase<DcsDbContext, TEntity>，这个泛型基类第一个参数就是我们项目中的具体DbContext,第二个参数就是我们具体定义的实体，这个实体是主键为Int的自增长类型。这里面由于查询的数据非常多，所以我们这里实际上返回的是分页的第一页的结果集，这里还有一个重要的知识就是，为了防止sql注入，这里sql中的参数都采用参数的匿名对象，而不是直接进行拼接，这个是防止SQL注入的时候最常见的方式。通过这个具体的例子你应该知道怎样在ABP Dapper中使用匿名参数对象来防止SQL注入，另外通过这段SQL你还知道在Oracle数据库中如何对查询到的结果进行分页处理。
+
+　　在处理完这些后，我们再来看看当前VehicleOrderPlanRepository继承的接口是在哪里进行定义的？具体的领域层又该如何进行调用？
+
+public interface IVehicleOrderPlanDapperRepository : IDapperRepository<VehicleOrderPlan> {
+       IEnumerable<WeeklyOrderPlanSummary> GetWeeklyOrderPlanSummary(int? yearOfPlan, int? weekOfPlan, string provinceName,
+           [CanBeNull] VehicleOrderPlanType[] planType, string marketName, PageRequest page);
+   }
+
+   这个接口非常简单，但是这个接口究竟应该在哪里进行定义呢？我们按照DDD思想，首先想到的就是在领域层进行定义，不然领域层其它业务该在哪里调用这个方法。

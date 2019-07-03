@@ -22,6 +22,8 @@ namespace SMIC.EntityFrameworkCore
 
         public virtual DbSet<Person> Persons { get; set;}
 
+        public virtual DbSet<MyUser> MyUsers { get; set; }
+
         public virtual DbSet<PhoneNumber> PhoneNumbers { get; set; }
 
         public SMICDbContext(DbContextOptions<SMICDbContext> options)
@@ -33,7 +35,7 @@ namespace SMIC.EntityFrameworkCore
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             /*
-            最佳方案在 IntelliTrace 窗口 查看 ADO.NET 事件
+            最佳方案在 VS2017 【企业版】 IntelliTrace 窗口 查看 ADO.NET 事件
             //optionsBuilder.UseLoggerFactory(new EFLoggerFactory());
 
             //输出来源选择 ASP.NET Web 服务器

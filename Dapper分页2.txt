@@ -1,0 +1,92 @@
+Dapper分页实现二
+
+Dapper返回List<dynamic>对象
+
+		/// <summary>
+        /// 获取候选人推荐的分页数据
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="candidateName"></param>
+        /// <param name="allRowsCount"></param>
+        /// <returns></returns>
+        public List<dynamic> GetCandidateRecommendPage(int page, int pageSize, string candidateName, out long allRowsCount)
+        {
+            var sql = @"SELECT  c.Name,c.birthday,c.CVId FROM dbo.Candidate c ";
+            var allRowsCountSql = @"SELECT COUNT(0) FROM dbo.Candidate";
+ 
+            var ret = base.DBSession.Connection.GetPage<dynamic>(page, pageSize, out allRowsCount, sql, null, allRowsCountSql).ToList();
+            return ret;
+        }
+
+		
+		
+实现三
+                string sortAsc;
+                if (isAsc)
+                {
+                    sortAsc = "asc";
+                }
+                else
+                {
+                    sortAsc = "desc";
+                }
+                int start = (pageIndex - 1) * pageSize + 1;
+                int end = pageIndex * pageSize;
+                StringBuilder sql = new StringBuilder();
+                sql.Append("select * from(select *, Row_Number() over(order by id " + sortAsc + ") as rowNumber from " + tb + ")t where t.rowNumber >= @start and t.rowNumber <= @end ");
+                List<ContentModel> result = Conn.Query<ContentModel>(sql.ToString(), new { start = start, end = end }).ToList();
+                rowCount = GetCount();
+                return result;
+
+
+实现四
+
+//分页查询
+long allRowsCount = 0;
+this.GetPageList<DemoEntity>(1, 10, out allRowsCount, new { ID = 1 }, sort);
+
+实现五
+
+String executeQuery = @"WITH pagintable AS(
+                                        SELECT ROW_NUMBER() OVER(ORDER BY CreateDate DESC )AS RowID, ID, FileID, TabName, TabID, FileName, FileDesc, FilePath, FileTypeID, FileSize, CreateDate, CreateMan, EditDate, EditMan, IsValid, NeedMoveToMoss, IsMoveToMoss, IsTemp,SequenceNum FROM Attachment
+                                        WHERE 1= 1) 
+                                        SELECT * FROM pagintable where RowID between ((@CurrentPageIndex - 1)  * @PageSize) + 1  and (@CurrentPageIndex  * @PageSize)";
+                String executeCount = "SELECT COUNT(*) AS CountNum FROM Attachment WHERE 1= 1";
+                var mixCondition = new
+                {
+                    CurrentPageIndex = pagin.CurrentPageIndex,
+                    PageSize = pagin.PageSize
+                };
+                List<AttachmentModel> listScore = conn.Query<AttachmentModel>(executeQuery, mixCondition).ToList();
+                pagin.TotalItemCount = conn.Query<Int32>(executeCount, mixCondition).SingleOrDefault<Int32>();
+                KeyValuePair<Pagination, IList<AttachmentModel>> result =
+                    new KeyValuePair<Pagination, IList<AttachmentModel>>(pagin, listScore);
+                return result;
+
+
+方案一
+首先，Dapper组件中并未内置分页的功能，但是使用Dapper实现分页也并不难，比如我们可以使用Dapper的查询功能执行分页查询语句，然后返回一个IEnumerable<T>的查询结果集合，如：
+
+SELECT  *
+FROM    ( SELECT    ROW_NUMBER() OVER ( ORDER BY InsertDate) AS RowNum, *
+          FROM      Posts
+          WHERE     InsertDate >= '1900-01-01'
+        ) AS result
+WHERE   RowNum >= 1 // *此处改为你的分页参数(分页起始位置)
+    AND RowNum < 20  //*分页结束位置
+ORDER BY RowNum
+以上语句支持SQL Server 2005及以上版本。
+
+方案二
+如果你使用的是SQL Server 2012及以上版本的话，你还可以使用SQL Server2012的更高级的分页查询SQL语句：OFFSET FETCH，如：
+
+SELECT * FROM [Posts]
+ORDER BY [InsertDate]
+OFFSET 20 ROWS
+FETCH NEXT 5 ROWS ONLY
+
+
+
+基于Dapper的分页实现，支持筛选，排序，结果集总数，多表查询，非存储过程
+https://www.cnblogs.com/jinweijie/p/dapper_pagination.html

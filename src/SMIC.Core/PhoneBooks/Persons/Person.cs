@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Abp.Domain.Entities.Auditing;
 using SMIC.PhoneBooks.PhoneNumbers;
-
+using Abp.Domain.Entities;
 namespace SMIC.PhoneBooks.Persons
 {
     /// <summary>
@@ -38,5 +39,21 @@ namespace SMIC.PhoneBooks.Persons
         /// </summary>
         public ICollection<PhoneNumber> PhoneNumbers { get; set; }
 
+    }
+
+    public class MyUser : Entity<int>
+    {
+        public string userName { get; set; }
+        public string name { get; set; }
+        public bool isActive { get; set; }
+        public DateTime? CreationTime { get; set; }
+        public DateTime? LastLoginTime { get; set; }
+        /*
+         * userName
+         * name
+         * isActive
+         * lastLoginTime
+         * creationTime
+         */ 
     }
 }
