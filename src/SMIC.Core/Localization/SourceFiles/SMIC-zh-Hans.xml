@@ -97,7 +97,21 @@
     <text name="DeleteTenantConfirm">确认删除该租户？</text>
     <text name="EditTenant">编辑租户</text>
     
-    
+    <text name="UnionId"  value="UnionId"></text>
+    <text name="SessionKey"  value="SessionKey"></text>
+    <text name="NickName"  value="昵称"></text>
+    <text name="Gender"  value="性别"></text>
+    <text name="City"  value="城市"></text>
+    <text name="Province"  value="省份"></text>
+    <text name="Country"  value="国家"></text>
+
+    <text name="MemberUser" value="会员"></text>
+    <text name="QueryMemberUser"  value="查询会员"></text>
+    <text name="CreateMemberUser"  value="添加会员"></text>
+    <text name="EditMemberUser"  value="编辑会员"></text>
+    <text name="DeleteMemberUser"  value="删除会员"></text>
+    <text name="BatchDeleteMemberUser" value="批量删除会员"></text>
+    <text name="ExportMemberUser"  value="导出会员"></text>
   </texts>
 </localizationDictionary>
 

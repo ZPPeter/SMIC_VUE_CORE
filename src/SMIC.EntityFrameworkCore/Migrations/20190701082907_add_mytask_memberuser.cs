@@ -7,13 +7,13 @@ namespace SMIC.Migrations
     public partial class add_mytask_memberuser : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
-        {
+        {            
             migrationBuilder.AddColumn<string>(
                 name: "Discriminator",
                 table: "AbpUsers",
                 nullable: false,
                 defaultValue: "");
-
+            
             migrationBuilder.AddColumn<string>(
                 name: "City",
                 table: "AbpUsers",
@@ -53,7 +53,7 @@ namespace SMIC.Migrations
                 name: "UnionId",
                 table: "AbpUsers",
                 maxLength: 128,
-                nullable: true);
+                nullable: true);            
 
             migrationBuilder.CreateTable(
                 name: "Tasks",

@@ -5,7 +5,8 @@ using SMIC.Authorization;
 
 using SMIC.PhoneBooks.Persons.Authorization;
 using SMIC.PhoneBooks.Persons.Dtos.LTMAutoMapper;
-
+using SMIC.MyTasks.Mapper;
+using SMIC.MyTasks.Authorization;
 namespace SMIC
 {
     [DependsOn(
@@ -19,9 +20,13 @@ namespace SMIC
             Configuration.Authorization.Providers.Add<SMICAuthorizationProvider>();
 
             Configuration.Authorization.Providers.Add<PersonAppAuthorizationProvider>();  // SMIC.PhoneBooks.Persons.Authorization
+            Configuration.Authorization.Providers.Add<TaskAuthorizationProvider>();
 
-            Configuration.Modules.AbpAutoMapper().Configurators.Add(CustomerPersonMapper.CreateMappings); // SMIC.PhoneBooks.Persons.Dtos.LTMAutoMapper
-
+            Configuration.Modules.AbpAutoMapper().Configurators.Add(configuration =>
+            {
+                CustomerPersonMapper.CreateMappings(configuration);   // 自定义类型映射 - SMIC.PhoneBooks.Persons.Dtos.LTMAutoMapper
+                TaskMapper.CreateMappings(configuration);       // SMIC.Members.Mapper/MemberUserMapper
+            });
         }
 
         public override void Initialize()

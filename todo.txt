@@ -4,15 +4,7 @@ https://www.jianshu.com/p/b55bf7b74ab6
 在AbpZero中hangfire后台作业的使用——开启hangfire
 https://blog.csdn.net/WuLex/article/details/78454519
 
-phonebooks 继续看网易云课堂
-https://study.163.com/course/courseMain.htm?courseId=1005208064
-
 abp.dapper
+
++memberuser
 +lastlogintime2
-
-代码生成器 + Task,memberuser
-
-IIS 部署
-
-打印
-https://www.jianshu.com/p/a6e9ace79345

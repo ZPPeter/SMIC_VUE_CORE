@@ -16,6 +16,9 @@ using SMIC.PhoneBooks.PhoneNumbers;
 using SMIC.PhoneBooks.PhoneNumbers.Dtos;
 using Abp.Dapper.Repositories;
 
+using System.Data.SqlClient;
+using Abp.Timing; // Clock.Now;
+
 namespace SMIC.PhoneBooks.Persons
 {
     /// <summary>
@@ -48,6 +51,15 @@ namespace SMIC.PhoneBooks.Persons
 
         public IEnumerable<Person> GetDapperPersons()
         {
+            //SqlParameter[] parameters = new[]{
+            //    new SqlParameter("Id", AbpSession.UserId ),
+            //    new SqlParameter("LastLoginTime", Clock.Now)
+            //};
+            //_personDapperRepository.Execute("update AbpUsers set LastLoginTime2=@LastLoginTime where Id=@Id", parameters);
+            Logger.Info("update AbpUsers set LastLoginTime2 = '" + Clock.Now + "' where Id = " + AbpSession.UserId);
+            _personDapperRepository.Execute("update AbpUsers set LastLoginTime2='" + Clock.Now + "' where Id=" + AbpSession.UserId);
+            Logger.Info("Update "+ AbpSession.UserId + "OK? Than show it.");
+
             IEnumerable<Person> persons = _personDapperRepository.Query("select * from Persons");
             return persons;
         }

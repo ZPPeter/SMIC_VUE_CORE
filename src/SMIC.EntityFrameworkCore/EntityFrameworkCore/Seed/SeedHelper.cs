@@ -38,7 +38,7 @@ namespace SMIC.EntityFrameworkCore.Seed
             using (var uowManager = iocResolver.ResolveAsDisposable<IUnitOfWorkManager>())
             {
                 using (var uow = uowManager.Object.Begin(TransactionScopeOption.Suppress))
-                {
+                {                    
                     var context = uowManager.Object.Current.GetDbContext<TDbContext>(MultiTenancySides.Host);
 
                     contextAction(context);

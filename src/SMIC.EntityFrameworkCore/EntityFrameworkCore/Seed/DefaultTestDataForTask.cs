@@ -9,7 +9,7 @@ namespace SMIC.EntityFrameworkCore.Seed
     {
         private readonly SMICDbContext _context;
 
-        private static readonly List<Task> _tasks;
+        private static readonly List<MyTask> _tasks;
 
         public DefaultTestDataForTask(SMICDbContext context)
         {
@@ -18,15 +18,15 @@ namespace SMIC.EntityFrameworkCore.Seed
 
         static DefaultTestDataForTask()
         {
-            _tasks = new List<Task>()
+            _tasks = new List<MyTask>()
             {
-                new Task("Learning ABP deom", "Learning how to use abp framework to build a MPA application."),
-                new Task("Make Lunch", "Cook 2 dishs")
+                new MyTask("Learning ABP deom", "Learning how to use abp framework to build a MPA application."),
+                new MyTask("Make Lunch", "Cook 2 dishs")
             };
         }
 
         public void Create()
-        {
+        {            
             foreach (var task in _tasks)
             {
                 _context.Tasks.Add(task);
