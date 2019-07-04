@@ -9,8 +9,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="EntityFrameworkCore\Mapping\Users\**" />
+    <Compile Remove="EntityFrameworkCore\新建文件夹\**" />
     <EmbeddedResource Remove="EntityFrameworkCore\Mapping\Users\**" />
+    <EmbeddedResource Remove="EntityFrameworkCore\新建文件夹\**" />
     <None Remove="EntityFrameworkCore\Mapping\Users\**" />
+    <None Remove="EntityFrameworkCore\新建文件夹\**" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="EFLogger.cs" />

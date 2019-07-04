@@ -1,5 +1,6 @@
 ﻿using Abp.EntityFrameworkCore.Configuration;
 using Abp.Modules;
+using Abp.Domain.Uow;
 using Abp.Reflection.Extensions;
 using Abp.Zero.EntityFrameworkCore;
 using SMIC.EntityFrameworkCore.Seed;
@@ -8,12 +9,20 @@ using Abp.Dapper;
 using System.Reflection;
 using System.Collections.Generic;
 
+using Abp.EntityFrameworkCore;
+
+using Abp.Configuration.Startup;
+
+
 namespace SMIC.EntityFrameworkCore
 {
+
     [DependsOn(
         typeof(SMICCoreModule), 
         typeof(AbpZeroCoreEntityFrameworkCoreModule),
-        typeof(AbpDapperModule))]
+        typeof(AbpDapperModule),
+        typeof(AbpEntityFrameworkCoreModule)
+        )]
     public class SMICEntityFrameworkModule : AbpModule
     {
         /* Used it tests to skip dbcontext registration, in order to use in-memory database of EF Core */
@@ -23,6 +32,8 @@ namespace SMIC.EntityFrameworkCore
 
         public override void PreInitialize()
         {
+            Configuration.ReplaceService<IConnectionStringResolver, MyConnectionStringResolver>(); // using Abp.Configuration.Startup;
+
             if (!SkipDbContextRegistration)
             {
                 Configuration.Modules.AbpEfCore().AddDbContext<SMICDbContext>(options =>
@@ -34,6 +45,19 @@ namespace SMIC.EntityFrameworkCore
                     else
                     {
                         SMICDbContextConfigurer.Configure(options.DbContextOptions, options.ConnectionString);
+                    }
+                });
+
+                // Configure second DbContext
+                Configuration.Modules.AbpEfCore().AddDbContext<SDIMDbContext>(options =>
+                {
+                    if (options.ExistingConnection != null)
+                    {
+                        SDIMDbContextOptionsConfigurer.Configure(options.DbContextOptions, options.ExistingConnection);
+                    }
+                    else
+                    {
+                        SDIMDbContextOptionsConfigurer.Configure(options.DbContextOptions, options.ConnectionString);
                     }
                 });
             }

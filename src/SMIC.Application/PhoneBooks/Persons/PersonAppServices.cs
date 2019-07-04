@@ -20,6 +20,7 @@ using Abp.Timing; // Clock.Now;
 using Newtonsoft.Json;
 
 using SMIC.Members;
+using System.Linq.Expressions;
 
 namespace SMIC.PhoneBooks.Persons
 {
@@ -36,6 +37,7 @@ namespace SMIC.PhoneBooks.Persons
         ///
         private readonly IDapperRepository<MyUser> _personDapperRepository;
         private readonly IDapperRepository<MemberUser, long> _memberDapperRepository;
+        private readonly IDapperRepository<VW_SJMX,long> _vwsjmxDapperRepository;
 
         private readonly IRepository<Person, int> _personRepository;
 
@@ -46,14 +48,20 @@ namespace SMIC.PhoneBooks.Persons
         /// <summary>
         ///     构造函数
         /// </summary>
-        public PersonAppService(IRepository<Person, int> personRepository
-            , IPersonManager personManager, IRepository<PhoneNumber, long> phoneNumbeRepository, IDapperRepository<MyUser> personDapperRepository, IDapperRepository<MemberUser, long> memberDapperRepository)
+        public PersonAppService(
+            IRepository<Person, int> personRepository, 
+            IPersonManager personManager, 
+            IRepository<PhoneNumber, long> phoneNumbeRepository, 
+            IDapperRepository<MyUser> personDapperRepository, 
+            IDapperRepository<MemberUser, long> memberDapperRepository,
+            IDapperRepository<VW_SJMX, long> vwsjmxDapperRepository)
         {
             _personRepository = personRepository;
             _personManager = personManager;
             _phoneNumbeRepository = phoneNumbeRepository;
             _personDapperRepository = personDapperRepository;
             _memberDapperRepository = memberDapperRepository;
+            _vwsjmxDapperRepository = vwsjmxDapperRepository;
         }
 
         //public string GetDapperPersons()
@@ -99,6 +107,34 @@ namespace SMIC.PhoneBooks.Persons
             // https://www.cnblogs.com/seekdream/p/10790615.html
 
         }
+
+        //public IEnumerable<VW_SJMX> GetSjmx()
+        //public List<VW_SJMX> GetSjmx()
+        public dynamic GetSjmx1()
+        {
+            dynamic ret = _vwsjmxDapperRepository.GetAllPaged(x => x.器具名称 == "全站仪", 1, 20, "ID").ToDynamicList<dynamic>(); //OK
+            //IEnumerable<VW_SJMX> ret = _vwsjmxDapperRepository.Query("select top 20 * from VW_SJMX"); //OK                        
+            return ret;
+        }
+
+        public List<VW_SJMX> GetSjmx2()
+        {
+            IEnumerable<VW_SJMX> ret = _vwsjmxDapperRepository.GetAllPaged(x => x.器具名称 == "全站仪", 2, 20, "ID");
+            // 不能直接返回 ret
+
+            List<VW_SJMX> tempList = new List<VW_SJMX>();
+            IEnumerator<VW_SJMX> currentEnumerator = ret.GetEnumerator();
+            if (currentEnumerator != null)
+            {
+                for (int count = 0; currentEnumerator.MoveNext(); count++)
+                {
+                    tempList.Add(currentEnumerator.Current);
+                }
+            }
+
+            return tempList;
+        }
+
 
         /// <summary>
         ///     获取Person的分页列表信息

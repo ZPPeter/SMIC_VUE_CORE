@@ -4,7 +4,8 @@
     {
         public const string LocalizationSourceName = "SMIC";
 
-        public const string ConnectionStringName = "Default";
+        public const string     ConnectionStringName = "Default";
+        public const string SDIMConnectionStringName = "SDIM";
 
         public const bool MultiTenancyEnabled = true;
 		        
