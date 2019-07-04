@@ -8,6 +8,11 @@
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="EntityFrameworkCore\Mapping\Users\**" />
+    <EmbeddedResource Remove="EntityFrameworkCore\Mapping\Users\**" />
+    <None Remove="EntityFrameworkCore\Mapping\Users\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Remove="EFLogger.cs" />
     <Compile Remove="EFLoggerFactory.cs" />
     <Compile Remove="EFLoggerProvider.cs" />

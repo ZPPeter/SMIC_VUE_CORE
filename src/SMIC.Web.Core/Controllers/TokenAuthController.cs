@@ -133,8 +133,39 @@ namespace SMIC.Controllers
             }
         }
 
+        
         private async Task<User> RegisterExternalUserAsync(ExternalAuthUserInfo externalUser)
         {
+            /* --- 微信
+            var user = await _userRegistrationManager.RegisterAsync<MemberUser>(
+                externalUser.Name,
+                externalUser.Surname,
+                externalUser.EmailAddress,
+                externalUser.EmailAddress,
+                Authorization.Users.User.CreateRandomPassword(),
+                true
+            );
+
+            if (externalUser is WechatAuthUserInfo)
+            {
+                user.SessionKey = (externalUser as WechatAuthUserInfo).SessionKey;
+            }
+
+            user.Logins = new List<UserLogin>
+            {
+                new UserLogin
+                {
+                    LoginProvider = externalUser.Provider,
+                    ProviderKey = externalUser.ProviderKey,
+                    TenantId = user.TenantId
+                }
+            };
+
+            await CurrentUnitOfWork.SaveChangesAsync();
+
+            return user;
+            */
+            
             var user = await _userRegistrationManager.RegisterAsync(
                 externalUser.Name,
                 externalUser.Surname,
@@ -157,6 +188,7 @@ namespace SMIC.Controllers
             await CurrentUnitOfWork.SaveChangesAsync();
 
             return user;
+            
         }
 
         private async Task<ExternalAuthUserInfo> GetExternalUserInfo(ExternalAuthenticateModel model)

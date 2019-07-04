@@ -25,7 +25,7 @@ namespace SMIC
             Configuration.Modules.AbpAutoMapper().Configurators.Add(configuration =>
             {
                 CustomerPersonMapper.CreateMappings(configuration);   // 自定义类型映射 - SMIC.PhoneBooks.Persons.Dtos.LTMAutoMapper
-                TaskMapper.CreateMappings(configuration);       // SMIC.Members.Mapper/MemberUserMapper
+                TaskMapper.CreateMappings(configuration);             // MyTasks.Task的AutoMapper
             });
         }
 

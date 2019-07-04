@@ -18,6 +18,9 @@ using Abp.Dapper.Repositories;
 //using System.Data.SqlClient;
 using Abp.Timing; // Clock.Now;
 using Newtonsoft.Json;
+
+using SMIC.Members;
+
 namespace SMIC.PhoneBooks.Persons
 {
     /// <summary>
@@ -32,25 +35,30 @@ namespace SMIC.PhoneBooks.Persons
         ////ECC/ END CUSTOM CODE SECTION
         ///
         private readonly IDapperRepository<MyUser> _personDapperRepository;
+        private readonly IDapperRepository<MemberUser, long> _memberDapperRepository;
+
         private readonly IRepository<Person, int> _personRepository;
 
         private readonly IRepository<PhoneNumber, long> _phoneNumbeRepository;
+
+        
 
         /// <summary>
         ///     构造函数
         /// </summary>
         public PersonAppService(IRepository<Person, int> personRepository
-            , IPersonManager personManager, IRepository<PhoneNumber, long> phoneNumbeRepository, IDapperRepository<MyUser> personDapperRepository)
+            , IPersonManager personManager, IRepository<PhoneNumber, long> phoneNumbeRepository, IDapperRepository<MyUser> personDapperRepository, IDapperRepository<MemberUser, long> memberDapperRepository)
         {
             _personRepository = personRepository;
             _personManager = personManager;
             _phoneNumbeRepository = phoneNumbeRepository;
             _personDapperRepository = personDapperRepository;
+            _memberDapperRepository = memberDapperRepository;
         }
 
         //public string GetDapperPersons()
         //public IEnumerable<Person> GetDapperPersons()
-        public IEnumerable<MyUser> GetDapperPersons()
+        public IEnumerable<MemberUser> GetDapperPersons()
         {
             //SqlParameter[] parameters = new[]{
             //    new SqlParameter("Id", AbpSession.UserId ),
@@ -75,11 +83,15 @@ namespace SMIC.PhoneBooks.Persons
             //var lst = _personDapperRepository.Query("select Id,Name,userName,isActive,CreationTime,LastLoginTime2 from AbpUsers");
             //return JsonConvert.SerializeObject(lst);
 
-            IEnumerable<MyUser> persons = _personDapperRepository.Query("select Id,Name,userName,isActive,CreationTime,LastLoginTime2 LastLoginTime from AbpUsers");
-            return persons;
+            //IEnumerable<MyUser> persons = _personDapperRepository.Query("select Id,Name,userName,isActive,CreationTime,LastLoginTime2 LastLoginTime from AbpUsers");
+            //return persons;
 
             //await _DapperRepository.QueryAsync("select * from table");
             //await _DapperRepository.CounAsync(t => t.SysConfigName != "");
+
+            //IEnumerable<MemberUser> persons = _memberDapperRepository.Query("select Id,Name,userName,isActive,CreationTime,LastLoginTime2 LastLoginTime from AbpUsers");
+            IEnumerable<MemberUser> persons = _memberDapperRepository.Query("select Id,Name,userName,isActive,CreationTime,LastLoginTime2 from AbpUsers");
+            return persons;
 
             // 分页 
             // _personDapperRepository.GetAllPaged(...
