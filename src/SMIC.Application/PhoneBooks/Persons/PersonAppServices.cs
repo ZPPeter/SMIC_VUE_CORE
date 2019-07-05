@@ -22,6 +22,9 @@ using Newtonsoft.Json;
 using SMIC.Members;
 using System.Linq.Expressions;
 
+using System.Linq;
+using System;
+
 namespace SMIC.PhoneBooks.Persons
 {
     /// <summary>
@@ -35,24 +38,22 @@ namespace SMIC.PhoneBooks.Persons
         ////BCC/ BEGIN CUSTOM CODE SECTION
         ////ECC/ END CUSTOM CODE SECTION
         ///
-        private readonly IDapperRepository<MyUser> _personDapperRepository;
+        private readonly IDapperRepository<Person> _personDapperRepository;
         private readonly IDapperRepository<MemberUser, long> _memberDapperRepository;
-        private readonly IDapperRepository<VW_SJMX,long> _vwsjmxDapperRepository;
+        private readonly IDapperRepository<VW_SJMX, long> _vwsjmxDapperRepository;
 
         private readonly IRepository<Person, int> _personRepository;
-
         private readonly IRepository<PhoneNumber, long> _phoneNumbeRepository;
 
-        
 
         /// <summary>
         ///     构造函数
         /// </summary>
         public PersonAppService(
-            IRepository<Person, int> personRepository, 
-            IPersonManager personManager, 
-            IRepository<PhoneNumber, long> phoneNumbeRepository, 
-            IDapperRepository<MyUser> personDapperRepository, 
+            IRepository<Person, int> personRepository,
+            IPersonManager personManager,
+            IRepository<PhoneNumber, long> phoneNumbeRepository,
+            IDapperRepository<Person> personDapperRepository,
             IDapperRepository<MemberUser, long> memberDapperRepository,
             IDapperRepository<VW_SJMX, long> vwsjmxDapperRepository)
         {
@@ -101,11 +102,6 @@ namespace SMIC.PhoneBooks.Persons
             IEnumerable<MemberUser> persons = _memberDapperRepository.Query("select Id,Name,userName,isActive,CreationTime,LastLoginTime2 from AbpUsers");
             return persons;
 
-            // 分页 
-            // _personDapperRepository.GetAllPaged(...
-            // 参考
-            // https://www.cnblogs.com/seekdream/p/10790615.html
-
         }
 
         //public IEnumerable<VW_SJMX> GetSjmx()
@@ -117,13 +113,34 @@ namespace SMIC.PhoneBooks.Persons
             return ret;
         }
 
+
+        public int GetPersonCount()
+        {
+            Expression<Func<Person, bool>> predicate = p=>p.Name != "";            
+            predicate = predicate.And(p => p.Name.Contains("A"));
+            return _personDapperRepository.Count(predicate);
+        }
+
         public PagedResultDto<VW_SJMX> GetSjmx2(GetVwSjmxsInput input)
         {
-            //var totalCount0 = _vwsjmxDapperRepository.Count(f=>true);   // error
-            //var totalCount0 = _vwsjmxDapperRepository.Count(f=>f.id>0); // ok
-            //Expression.IfThen()
-            var predicate = PredicateExtensions.True<VW_SJMX>();
-            
+
+            Expression condition = null;
+            ParameterExpression param = Expression.Parameter(typeof(VW_SJMX), "p");
+            Expression right = Expression.Constant("-1");
+            Expression left = Expression.Property(param, typeof(VW_SJMX).GetProperty("送检单号"));
+            Expression filter = Expression.NotEqual(left, right); // 送检单号 != -1
+            condition = filter;
+
+            right = Expression.Constant("12345");
+            left = Expression.Property(param, typeof(VW_SJMX).GetProperty("送检单号"));
+            filter = Expression.Equal(left, right);
+            condition = Expression.And(condition, filter);
+
+            //var predicate = PredicateExtensions.True<VW_SJMX>();
+            var predicate = Expression.Lambda<Func<VW_SJMX, bool>>(condition, param);
+            //predicate = predicate.And(p => p.送检单号.Contains(input.Filter));
+
+            /*
             if (!input.Filter.IsNullOrWhiteSpace())
             {
                 predicate = predicate.And(p => p.送检单号.Contains(input.Filter));
@@ -137,6 +154,7 @@ namespace SMIC.PhoneBooks.Persons
             {
                 predicate = predicate.And(p => p.送检日期 <= input.To);
             }
+            */
 
             var totalCount = _vwsjmxDapperRepository.Count(predicate);
 
@@ -146,20 +164,15 @@ namespace SMIC.PhoneBooks.Persons
                 a.送检单号.Contains(input.Filter) &&
                 a.送检日期 >= input.From &&
                 a.送检日期 <= input.To
-                );
-            
-            return Repository.GetAll()
-                .WhereIf(!input.Keyword.IsNullOrWhiteSpace(), b => b.Name.Contains(input.Keyword))
-                .WhereIf(input.From.HasValue, b => b.CreationTime >= input.From.Value.LocalDateTime)
-                .WhereIf(input.To.HasValue, b => b.CreationTime <= input.To.Value.LocalDateTime);
+                );            
             */
             //IEnumerable<VW_SJMX> ret = _vwsjmxDapperRepository.GetAllPaged(x => x.器具名称 == "全站仪", 2, 20, "ID");
             //IEnumerable<VW_SJMX> ret = _vwsjmxDapperRepository.GetAllPaged(a =>(a.器具名称 == "全站仪") && a.送检单号.Contains(input.Filter), input.SkipCount/input.MaxResultCount, input.MaxResultCount, input.Sorting);
-            
+
             IEnumerable<VW_SJMX> ret = _vwsjmxDapperRepository.GetAllPaged(
                 predicate,
-                input.SkipCount / input.MaxResultCount, 
-                input.MaxResultCount, 
+                input.SkipCount / input.MaxResultCount,
+                input.MaxResultCount,
                 input.Sorting);
 
 
@@ -181,6 +194,24 @@ namespace SMIC.PhoneBooks.Persons
         }
 
 
+        public int GetSjmx3()
+        {
+            //Expression.IfThen()
+
+            Expression condition = null;
+            ParameterExpression param = Expression.Parameter(typeof(Person), "p");
+            Expression right = Expression.Constant("Name");
+            Expression left = Expression.Property(param, typeof(Person).GetProperty("Name"));
+            Expression filter = Expression.Equal(left, right);
+            condition = filter;
+            condition = Expression.And(condition, filter);
+                        
+            var totalCount = _personDapperRepository.Count(Expression.Lambda<Func<Person, bool>>(filter, param)); // ok
+
+            return totalCount;
+
+        }
+
         /// <summary>
         ///     获取Person的分页列表信息
         /// </summary>
@@ -188,7 +219,7 @@ namespace SMIC.PhoneBooks.Persons
         /// <returns></returns>
         public async Task<PagedResultDto<PersonListDto>> GetPagedPersons(GetPersonsInput input)
         {
-            var query = _personRepository.GetAll().Include(a=>a.PhoneNumbers).WhereIf(!input.Filter.IsNullOrWhiteSpace(),
+            var query = _personRepository.GetAll().Include(a => a.PhoneNumbers).WhereIf(!input.Filter.IsNullOrWhiteSpace(),
                 a => a.Name.Contains(input.Filter) || a.Address.Contains(input.Filter) ||
                      a.EmailAddress.Contains(input.Filter));
             //TODO:根据传入的参数添加过滤条件
@@ -351,7 +382,6 @@ namespace SMIC.PhoneBooks.Persons
             // ObjectMapper.Map(input, entity);
             await _personRepository.UpdateAsync(entity);
         }
-
-    }
+   }
 
 }
