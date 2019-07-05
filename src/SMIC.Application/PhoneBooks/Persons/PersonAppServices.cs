@@ -117,10 +117,51 @@ namespace SMIC.PhoneBooks.Persons
             return ret;
         }
 
-        public List<VW_SJMX> GetSjmx2()
+        public PagedResultDto<VW_SJMX> GetSjmx2(GetVwSjmxsInput input)
         {
-            IEnumerable<VW_SJMX> ret = _vwsjmxDapperRepository.GetAllPaged(x => x.器具名称 == "全站仪", 2, 20, "ID");
-            // 不能直接返回 ret
+            //var totalCount0 = _vwsjmxDapperRepository.Count(f=>true);   // error
+            //var totalCount0 = _vwsjmxDapperRepository.Count(f=>f.id>0); // ok
+            //Expression.IfThen()
+            var predicate = PredicateExtensions.True<VW_SJMX>();
+            
+            if (!input.Filter.IsNullOrWhiteSpace())
+            {
+                predicate = predicate.And(p => p.送检单号.Contains(input.Filter));
+                predicate = predicate.Or(p => p.单位名称.Contains(input.Filter));
+            }
+            if (input.From != null) // > DateTime.MinValue
+            {
+                predicate = predicate.And(p => p.送检日期 >= input.From);
+            }
+            if (input.To != null) // > DateTime.MinValue
+            {
+                predicate = predicate.And(p => p.送检日期 <= input.To);
+            }
+
+            var totalCount = _vwsjmxDapperRepository.Count(predicate);
+
+            /*
+            var totalCount1 = _vwsjmxDapperRepository.Count(
+                a => (a.器具名称 == "全站仪") &&
+                a.送检单号.Contains(input.Filter) &&
+                a.送检日期 >= input.From &&
+                a.送检日期 <= input.To
+                );
+            
+            return Repository.GetAll()
+                .WhereIf(!input.Keyword.IsNullOrWhiteSpace(), b => b.Name.Contains(input.Keyword))
+                .WhereIf(input.From.HasValue, b => b.CreationTime >= input.From.Value.LocalDateTime)
+                .WhereIf(input.To.HasValue, b => b.CreationTime <= input.To.Value.LocalDateTime);
+            */
+            //IEnumerable<VW_SJMX> ret = _vwsjmxDapperRepository.GetAllPaged(x => x.器具名称 == "全站仪", 2, 20, "ID");
+            //IEnumerable<VW_SJMX> ret = _vwsjmxDapperRepository.GetAllPaged(a =>(a.器具名称 == "全站仪") && a.送检单号.Contains(input.Filter), input.SkipCount/input.MaxResultCount, input.MaxResultCount, input.Sorting);
+            
+            IEnumerable<VW_SJMX> ret = _vwsjmxDapperRepository.GetAllPaged(
+                predicate,
+                input.SkipCount / input.MaxResultCount, 
+                input.MaxResultCount, 
+                input.Sorting);
+
 
             List<VW_SJMX> tempList = new List<VW_SJMX>();
             IEnumerator<VW_SJMX> currentEnumerator = ret.GetEnumerator();
@@ -132,7 +173,11 @@ namespace SMIC.PhoneBooks.Persons
                 }
             }
 
-            return tempList;
+            return new PagedResultDto<VW_SJMX>(
+                totalCount,
+                tempList
+            );
+
         }
 
 
@@ -306,5 +351,7 @@ namespace SMIC.PhoneBooks.Persons
             // ObjectMapper.Map(input, entity);
             await _personRepository.UpdateAsync(entity);
         }
+
     }
+
 }

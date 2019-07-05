@@ -23,10 +23,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMIC.EntityFrameworkCore", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D019D779-47FD-4502-BC6F-69283B793BF1}"
 	ProjectSection(SolutionItems) = preProject
+		101 LINQ Samples.txt = 101 LINQ Samples.txt
 		ABP的WebApi访问控制.txt = ABP的WebApi访问控制.txt
 		Dapper分页.txt = Dapper分页.txt
 		Dapper分页2.txt = Dapper分页2.txt
 		LastLoginTime.txt = LastLoginTime.txt
+		linq_lambda表达式.txt = linq_lambda表达式.txt
 		There is no permission.txt = There is no permission.txt
 		todo.txt = todo.txt
 		发布.txt = 发布.txt

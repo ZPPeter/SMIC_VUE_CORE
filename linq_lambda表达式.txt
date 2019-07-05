@@ -1,0 +1,23 @@
+a是参数，=> 后面是返回值
+
+a => { return a.ID > 0; }
+
+a => a.器具名称 == "全站仪"
+
+a => {
+       if (a.Age > 20)
+       {
+                Console.WriteLine(a.ID);
+       }
+
+     }
+
+a => (a.器具名称 == "全站仪") && a.送检单号.Contains(input.Filter)
+
+
+a => (a.器具名称 == "全站仪") &&
+     a.送检单号.Contains(input.Filter) &&
+     a.送检日期>=input.From &&
+     a.送检日期<=input.To
+
+s => s.Age > 30
