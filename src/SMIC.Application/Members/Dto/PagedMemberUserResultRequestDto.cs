@@ -1,7 +1,7 @@
 ﻿using System;
 using Abp.Application.Services.Dto;
 
-namespace Abplus.ZeroDemo.Members.Dto
+namespace SMIC.Members.Dto
 {
     public class PagedMemberUserResultRequestDto : PagedResultRequestDto
     {

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Abp.Authorization.Users;
 using Abp.Domain.Services;
 using Abp.IdentityFramework;
@@ -11,6 +9,8 @@ using Abp.Runtime.Session;
 using Abp.UI;
 using SMIC.Authorization.Roles;
 using SMIC.MultiTenancy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace SMIC.Authorization.Users
 {
@@ -37,15 +37,15 @@ namespace SMIC.Authorization.Users
             AbpSession = NullAbpSession.Instance;
         }
 
-        public async Task<User> RegisterAsync(string name, string surname, string emailAddress, string userName, string plainPassword, bool isEmailConfirmed)
+        public async Task<T> RegisterAsync<T>(string name, string surname, string emailAddress, string userName, string plainPassword, bool isEmailConfirmed) where T : User, new()
         {
             CheckForTenant();
 
             var tenant = await GetActiveTenantAsync();
 
-            var user = new User
+            var user = new T
             {
-                TenantId = tenant.Id,
+                TenantId = tenant?.Id,
                 Name = name,
                 Surname = surname,
                 EmailAddress = emailAddress,
@@ -56,13 +56,16 @@ namespace SMIC.Authorization.Users
             };
 
             user.SetNormalizedNames();
-           
-            foreach (var defaultRole in await _roleManager.Roles.Where(r => r.IsDefault).ToListAsync())
-            {
-                user.Roles.Add(new UserRole(tenant.Id, user.Id, defaultRole.Id));
-            }
 
-            await _userManager.InitializeOptionsAsync(tenant.Id);
+            if (tenant!=null)
+            {
+                foreach (var defaultRole in await _roleManager.Roles.Where(r => r.IsDefault).ToListAsync())
+                {
+                    user.Roles.Add(new UserRole(tenant.Id, user.Id, defaultRole.Id));
+                }
+            }
+            
+            await _userManager.InitializeOptionsAsync(tenant?.Id);
 
             CheckErrors(await _userManager.CreateAsync(user, plainPassword));
             await CurrentUnitOfWork.SaveChangesAsync();
@@ -74,7 +77,7 @@ namespace SMIC.Authorization.Users
         {
             if (!AbpSession.TenantId.HasValue)
             {
-                throw new InvalidOperationException("Can not register host users!");
+                //throw new InvalidOperationException("Can not register host users!");
             }
         }
 
@@ -109,4 +112,6 @@ namespace SMIC.Authorization.Users
             identityResult.CheckErrors(LocalizationManager);
         }
     }
+
 }
+

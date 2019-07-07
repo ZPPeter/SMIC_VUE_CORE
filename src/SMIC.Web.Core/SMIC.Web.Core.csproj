@@ -16,6 +16,14 @@
     <RootNamespace>SMIC</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Authentication\External\Wechat\**" />
+    <Compile Remove="Wechat\**" />
+    <EmbeddedResource Remove="Authentication\External\Wechat\**" />
+    <EmbeddedResource Remove="Wechat\**" />
+    <None Remove="Authentication\External\Wechat\**" />
+    <None Remove="Wechat\**" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\SMIC.Application\SMIC.Application.csproj" />
     <ProjectReference Include="..\SMIC.EntityFrameworkCore\SMIC.EntityFrameworkCore.csproj" />
   </ItemGroup>

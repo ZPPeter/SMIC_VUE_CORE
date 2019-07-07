@@ -1,23 +1,41 @@
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Abp.Authorization;
 using Abp.Configuration;
+using Abp.Domain.Repositories;
 using Abp.Zero.Configuration;
 using SMIC.Authorization.Accounts.Dto;
 using SMIC.Authorization.Users;
+using SMIC.Members;
+//using SMIC.Wechat;
+//using SMIC.Wechat.DecryptResults;
 
 namespace SMIC.Authorization.Accounts
 {
     public class AccountAppService : SMICAppServiceBase, IAccountAppService
     {
-        // from: http://regexlib.com/REDetails.aspx?regexp_id=1923
-        public const string PasswordRegex = "(?=^.{8,}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\\s)[0-9a-zA-Z!@#$%^&*()]*$";
-
         private readonly UserRegistrationManager _userRegistrationManager;
+        private readonly UserManager _userManager;
+
+        private readonly IRepository<MemberUser, long> _memberRepository;
 
         public AccountAppService(
-            UserRegistrationManager userRegistrationManager)
+            UserRegistrationManager userRegistrationManager,
+            UserManager userManager,
+            IRepository<MemberUser, long> memberRepository)
         {
             _userRegistrationManager = userRegistrationManager;
+            _userManager = userManager;
+            _memberRepository = memberRepository;
         }
+
+        /// <summary>
+        /// 修改密码
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+
 
         public async Task<IsTenantAvailableOutput> IsTenantAvailable(IsTenantAvailableInput input)
         {
@@ -37,7 +55,7 @@ namespace SMIC.Authorization.Accounts
 
         public async Task<RegisterOutput> Register(RegisterInput input)
         {
-            var user = await _userRegistrationManager.RegisterAsync(
+            var user = await _userRegistrationManager.RegisterAsync<MemberUser>(
                 input.Name,
                 input.Surname,
                 input.EmailAddress,
@@ -53,5 +71,69 @@ namespace SMIC.Authorization.Accounts
                 CanLogin = user.IsActive && (user.IsEmailConfirmed || !isEmailConfirmationRequiredForLogin)
             };
         }
+
+
+        /*
+        [AbpAuthorize]
+        public async Task ChangePassword(ChangePasswordInput input)
+        {
+            var user = await _userManager.GetUserByIdAsync(AbpSession.UserId.Value);
+            var result = await _userManager.ChangePasswordAsync(user, input.CurrentPassword, input.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                throw new SMICBusinessException(ErrorCode.ChangePasswordFailed, string.Join(" ", result.Errors.Select(e => e.Description)));
+            }
+        }
+
+        /// <summary>
+        /// 获取账户设置
+        /// </summary>
+        /// <returns></returns>
+        [AbpAuthorize]
+        public async Task<AccountProfileDto> GetProfile()
+        {
+            var user = await _userManager.GetUserByIdAsync(AbpSession.UserId.Value);
+
+            return new AccountProfileDto
+            {
+                HeadLogo = user.HeadLogo,
+                Name = user.Name,
+                Surname = user.Surname
+            };
+        }
+        public async Task SyncWechatUserInfo(WechatUserInfoInput input)
+        {
+            var member = await _memberRepository.FirstOrDefaultAsync(AbpSession.UserId.Value);
+
+            try
+            {
+                var userInfo = input.EncryptedData.DecryptWechatData<UserInfoDecryptResult>(input.IV, member.SessionKey);
+                userInfo.SetTo(member);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"{GetType().FullName}:微信用户信息同步失败!{ex.Message}", ex);
+                throw new AbpProjectNameBusinessException(ErrorCode.WechatUserInfoSyncFail);
+            }
+
+        }
+
+        /// <summary>
+        /// 更新账户设置
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAuthorize]
+        public async Task UpdateProfile(AccountProfileDto input)
+        {
+            var user = await _userManager.GetUserByIdAsync(AbpSession.UserId.Value);
+            user.Name = input.Name;
+            user.Surname = input.Surname;
+            user.HeadLogo = input.HeadLogo;
+            await _userManager.UpdateAsync(user);
+        }
+        */
     }
 }
+ 

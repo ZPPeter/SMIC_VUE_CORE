@@ -4,3 +4,5 @@ https://www.jianshu.com/p/b55bf7b74ab6
 在AbpZero中hangfire后台作业的使用——开启hangfire
 https://blog.csdn.net/WuLex/article/details/78454519
 
+完善 VW_SJMX
++Zero:user role 权限配置，审计日志，组织部门设置

@@ -17,7 +17,7 @@ using SMIC.Authorization;
 using SMIC.Authorization.Users;
 using SMIC.Models.TokenAuth;
 using SMIC.MultiTenancy;
-
+using SMIC.Members;
 namespace SMIC.Controllers
 {
     [Route("api/[controller]/[action]")]
@@ -165,8 +165,9 @@ namespace SMIC.Controllers
 
             return user;
             */
-            
-            var user = await _userRegistrationManager.RegisterAsync(
+
+            //var user = await _userRegistrationManager.RegisterAsync(
+            var user = await _userRegistrationManager.RegisterAsync < MemberUser > (
                 externalUser.Name,
                 externalUser.Surname,
                 externalUser.EmailAddress,

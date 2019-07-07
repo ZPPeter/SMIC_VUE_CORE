@@ -1,4 +1,4 @@
-﻿namespace Abplus.ZeroDemo.Members.Dto
+﻿namespace SMIC.Members.Dto
 {
     public class CreateMemberUserDto
     {

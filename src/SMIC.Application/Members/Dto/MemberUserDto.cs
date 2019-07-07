@@ -1,7 +1,7 @@
 ﻿using Abp.AutoMapper;
-using Abplus.ZeroDemo.Users.Dto;
+using SMIC.Users.Dto;
 
-namespace Abplus.ZeroDemo.Members.Dto
+namespace SMIC.Members.Dto
 {
     [AutoMapFrom(typeof(MemberUser))]
     public class MemberUserDto : UserDto

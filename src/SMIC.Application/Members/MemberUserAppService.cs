@@ -6,9 +6,9 @@ using Abp.Application.Services.Dto;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
 using Abp.Linq.Extensions;
-using Abplus.ZeroDemo.Members.Dto;
+using SMIC.Members.Dto;
 
-namespace Abplus.ZeroDemo.Members
+namespace SMIC.Members
 {
     /// <summary>
     /// 仅供后台查询会员信息
@@ -19,7 +19,7 @@ namespace Abplus.ZeroDemo.Members
             IRepository<MemberUser, long> repository)
             : base(repository)
         {
-            LocalizationSourceName = ZeroDemoConsts.LocalizationSourceName;
+            LocalizationSourceName = SMICConsts.LocalizationSourceName;
         }
 
         protected override IQueryable<MemberUser> CreateFilteredQuery(PagedMemberUserResultRequestDto input)

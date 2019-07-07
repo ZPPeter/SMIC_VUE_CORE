@@ -11,11 +11,6 @@
     <RootNamespace>SMIC</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Members\**" />
-    <EmbeddedResource Remove="Members\**" />
-    <None Remove="Members\**" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Remove="Person.cs" />
   </ItemGroup>
   <ItemGroup>
