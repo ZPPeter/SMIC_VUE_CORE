@@ -33,10 +33,13 @@ namespace SMIC.PhoneBooks.Persons.Dtos
         /// <summary>
         /// 模糊搜索使用的关键字
         /// </summary>
-        public string Filter { get; set; }
+        public string QJMC { get; set; }
+        public string WTDH { get; set; }
+        public string WTDW { get; set; }
         public DateTime? From { get; set; }
         public DateTime? To { get; set; }
 
+        public string Order { get; set; }
         /// <summary>
         /// 正常化排序使用
         /// </summary>
@@ -45,6 +48,10 @@ namespace SMIC.PhoneBooks.Persons.Dtos
             if (string.IsNullOrEmpty(Sorting))
             {
                 Sorting = "Id";
+            }
+            if (string.IsNullOrEmpty(Order))
+            {
+                Order = "asc";
             }
         }
 
