@@ -10,7 +10,7 @@ using SMIC.MyTasks;
 using SMIC.PhoneBooks.PhoneNumbers;
 using SMIC.PhoneBooks.Persons;
 using SMIC.EntityMapper.Tasks;
-//using SMIC.Utils;
+using SMIC.Utils; //EFLogger
 namespace SMIC.EntityFrameworkCore
 {
     public class SMICDbContext : AbpZeroDbContext<Tenant, Role, User, SMICDbContext>
@@ -21,9 +21,9 @@ namespace SMIC.EntityFrameworkCore
 
         public virtual DbSet<MyTask> Tasks { get; set; }
 
-        //public virtual DbSet<Person> Persons { get; set;}
+        public virtual DbSet<Person> Persons { get; set;}
         //public virtual DbSet<MyUser> MyUsers { get; set; }
-        //public virtual DbSet<PhoneNumber> PhoneNumbers { get; set; }
+        public virtual DbSet<PhoneNumber> PhoneNumbers { get; set; }
 
         public SMICDbContext(DbContextOptions<SMICDbContext> options)
             : base(options)
@@ -32,11 +32,12 @@ namespace SMIC.EntityFrameworkCore
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            /*
-            最佳方案在 VS2017 【企业版】 IntelliTrace 窗口 查看 ADO.NET 事件
-            //optionsBuilder.UseLoggerFactory(new EFLoggerFactory());
+        {                        
+            optionsBuilder.UseLoggerFactory(new EFLoggerFactory()); // OK - 输出来源在 ASP.NET Core Web 服务器
+            //方案二：在 VS2017 【企业版】 IntelliTrace 窗口 查看 ADO.NET 事件
 
+            /*
+            // 下面也可以 
             //输出来源选择 ASP.NET Web 服务器
             var loggerFactory = new LoggerFactory();
             loggerFactory.AddProvider(new EFLoggerProvider());
@@ -44,10 +45,11 @@ namespace SMIC.EntityFrameworkCore
 
             base.OnConfiguring(optionsBuilder);
                         
-            //if (!optionsBuilder.IsConfigured) //下面语句不执行
+            //if (!optionsBuilder.IsConfigured)  // 不能有此句
             //{
-            //    optionsBuilder.UseLoggerFactory(new EFLoggerFactory());//将EFLoggerFactory类的实例注入给EF Core，这样所有DbContext的Log信息，都会由EFLogger类输出到Visual Studio的输出窗口了
-            //    //optionsBuilder.UseSqlServer("Server=localhost;User Id=sa;Password=1qaz!QAZ;Database=TestDB");
+                // 输出来源在 ASP.NET Core Web 服务器
+                optionsBuilder.UseLoggerFactory(new EFLoggerFactory());//将EFLoggerFactory类的实例注入给EF Core，这样所有DbContext的Log信息，都会由EFLogger类输出到Visual Studio的输出窗口了
+                //optionsBuilder.UseSqlServer("Server=localhost;User Id=sa;Password=1qaz!QAZ;Database=TestDB");
             //}
             */
         }
@@ -58,7 +60,7 @@ namespace SMIC.EntityFrameworkCore
 
             //modelBuilder.Entity<User>().Ignore(a => a.Name);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly()); // MemberUserConfiguration 等
 
             modelBuilder.ApplyConfiguration(new TaskCfg());
 

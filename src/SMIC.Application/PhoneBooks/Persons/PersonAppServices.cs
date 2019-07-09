@@ -99,7 +99,7 @@ namespace SMIC.PhoneBooks.Persons
             //await _DapperRepository.CounAsync(t => t.SysConfigName != "");
 
             //IEnumerable<MemberUser> persons = _memberDapperRepository.Query("select Id,Name,userName,isActive,CreationTime,LastLoginTime2 LastLoginTime from AbpUsers");
-            IEnumerable<MemberUser> persons = _memberDapperRepository.Query("select Id,Name,userName,isActive,CreationTime,LastLoginTime2 from AbpUsers");
+            IEnumerable<MemberUser> persons = _memberDapperRepository.Query("select Id,Name,userName,isActive,CreationTime,LastLoginTime from AbpUsers");
             return persons;
 
         }

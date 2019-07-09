@@ -44,13 +44,14 @@ namespace SMIC.Utils
         {
             //ef core执行数据库查询时的categoryName为Microsoft.EntityFrameworkCore.Database.Command,日志级别为Information
             if (categoryName == "Microsoft.EntityFrameworkCore.Database.Command"
-                    && logLevel == LogLevel.Information)
+                && logLevel == LogLevel.Information)
             {
                 var logContent = formatter(state, exception);
                 //TODO: 拿到日志内容想怎么玩就怎么玩吧
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(logContent);
+                if(!logContent.Contains("FROM [AbpBackgroundJobs] AS [t]"))
+                    Console.WriteLine(logContent);
                 Console.ResetColor();
             }
         }

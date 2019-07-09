@@ -8,7 +8,7 @@ namespace SMIC.Tests
         {
             if (!SMICConsts.MultiTenancyEnabled)
             {
-                Skip = "MultiTenancy is disabled.";
+                //Skip = "MultiTenancy is disabled.";
             }
         }
     }

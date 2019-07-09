@@ -1,11 +1,11 @@
-﻿using Abplus.ZeroDemo.Authorization.Users;
-using Abplus.ZeroDemo.Members;
+﻿using SMIC.Authorization.Users;
+using SMIC.Members;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Abplus.ZeroDemo.EntityFrameworkCore.Mapping.Users
+namespace SMIC.EntityFrameworkCore.Mapping.Users
 {
-    public class UserConfiguration : ZeroDemoEntityTypeConfiguration<User>
+    public class UserConfiguration : EntityTypeConfiguration<User>
     {
         public override void Configure(EntityTypeBuilder<User> builder)
         {

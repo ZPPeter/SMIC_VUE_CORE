@@ -3,16 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SMIC.Authorization.Users;
 using SMIC.EntityFrameworkCore;
 
 namespace SMIC.Migrations
 {
     [DbContext(typeof(SMICDbContext))]
-    partial class SMICDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190709112511_add_person")]
+    partial class add_person
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -959,6 +960,9 @@ namespace SMIC.Migrations
 
                     b.Property<DateTime?>("DeletionTime");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired();
+
                     b.Property<string>("EmailAddress")
                         .IsRequired()
                         .HasMaxLength(256);
@@ -1019,8 +1023,6 @@ namespace SMIC.Migrations
                         .IsRequired()
                         .HasMaxLength(256);
 
-                    b.Property<short>("UserType");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CreatorUserId");
@@ -1035,7 +1037,7 @@ namespace SMIC.Migrations
 
                     b.ToTable("AbpUsers");
 
-                    b.HasDiscriminator<short>("UserType").HasValue((short)0);
+                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
                 });
 
             modelBuilder.Entity("SMIC.MultiTenancy.Tenant", b =>
@@ -1252,7 +1254,7 @@ namespace SMIC.Migrations
 
                     b.ToTable("AbpUsers");
 
-                    b.HasDiscriminator().HasValue((short)1);
+                    b.HasDiscriminator().HasValue("MemberUser");
                 });
 
             modelBuilder.Entity("Abp.Authorization.Roles.RoleClaim", b =>

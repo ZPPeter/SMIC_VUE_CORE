@@ -8,17 +8,11 @@
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="EntityFrameworkCore\Mapping\Users\**" />
     <Compile Remove="EntityFrameworkCore\新建文件夹\**" />
-    <EmbeddedResource Remove="EntityFrameworkCore\Mapping\Users\**" />
     <EmbeddedResource Remove="EntityFrameworkCore\新建文件夹\**" />
-    <None Remove="EntityFrameworkCore\Mapping\Users\**" />
     <None Remove="EntityFrameworkCore\新建文件夹\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="EFLogger.cs" />
-    <Compile Remove="EFLoggerFactory.cs" />
-    <Compile Remove="EFLoggerProvider.cs" />
     <Compile Remove="Migrations\20180726102624_Upgrade_ABP_380.cs" />
     <Compile Remove="Migrations\20180927062408_test.cs" />
     <Compile Remove="Migrations\20190111071724_Upgraded_To_Abp_v4_1_0.cs" />

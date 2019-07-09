@@ -21,6 +21,17 @@ using SMIC.Roles.Dto;
 using SMIC.Users.Dto;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Abp.Dapper.Repositories;
+using SMIC.Members;
+
+
+
+using System.Linq.Dynamic.Core;
+using Abp.AutoMapper;
+using Abp.Timing; // Clock.Now;
+using Newtonsoft.Json;
+using System.Linq.Expressions;
+using System;
 
 namespace SMIC.Users
 {
@@ -34,6 +45,8 @@ namespace SMIC.Users
         private readonly IAbpSession _abpSession;
         private readonly LogInManager _logInManager;
 
+        private readonly IDapperRepository<MemberUser, long> _memberuserDapperRepository;
+
         public UserAppService(
             IRepository<User, long> repository,
             UserManager userManager,
@@ -41,7 +54,8 @@ namespace SMIC.Users
             IRepository<Role> roleRepository,
             IPasswordHasher<User> passwordHasher,
             IAbpSession abpSession,
-            LogInManager logInManager)
+            LogInManager logInManager,
+            IDapperRepository<MemberUser, long> memberuserDapperRepository)
             : base(repository)
         {
             _userManager = userManager;
@@ -50,6 +64,29 @@ namespace SMIC.Users
             _passwordHasher = passwordHasher;
             _abpSession = abpSession;
             _logInManager = logInManager;
+            _memberuserDapperRepository = memberuserDapperRepository;
+        }
+
+        public PagedResultDto<MemberUser> GetDapperAll()
+        {
+            //dynamic ret = _memberuserDapperRepository.GetAll(x => x.Id != 0).ToDynamicList<dynamic>(); //OK - using System.Linq.Dynamic.Core;
+            dynamic ret = _memberuserDapperRepository.Query("select Id,Name,userName,isActive,CreationTime,LastLoginTime from AbpUsers");
+            //return ret;
+
+            List<MemberUser> tempList = new List<MemberUser>();
+            IEnumerator<MemberUser> currentEnumerator = ret.GetEnumerator();
+            if (currentEnumerator != null)
+            {
+                for (int count = 0; currentEnumerator.MoveNext(); count++)
+                {
+                    tempList.Add(currentEnumerator.Current);
+                }
+            }
+
+            return new PagedResultDto<MemberUser>(
+                5,
+                tempList
+            );
         }
 
         public override async Task<UserDto> Create(CreateUserDto input)

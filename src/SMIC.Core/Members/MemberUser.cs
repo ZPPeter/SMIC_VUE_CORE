@@ -4,6 +4,34 @@ using System;
 /*
  继承于User，并为之配置TPH关系
  扩充 User表
+ Account/Register -> MemberUser  前台会员 , UserType = 1 UserConfiguration.cs
+ User/Create                     后台用户 , UserType = 0
+     public enum UserType : short
+    {
+        /// <summary>
+        /// 后台用户
+        /// </summary>
+        Backend = 0,
+        /// <summary>
+        /// 前台会员
+        /// </summary>
+        Frontend = 1
+    }
+
+namespace SMIC.EntityFrameworkCore.Mapping.Users
+{
+    public class UserConfiguration : EntityTypeConfiguration<User>
+    {
+        public override void Configure(EntityTypeBuilder<User> builder)
+        {
+            builder.HasDiscriminator<UserType>("UserType")
+                .HasValue<User>(UserType.Backend)
+                .HasValue<MemberUser>(UserType.Frontend);
+        }
+    }
+}
+
+
      */
 namespace SMIC.Members
 {
