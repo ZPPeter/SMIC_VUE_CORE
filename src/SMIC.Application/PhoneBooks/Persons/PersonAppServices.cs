@@ -75,13 +75,13 @@ namespace SMIC.PhoneBooks.Persons
             //};
             //_personDapperRepository.Execute("update AbpUsers set LastLoginTime2=@LastLoginTime where Id=@Id", parameters); // x
 
-            Logger.Info("update AbpUsers set LastLoginTime2 = '" + Clock.Now + "' where Id = " + AbpSession.UserId);
+            Logger.Info("update AbpUsers set LastLoginTime = '" + Clock.Now + "' where Id = " + AbpSession.UserId);
 
             //string sql = "update AbpUsers set LastLoginTime2 = @LastLoginTime WHERE Id = @Id;";
             //var singleParam = new { Id = AbpSession.UserId, LastLoginTime = Clock.Now };
             //_personDapperRepository.Execute(sql, singleParam);
 
-            _personDapperRepository.Execute("update AbpUsers set LastLoginTime2 = '" + Clock.Now + "' where Id = " + AbpSession.UserId);
+            _personDapperRepository.Execute("update AbpUsers set LastLoginTime = '" + Clock.Now + "' where Id = " + AbpSession.UserId);
 
             //Logger.Info("Update "+ AbpSession.UserId + "OK? Than show it.");
 

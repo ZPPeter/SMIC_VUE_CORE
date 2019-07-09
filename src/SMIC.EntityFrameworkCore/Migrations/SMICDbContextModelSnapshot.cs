@@ -980,8 +980,6 @@ namespace SMIC.Migrations
 
                     b.Property<bool>("IsTwoFactorEnabled");
 
-                    b.Property<DateTime?>("LastLoginTime2");
-
                     b.Property<DateTime?>("LastModificationTime");
 
                     b.Property<long?>("LastModifierUserId");
@@ -1090,89 +1088,32 @@ namespace SMIC.Migrations
                     b.ToTable("AbpTenants");
                 });
 
-            modelBuilder.Entity("SMIC.MyTasks.Task", b =>
+            modelBuilder.Entity("SMIC.MyTasks.MyTask", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("AssignedPersonId");
+                    b.Property<long?>("AssignedPersonId")
+                        .HasMaxLength(65);
 
-                    b.Property<DateTime>("CreationTime");
+                    b.Property<DateTime>("CreationTime")
+                        .HasMaxLength(65);
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(65536);
+                        .HasMaxLength(65);
 
-                    b.Property<byte>("State");
+                    b.Property<byte>("State")
+                        .HasMaxLength(65);
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(256);
+                        .HasMaxLength(65);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AssignedPersonId");
 
                     b.ToTable("Tasks");
-                });
-
-            modelBuilder.Entity("SMIC.PhoneBooks.Persons.Person", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Address")
-                        .HasMaxLength(120);
-
-                    b.Property<DateTime>("CreationTime");
-
-                    b.Property<long?>("CreatorUserId");
-
-                    b.Property<long?>("DeleterUserId");
-
-                    b.Property<DateTime?>("DeletionTime");
-
-                    b.Property<string>("EmailAddress")
-                        .HasMaxLength(64);
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<DateTime?>("LastModificationTime");
-
-                    b.Property<long?>("LastModifierUserId");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(32);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Persons");
-                });
-
-            modelBuilder.Entity("SMIC.PhoneBooks.PhoneNumbers.PhoneNumber", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreationTime");
-
-                    b.Property<string>("Number")
-                        .IsRequired()
-                        .HasMaxLength(11);
-
-                    b.Property<int>("PersonId");
-
-                    b.Property<int>("Type");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PersonId");
-
-                    b.ToTable("PhoneNumbers");
                 });
 
             modelBuilder.Entity("Abp.Application.Features.EditionFeatureSetting", b =>
@@ -1236,6 +1177,8 @@ namespace SMIC.Migrations
                         .HasMaxLength(64);
 
                     b.Property<byte>("Gender");
+
+                    b.Property<DateTime?>("LastLoginTime");
 
                     b.Property<string>("NickName")
                         .HasMaxLength(64);
@@ -1371,21 +1314,6 @@ namespace SMIC.Migrations
                     b.HasOne("SMIC.Authorization.Users.User", "LastModifierUser")
                         .WithMany()
                         .HasForeignKey("LastModifierUserId");
-                });
-
-            modelBuilder.Entity("SMIC.MyTasks.Task", b =>
-                {
-                    b.HasOne("SMIC.Authorization.Users.User", "AssignedPerson")
-                        .WithMany()
-                        .HasForeignKey("AssignedPersonId");
-                });
-
-            modelBuilder.Entity("SMIC.PhoneBooks.PhoneNumbers.PhoneNumber", b =>
-                {
-                    b.HasOne("SMIC.PhoneBooks.Persons.Person", "Person")
-                        .WithMany("PhoneNumbers")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Abp.Application.Features.EditionFeatureSetting", b =>

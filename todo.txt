@@ -6,3 +6,11 @@ https://blog.csdn.net/WuLex/article/details/78454519
 
 完善 VW_SJMX
 +Zero:user role 权限配置，审计日志，组织部门设置
+
+UserEx
+https://www.cnblogs.com/wer-ltm/p/7097623.html
+
+忽略字段
+https://www.cnblogs.com/wer-ltm/p/6722737.html
+
+vw_sjmx +id

@@ -1,6 +1,6 @@
 ﻿using Abp.AutoMapper;
 using SMIC.Users.Dto;
-
+using System;
 namespace SMIC.Members.Dto
 {
     [AutoMapFrom(typeof(MemberUser))]
@@ -17,5 +17,7 @@ namespace SMIC.Members.Dto
         public string Province { get; set; }
 
         public string Country { get; set; }
+
+        //public DateTime? LastLoginTime { get; set; }
     }
 }

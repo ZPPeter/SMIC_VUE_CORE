@@ -9,6 +9,7 @@ migrationBuilder.DropColumn(
 update-database
 
 检查 dbo.AbpUsers 表，LastLoginTime 在，OK 
+但是ABP不支持了，没法 getAll 查询了
 
 SessionAppService.cs
 public async Task<GetCurrentLoginInformationsOutput> GetCurrentLoginInformations()

@@ -10,8 +10,8 @@ using SMIC.EntityFrameworkCore;
 namespace SMIC.Migrations
 {
     [DbContext(typeof(SMICDbContext))]
-    [Migration("20190701082907_add_mytask_memberuser")]
-    partial class add_mytask_memberuser
+    [Migration("20190709085447_add_Task_Memberuser")]
+    partial class add_Task_Memberuser
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1090,29 +1090,30 @@ namespace SMIC.Migrations
                     b.ToTable("AbpTenants");
                 });
 
-            modelBuilder.Entity("SMIC.MyTasks.Task", b =>
+            modelBuilder.Entity("SMIC.MyTasks.MyTask", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("AssignedPersonId");
+                    b.Property<long?>("AssignedPersonId")
+                        .HasMaxLength(65);
 
-                    b.Property<DateTime>("CreationTime");
+                    b.Property<DateTime>("CreationTime")
+                        .HasMaxLength(65);
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(65536);
+                        .HasMaxLength(65);
 
-                    b.Property<byte>("State");
+                    b.Property<byte>("State")
+                        .HasMaxLength(65);
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(256);
+                        .HasMaxLength(65);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AssignedPersonId");
 
                     b.ToTable("Tasks");
                 });
@@ -1178,6 +1179,8 @@ namespace SMIC.Migrations
                         .HasMaxLength(64);
 
                     b.Property<byte>("Gender");
+
+                    b.Property<DateTime?>("LastLoginTime");
 
                     b.Property<string>("NickName")
                         .HasMaxLength(64);
@@ -1313,13 +1316,6 @@ namespace SMIC.Migrations
                     b.HasOne("SMIC.Authorization.Users.User", "LastModifierUser")
                         .WithMany()
                         .HasForeignKey("LastModifierUserId");
-                });
-
-            modelBuilder.Entity("SMIC.MyTasks.Task", b =>
-                {
-                    b.HasOne("SMIC.Authorization.Users.User", "AssignedPerson")
-                        .WithMany()
-                        .HasForeignKey("AssignedPersonId");
                 });
 
             modelBuilder.Entity("Abp.Application.Features.EditionFeatureSetting", b =>

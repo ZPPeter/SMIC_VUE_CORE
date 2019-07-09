@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using SMIC.Authorization.Users;
+using System;
 /*
  继承于User，并为之配置TPH关系
  扩充 User表
@@ -36,6 +37,10 @@ namespace SMIC.Members
 
         [MaxLength(CountryMaxLength)]
         public string Country { get; set; }
+
+        // 最近登录时间，ABP 已经去掉了
+        public DateTime? LastLoginTime { get; set; }
+
     }
 }
 

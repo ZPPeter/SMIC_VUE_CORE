@@ -18,13 +18,12 @@ namespace SMIC.EntityFrameworkCore
 
         /* Define a DbSet for each entity of the application */
         public virtual DbSet<MemberUser> MemberUsers { get; set; }
+
         public virtual DbSet<MyTask> Tasks { get; set; }
 
-        public virtual DbSet<Person> Persons { get; set;}
-
-        public virtual DbSet<MyUser> MyUsers { get; set; }
-
-        public virtual DbSet<PhoneNumber> PhoneNumbers { get; set; }
+        //public virtual DbSet<Person> Persons { get; set;}
+        //public virtual DbSet<MyUser> MyUsers { get; set; }
+        //public virtual DbSet<PhoneNumber> PhoneNumbers { get; set; }
 
         public SMICDbContext(DbContextOptions<SMICDbContext> options)
             : base(options)
@@ -56,6 +55,8 @@ namespace SMIC.EntityFrameworkCore
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            //modelBuilder.Entity<User>().Ignore(a => a.Name);
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
