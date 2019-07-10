@@ -15,15 +15,7 @@ using SMIC.PhoneBooks.Persons.Dtos;
 using SMIC.PhoneBooks.PhoneNumbers;
 using SMIC.PhoneBooks.PhoneNumbers.Dtos;
 using Abp.Dapper.Repositories;
-//using System.Data.SqlClient;
-using Abp.Timing; // Clock.Now;
-using Newtonsoft.Json;
-
-using SMIC.Members;
-using System.Linq.Expressions;
-
 using System.Linq;
-using System;
 
 namespace SMIC.PhoneBooks.Persons
 {
@@ -39,8 +31,8 @@ namespace SMIC.PhoneBooks.Persons
         ////ECC/ END CUSTOM CODE SECTION
         ///
         private readonly IDapperRepository<Person> _personDapperRepository;
-        private readonly IDapperRepository<MemberUser, long> _memberDapperRepository;
-        private readonly IDapperRepository<VW_SJMX, long> _vwsjmxDapperRepository;
+        //private readonly IDapperRepository<MemberUser, long> _memberDapperRepository;
+        //private readonly IDapperRepository<VW_SJMX, long> _vwsjmxDapperRepository;
 
         private readonly IRepository<Person, int> _personRepository;
         private readonly IRepository<PhoneNumber, long> _phoneNumbeRepository;
@@ -53,180 +45,19 @@ namespace SMIC.PhoneBooks.Persons
             IRepository<Person, int> personRepository,
             IPersonManager personManager,
             IRepository<PhoneNumber, long> phoneNumbeRepository,
-            IDapperRepository<Person> personDapperRepository,
-            IDapperRepository<MemberUser, long> memberDapperRepository,
-            IDapperRepository<VW_SJMX, long> vwsjmxDapperRepository)
+            IDapperRepository<Person> personDapperRepository
+            //,IDapperRepository<MemberUser, long> memberDapperRepository
+            //,IDapperRepository<VW_SJMX, long> vwsjmxDapperRepository
+            )
         {
             _personRepository = personRepository;
             _personManager = personManager;
             _phoneNumbeRepository = phoneNumbeRepository;
             _personDapperRepository = personDapperRepository;
-            _memberDapperRepository = memberDapperRepository;
-            _vwsjmxDapperRepository = vwsjmxDapperRepository;
+            //_memberDapperRepository = memberDapperRepository;
+            //_vwsjmxDapperRepository = vwsjmxDapperRepository;
         }
 
-        //public string GetDapperPersons()
-        //public IEnumerable<Person> GetDapperPersons()
-        public IEnumerable<MemberUser> GetDapperPersons()
-        {
-            //SqlParameter[] parameters = new[]{
-            //    new SqlParameter("Id", AbpSession.UserId ),
-            //    new SqlParameter("LastLoginTime", Clock.Now)
-            //};
-            //_personDapperRepository.Execute("update AbpUsers set LastLoginTime2=@LastLoginTime where Id=@Id", parameters); // x
-
-            Logger.Info("update AbpUsers set LastLoginTime = '" + Clock.Now + "' where Id = " + AbpSession.UserId);
-
-            //string sql = "update AbpUsers set LastLoginTime2 = @LastLoginTime WHERE Id = @Id;";
-            //var singleParam = new { Id = AbpSession.UserId, LastLoginTime = Clock.Now };
-            //_personDapperRepository.Execute(sql, singleParam);
-
-            _personDapperRepository.Execute("update AbpUsers set LastLoginTime = '" + Clock.Now + "' where Id = " + AbpSession.UserId);
-
-            //Logger.Info("Update "+ AbpSession.UserId + "OK? Than show it.");
-
-            //IEnumerable<Person> persons = _personDapperRepository.Query("select * from Persons");
-            //return persons;
-            //var lst = _personDapperRepository.Query("select LastLoginTime2 from AbpUsers");
-
-            //var lst = _personDapperRepository.Query("select Id,Name,userName,isActive,CreationTime,LastLoginTime2 from AbpUsers");
-            //return JsonConvert.SerializeObject(lst);
-
-            //IEnumerable<MyUser> persons = _personDapperRepository.Query("select Id,Name,userName,isActive,CreationTime,LastLoginTime2 LastLoginTime from AbpUsers");
-            //return persons;
-
-            //await _DapperRepository.QueryAsync("select * from table");
-            //await _DapperRepository.CounAsync(t => t.SysConfigName != "");
-
-            //IEnumerable<MemberUser> persons = _memberDapperRepository.Query("select Id,Name,userName,isActive,CreationTime,LastLoginTime2 LastLoginTime from AbpUsers");
-            IEnumerable<MemberUser> persons = _memberDapperRepository.Query("select Id,Name,userName,isActive,CreationTime,LastLoginTime from AbpUsers");
-            return persons;
-
-        }
-
-        //public IEnumerable<VW_SJMX> GetSjmx()
-        //public List<VW_SJMX> GetSjmx()
-        public dynamic GetSjmx1()
-        {
-            dynamic ret = _vwsjmxDapperRepository.GetAllPaged(x => x.器具名称 == "全站仪", 1, 20, "ID").ToDynamicList<dynamic>(); //OK
-            //IEnumerable<VW_SJMX> ret = _vwsjmxDapperRepository.Query("select top 20 * from VW_SJMX"); //OK                        
-            return ret;
-        }
-
-
-        public int GetVW_SJMXCount()
-        {
-            Expression<Func<VW_SJMX, bool>> predicate = p=>p.器具名称 == "全站仪";
-            predicate = predicate.And(p => p.单位名称.Contains("济南"));
-            predicate = predicate.And(p => p.送检日期 >= DateTime.Parse("2005-12-21"));
-            return _vwsjmxDapperRepository.Count(predicate);
-        }
-
-        public PagedResultDto<VW_SJMX> GetPagedVwSjmxs(GetVwSjmxsInput input)
-        {
-            /* 方法一
-            Expression condition = null;
-            ParameterExpression param = Expression.Parameter(typeof(VW_SJMX), "p");
-            Expression right = Expression.Constant("-1");
-            Expression left = Expression.Property(param, typeof(VW_SJMX).GetProperty("送检单号"));
-            Expression filter = Expression.NotEqual(left, right); // 送检单号 != -1
-            condition = filter;
-
-            right = Expression.Constant("12345");
-            left = Expression.Property(param, typeof(VW_SJMX).GetProperty("送检单号"));
-            filter = Expression.Equal(left, right);
-            condition = Expression.And(condition, filter);            
-            var predicate = Expression.Lambda<Func<VW_SJMX, bool>>(condition, param);
-            */
-
-            /* 方法二 */
-
-            Expression<Func<VW_SJMX, bool>> predicate = p => p.器具名称 == "全站仪";
-
-            //if (input.From != null) // DateTime? 会有问题
-            if (input.From > DateTime.MinValue)  
-            {
-                predicate = predicate.And(p => p.送检日期 >= DateTime.Parse(input.From.ToString())); // input.From
-            }
-            if (input.To > DateTime.MinValue) // != null
-            {
-                predicate = predicate.And(p => p.送检日期 <= DateTime.Parse(input.To.ToString()));   // input.To
-            }
-
-            //if (!input.Filter.IsNullOrWhiteSpace())
-            if (!input.WTDH.IsNullOrWhiteSpace())
-            {
-                predicate = predicate.And(p => p.送检单号.Contains(input.WTDH));                
-            }
-
-            if (!input.WTDW.IsNullOrWhiteSpace())
-            {
-                predicate = predicate.And(p => p.单位名称.Contains(input.WTDW));
-            }
-
-            var totalCount = _vwsjmxDapperRepository.Count(predicate);
-
-            /* - 固定查询条件
-            var totalCount1 = _vwsjmxDapperRepository.Count(
-                a => (a.器具名称 == "全站仪") &&
-                a.送检单号.Contains(input.Filter) &&
-                a.送检日期 >= input.From &&
-                a.送检日期 <= input.To
-                );
-            //IEnumerable<VW_SJMX> ret = _vwsjmxDapperRepository.GetAllPaged(x => x.器具名称 == "全站仪", 2, 20, "ID");
-            //IEnumerable<VW_SJMX> ret = _vwsjmxDapperRepository.GetAllPaged(a =>(a.器具名称 == "全站仪") && a.送检单号.Contains(input.Filter), input.SkipCount/input.MaxResultCount, input.MaxResultCount, input.Sorting);
-            */
-
-            //Logger.Info("input.Filter.IsNullOrWhiteSpace():" + input.Filter.IsNullOrWhiteSpace());
-            //Logger.Info("input.Filter.IsNullOrEmpty():" + input.Filter.IsNullOrEmpty());
-            //Logger.Info("input.Filter == ''" + (input.Filter == ""));
-            //Logger.Info(predicate.Body.ToString());
-
-            //Logger.Info(predicate.Body.ToString());
-            
-            IEnumerable<VW_SJMX> ret = _vwsjmxDapperRepository.GetAllPaged(
-                predicate,
-                input.SkipCount / input.MaxResultCount,
-                input.MaxResultCount,
-                input.Sorting,input.Order=="asc"); // input.Order=="asc"  true/false
-
-            /*
-            List<VW_SJMX> tempList = new List<VW_SJMX>();
-            IEnumerator<VW_SJMX> currentEnumerator = ret.GetEnumerator();
-            if (currentEnumerator != null)
-            {
-                for (int count = 0; currentEnumerator.MoveNext(); count++)
-                {
-                    tempList.Add(currentEnumerator.Current);
-                }
-            }
-            */
-
-            List<VW_SJMX> tempList2 = ret.MapTo<List<VW_SJMX>>();
-            return new PagedResultDto<VW_SJMX>(
-                totalCount,
-                tempList2
-            );
-        }
-
-
-        public int GetSjmx3()
-        {
-            //Expression.IfThen()
-
-            Expression condition = null;
-            ParameterExpression param = Expression.Parameter(typeof(Person), "p");
-            Expression right = Expression.Constant("Name");
-            Expression left = Expression.Property(param, typeof(Person).GetProperty("Name"));
-            Expression filter = Expression.Equal(left, right);
-            condition = filter;
-            condition = Expression.And(condition, filter);
-                        
-            var totalCount = _personDapperRepository.Count(Expression.Lambda<Func<Person, bool>>(filter, param)); // ok
-
-            return totalCount;
-
-        }
 
         /// <summary>
         ///     获取Person的分页列表信息

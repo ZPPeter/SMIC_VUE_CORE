@@ -8,8 +8,11 @@
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="EntityFrameworkCore\Mapping\UserExs\**" />
     <Compile Remove="EntityFrameworkCore\新建文件夹\**" />
+    <EmbeddedResource Remove="EntityFrameworkCore\Mapping\UserExs\**" />
     <EmbeddedResource Remove="EntityFrameworkCore\新建文件夹\**" />
+    <None Remove="EntityFrameworkCore\Mapping\UserExs\**" />
     <None Remove="EntityFrameworkCore\新建文件夹\**" />
   </ItemGroup>
   <ItemGroup>
@@ -35,8 +38,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SMIC.Core\SMIC.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="EntityMapper\" />
   </ItemGroup>
 </Project>

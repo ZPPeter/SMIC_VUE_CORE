@@ -112,6 +112,11 @@
     <text name="DeleteMemberUser"  value="删除会员"></text>
     <text name="BatchDeleteMemberUser" value="批量删除会员"></text>
     <text name="ExportMemberUser"  value="导出会员"></text>
+
+    <text name="FieldIsRequired"  value="不能为空"></text>
+    <text name="ConfirmPasswordMsg"  value="密码需要确认"></text>
+    
+
   </texts>
 </localizationDictionary>
 

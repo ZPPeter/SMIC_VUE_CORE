@@ -18,7 +18,7 @@ namespace SMIC.EntityFrameworkCore
 
         /* Define a DbSet for each entity of the application */
         public virtual DbSet<MemberUser> MemberUsers { get; set; }
-
+        public virtual DbSet<AbpUser> AbpUserExs { get; set; }
         public virtual DbSet<MyTask> Tasks { get; set; }
 
         public virtual DbSet<Person> Persons { get; set;}

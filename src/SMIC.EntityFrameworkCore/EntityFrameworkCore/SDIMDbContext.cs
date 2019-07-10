@@ -1,6 +1,6 @@
 ﻿using Abp.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SMIC.PhoneBooks.Persons;
+using SMIC.SDIM;
 namespace SMIC.EntityFrameworkCore
 {
     // 2. DbContext

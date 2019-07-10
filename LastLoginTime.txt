@@ -11,7 +11,7 @@ update-database
 检查 dbo.AbpUsers 表，LastLoginTime 在，OK 
 但是ABP不支持了，没法 getAll 查询了
 
-SessionAppService.cs
+SessionAppService.cs - 每次对话都要运行
 public async Task<GetCurrentLoginInformationsOutput> GetCurrentLoginInformations()
 
             // 还需要重写 GetAll
@@ -27,4 +27,8 @@ public async Task<GetCurrentLoginInformationsOutput> GetCurrentLoginInformations
             };
             context.Database.ExecuteSqlCommand("update AbpUsers set LastLoginTime=@LastLoginTime where Id=@Id", parameters);
 
+SetLastLoginTime();
+
 ABP 不支持了，可以+LastLoginTime2字段
+
+GetCurrentLoginInformations() 在系统启动的时候就运行了，不能用！
