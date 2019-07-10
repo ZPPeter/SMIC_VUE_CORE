@@ -10,12 +10,17 @@ https://www.cnblogs.com/wer-ltm/p/7097623.html
 忽略字段
 https://www.cnblogs.com/wer-ltm/p/6722737.html
 
+基于Dapper的Lambda扩展.支持分库分表
+https://liningit.github.io/LnskyDB/#/join
 
 +Zero:user role 权限配置，审计日志，组织部门设置
-
-user分页:角色 + dapper 例子
 
 去掉：姓 字段
 邮箱地址可空，＋电话号码
 
-email 验证 是 EN，改中文
+user分页:角色 - 多表查询，一对多
+条件查询
+
+学习映射
+https://blog.csdn.net/wangwengrui40/article/details/86609037
+https://www.cnblogs.com/CreateMyself/p/6995403.html

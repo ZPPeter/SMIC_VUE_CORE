@@ -66,7 +66,6 @@ namespace SMIC.Users
             //_memberuserDapperRepository = memberuserDapperRepository;
         }
 
-
         public override async Task<UserDto> Create(CreateUserDto input)
         {
             CheckCreatePermission();
@@ -150,6 +149,14 @@ namespace SMIC.Users
             return userDto;
         }
 
+        public UserDto MapToEntityDtoEx(User user)
+        {
+            var roles = _roleManager.Roles.Where(r => user.Roles.Any(ur => ur.RoleId == r.Id)).Select(r => r.NormalizedName);
+            var userDto = base.MapToEntityDto(user);
+            userDto.RoleNames = roles.ToArray();
+            return userDto;
+        }
+
         protected override IQueryable<User> CreateFilteredQuery(PagedUserResultRequestDto input)
         {
             return Repository.GetAllIncluding(x => x.Roles)
@@ -167,6 +174,16 @@ namespace SMIC.Users
             }
 
             return user;
+        }
+
+        public async Task<UserDto> GetEntityById(long id)
+        {
+            var user = await Repository.GetAllIncluding(x => x.Roles).FirstOrDefaultAsync(x => x.Id == id);
+
+            var roles = _roleManager.Roles.Where(r => user.Roles.Any(ur => ur.RoleId == r.Id)).Select(r => r.NormalizedName);
+            var userDto = base.MapToEntityDto(user);
+            userDto.RoleNames = roles.ToArray();
+            return userDto;
         }
 
         protected override IQueryable<User> ApplySorting(IQueryable<User> query, PagedUserResultRequestDto input)

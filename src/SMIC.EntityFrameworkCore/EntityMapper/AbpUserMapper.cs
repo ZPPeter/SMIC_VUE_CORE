@@ -8,7 +8,7 @@ namespace SMIC.EntityFrameworkCore.EntityMapper
         public AbpUserMapper()
         {
             Table("AbpUsers");
-            Map(x => x.Roles).Ignore();
+            Map(x => x.RoleNames).Ignore();
             AutoMap();
         }
     }

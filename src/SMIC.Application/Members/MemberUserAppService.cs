@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services;
@@ -16,10 +17,13 @@ using Abp.UI;
 using Microsoft.EntityFrameworkCore;
 using Abp.Dapper.Repositories;
 
+using Abp.Dapper.Filters;
+
 using Abp.Timing; // Clock.Now;
 using Newtonsoft.Json;
-
+using SMIC.Roles;
 using SMIC.Authorization.Users;
+using SMIC.Authorization.Roles;
 using System.Linq.Expressions;
 using System.Text; // String 字符串一旦创建就不可修改大小,在需要对字符串执行重复修改的情况下，与创建新的String对象相关的系统开销可能会非常昂贵。如果要修改字符串而不创建新的对象，则可以使用System.Text.StringBuilder类。例如当在一个循环中将许多字符串连接在一起时，使用StringBuilder类可以提升性能。
 namespace SMIC.Members
@@ -31,12 +35,15 @@ namespace SMIC.Members
     {
         //private readonly IDapperRepository<MemberUser, long> _memberDapperRepository;
         private readonly IDapperRepository<AbpUser, long> _userRepository;
+        private readonly IDapperRepository<Role, int> _roleRepository;
 
         public MemberUserAppService(
-            IRepository<MemberUser, long> repository, IDapperRepository<AbpUser, long> userRepository)//, IDapperRepository<MemberUser, long> memberDapperRepository)
+            IRepository<MemberUser, long> repository, IDapperRepository<AbpUser, long> userRepository, IDapperRepository<Role, int> roleRepository)//, IDapperRepository<MemberUser, long> memberDapperRepository)
             : base(repository)
         {
             _userRepository = userRepository;
+            _roleRepository = roleRepository;
+
             //_memberDapperRepository = memberDapperRepository;            
             LocalizationSourceName = SMICConsts.LocalizationSourceName;
         }
@@ -52,12 +59,16 @@ namespace SMIC.Members
 
         public PagedResultDto<AbpUser> GetPagedMemberUsers(PagedMemberUserResultRequestDto input)
         {
+
+            //Expression<Func<AbpUser,Role, bool>> predicat = (p,b) => (p.TenantId == null &&  p.RoleNames );
+
             /*
              _repository -> MemberUser -> 查询记录 from AbpUsers where UserType =1
                             user -> UserType =0 也会显示，TenantId = 1 不显示，未启用租户,User 没有 LastLoginTime 的
              */
 
             Expression<Func<AbpUser, bool>> predicate = p => p.TenantId == null;
+                        
             var totalCount = _userRepository.Count(predicate);
             IEnumerable<AbpUser> ret = _userRepository.GetAllPaged(
                 predicate,
@@ -65,12 +76,33 @@ namespace SMIC.Members
                 input.MaxResultCount,
                 input.Sorting, input.Order == "asc"); // input.Order=="asc"  true/false
 
-            List<AbpUser> tempList2 = ret.MapTo<List<AbpUser>>();
+            //List<AbpUser> tempList2 = ret.MapTo<List<AbpUser>>();
+            List<AbpUser> tempList = new List<AbpUser>();
+            IEnumerator<AbpUser> currentEnumerator = ret.GetEnumerator();
+            if (currentEnumerator != null)
+            {
+                for (int count = 0; currentEnumerator.MoveNext(); count++)
+                {
+                    //currentEnumerator.Current.RoleNames = GetRoles(currentEnumerator.Current.Id);
+                    tempList.Add(currentEnumerator.Current);
+                }
+            }
 
             return new PagedResultDto<AbpUser>(
                 totalCount,
-                tempList2
+                tempList
             );
+        }
+
+        public string[] GetRoles(long userid) {
+                        
+            var param = new { Id = userid };
+            var ret = _roleRepository.Query("select b.NormalizedName from AbpRoles b where b.Id in (select RoleId from AbpUserRoles a where a.UserId = @Id)", param);
+
+            List<string> list = new List<string>();
+            foreach (Role r in ret)
+                list.Add(r.NormalizedName);            
+            return list.ToArray();
         }
 
         /*

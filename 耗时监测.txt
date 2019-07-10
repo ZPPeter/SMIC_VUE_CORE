@@ -1,0 +1,5 @@
+// LogHelper.ErrorLog(info);   // 可以记录操作
+                var sw = new Stopwatch(); sw.Start();
+                var restult = conn.Execute(sql, param, transaction, commandTimeout, commandType);
+                sw.Stop();
+                LogHelper.ErrorLog(info + "耗时:" + sw.ElapsedMilliseconds + (sw.ElapsedMilliseconds > 1000 ? "#####" : string.Empty) + "\n"); // 可以记录操作

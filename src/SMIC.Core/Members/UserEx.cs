@@ -28,10 +28,10 @@ namespace SMIC.Members
 
         public DateTime CreationTime { get; set; }
         
-        //[NotMapped]
-        [ForeignKey("UserId")]        
-        public virtual ICollection<UserRole> Roles { get; set; }
-        
+        [NotMapped]
+        public string[] RoleNames { get; set; }
+
+        public ICollection<SMIC.Authorization.Roles.Role> Roles { get; set; }
 
         public bool IsTransient()
         {
