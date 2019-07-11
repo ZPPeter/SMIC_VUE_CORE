@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Diagnostics;
+using System;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,6 +27,9 @@ using SMIC.Authorization.Users;
 using SMIC.Authorization.Roles;
 using System.Linq.Expressions;
 using System.Text; // String 字符串一旦创建就不可修改大小,在需要对字符串执行重复修改的情况下，与创建新的String对象相关的系统开销可能会非常昂贵。如果要修改字符串而不创建新的对象，则可以使用System.Text.StringBuilder类。例如当在一个循环中将许多字符串连接在一起时，使用StringBuilder类可以提升性能。
+using DapperExtensions;
+using Abp.Data;
+
 namespace SMIC.Members
 {
     /// <summary>
@@ -57,8 +61,15 @@ namespace SMIC.Members
             //CreationTime是按照服务器时间存储，故表单提交的UTC时间可转为服务器LocalDateTime进行比较
         }
 
+        /// <summary>
+        /// 增加 LastLogintime,Dapper 实现
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public PagedResultDto<AbpUser> GetPagedMemberUsers(PagedMemberUserResultRequestDto input)
-        {
+        {            
+            var sw = new Stopwatch();
+            sw.Start();
 
             //Expression<Func<AbpUser,Role, bool>> predicat = (p,b) => (p.TenantId == null &&  p.RoleNames );
 
@@ -68,7 +79,32 @@ namespace SMIC.Members
              */
 
             Expression<Func<AbpUser, bool>> predicate = p => p.TenantId == null;
-                        
+
+            //if (input.From != null) // DateTime? 会有问题
+            if (input.From != null && input.From > DateTimeOffset.MinValue)
+            {
+                predicate = predicate.And(p => p.CreationTime >= DateTime.Parse(input.From.ToString())); // input.From
+            }
+            if (input.To != null && input.To > DateTimeOffset.MinValue) // != null
+            {
+                predicate = predicate.And(p => p.CreationTime <= DateTime.Parse(input.To.ToString()));   // input.To
+            }
+
+            //if (!input.Filter.IsNullOrWhiteSpace())
+            //if (!input.Keyword.IsNullOrWhiteSpace())
+            //{
+            //    predicate = predicate.And(p => p.Name.Contains(input.Keyword));
+            //}
+
+            if (!input.Keyword.IsNullOrWhiteSpace())
+            {
+                predicate = predicate.And(p => p.UserName.Contains(input.Keyword));
+            }
+
+            if (input.IsActive != null) {
+                predicate = predicate.And(p => p.IsActive==(input.IsActive=="true"));
+            }
+
             var totalCount = _userRepository.Count(predicate);
             IEnumerable<AbpUser> ret = _userRepository.GetAllPaged(
                 predicate,
@@ -83,10 +119,17 @@ namespace SMIC.Members
             {
                 for (int count = 0; currentEnumerator.MoveNext(); count++)
                 {
-                    //currentEnumerator.Current.RoleNames = GetRoles(currentEnumerator.Current.Id);
+                    //currentEnumerator.Current.RoleNames = GetRoles(currentEnumerator.Current.Id); // conn 嵌套错误
                     tempList.Add(currentEnumerator.Current);
                 }
             }
+
+            foreach (AbpUser o in tempList) {
+                o.RoleNames = GetRoles(o.Id);
+            }
+
+            sw.Stop();
+            Logger.Error("耗时:" + sw.ElapsedMilliseconds + (sw.ElapsedMilliseconds > 1000 ? "#####" : string.Empty) + "毫秒\n"); // 可以记录操作
 
             return new PagedResultDto<AbpUser>(
                 totalCount,
@@ -190,5 +233,6 @@ namespace SMIC.Members
         /// <returns></returns>
         [RemoteService(false)]
         public override Task Delete(EntityDto<long> input) => throw new NotImplementedException();
-    }
+    }                               
+
 }

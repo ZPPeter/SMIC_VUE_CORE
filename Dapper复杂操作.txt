@@ -1,0 +1,97 @@
+Dapper中的一些复杂操作和inner join应该注意的坑
+
+in
+
+var sql = "select * from Users where Email in @emails";
+var info = connection.Query<Users>(sql, new { emails = new string[2] { "5qq.com", "7qq.com" } });
+
+
+多条sql一起执行
+
+有时候我们会想在一条sql中灌入很多的snippet sql，然后让其一起执行，此时让我想起了一个操作，我会在db中load data的时候会写到
+select ... from marketing where  id in (....); select .... from eventmarketing where in (...)类似这样的语句，然后进行结果合并
+
+            var sql = "select * from Product; select * from Users";
+
+            var multiReader = connection.QueryMultiple(sql);
+
+            var productList = multiReader.Read<Product>();
+
+            var userList = multiReader.Read<Users>();
+
+            multiReader.Dispose();
+
+
+join
+
+var sql = @"select  p.ProductName,p.CreateTime,u.UserName
+                        from Product as p
+                        join Users as u
+                        on p.UserID = u.UserID
+                        where p.CreateTime > '2015-12-12'; ";
+
+            var result = connection.Query<Product, Users, Product>(sql,
+                                    (product, users) =>
+                                    {
+                                        product.UserOwner = users; return product;
+                                    });
+
+当你使用multi-mapping的时候要确保设置了splitOn参数，除了Id
+splitOn就是Dapper对DataReader进行”从右到左“的扫描，这样就可以从sequent中获取到一个subsequent，然后遇到设置的splitOn就停止
+
+var sql = @"select  p.ProductName,p.CreateTime,u.UserName
+                        from Product as p
+                        join Users as u
+                        on p.UserID = u.UserID
+                        where p.CreateTime > '2015-12-12'; ";
+
+            var result = connection.Query<Product, Users, Product>(sql,
+                                    (product, users) =>
+                                    {
+                                        product.UserOwner = users; return product;
+                                    },splitOn: "UserName");
+
+不指定这些具体Type，而默认使用 dynamic
+var result = connection.Query(sql)
+
+SP
+var info = connection.Query<Users>("sp_GetUsers", new { id = 5 },commandType: CommandType.StoredProcedure);
+
+
+一对多
+var dados = conexao.Query<dynamic>(
+                    "SELECT R.IdRegiao, " +
+                           "R.NomeRegiao, " +
+                           "E.SiglaEstado AS Estados_SiglaEstado, " +
+                           "E.NomeEstado AS Estados_NomeEstado, " +
+                           "E.NomeCapital AS Estados_NomeCapital " +
+                    "FROM dbo.Regioes R " +
+                    "INNER JOIN dbo.Estados E " +
+                        "ON E.IdRegiao = R.IdRegiao " +
+                    "ORDER BY R.NomeRegiao, E.NomeEstado");
+
+                AutoMapper.Configuration.AddIdentifier(
+                    typeof(Regiao), "IdRegiao");
+                AutoMapper.Configuration.AddIdentifier(
+                    typeof(Estado), "SiglaEstado");
+
+                List<Regiao> regioes = (AutoMapper.MapDynamic<Regiao>(dados)
+                    as IEnumerable<Regiao>).ToList();
+
+                return regioes;
+
+多对多
+return conexao.Query<Estado, Regiao, Estado>(
+                    "SELECT * " +
+                    "FROM dbo.Estados E " +
+                    "INNER JOIN dbo.Regioes R ON R.IdRegiao = E.IdRegiao " +
+                    "ORDER BY E.NomeEstado",
+                    map: (estado, regiao) =>
+                    {
+                        estado.DadosRegiao = regiao;
+                        return estado;
+                    },
+                    splitOn: "SiglaEstado,IdRegiao");
+
+多表查询一例
+https://blog.csdn.net/wyljz/article/details/68926745

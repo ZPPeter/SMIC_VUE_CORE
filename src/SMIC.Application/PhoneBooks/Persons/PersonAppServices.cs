@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Diagnostics;
+using System.Collections.Generic;
 using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
@@ -15,7 +17,9 @@ using SMIC.PhoneBooks.Persons.Dtos;
 using SMIC.PhoneBooks.PhoneNumbers;
 using SMIC.PhoneBooks.PhoneNumbers.Dtos;
 using Abp.Dapper.Repositories;
+using Abp.Dapper.Filters;
 using System.Linq;
+using DapperExtensions;
 
 namespace SMIC.PhoneBooks.Persons
 {
@@ -58,6 +62,13 @@ namespace SMIC.PhoneBooks.Persons
             //_vwsjmxDapperRepository = vwsjmxDapperRepository;
         }
 
+        /// <summary>
+        /// 返回结果不包含 phoneNumbers
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Person> TestPersonPhoneNumber() {
+            return _personDapperRepository.Query("select * from persons"); //"phoneNumbers": null,            
+        }
 
         /// <summary>
         ///     获取Person的分页列表信息
@@ -66,6 +77,10 @@ namespace SMIC.PhoneBooks.Persons
         /// <returns></returns>
         public async Task<PagedResultDto<PersonListDto>> GetPagedPersons(GetPersonsInput input)
         {
+
+            var sw = new Stopwatch();
+            sw.Start();
+
             var query = _personRepository.GetAll().Include(a => a.PhoneNumbers).WhereIf(!input.Filter.IsNullOrWhiteSpace(),
                 a => a.Name.Contains(input.Filter) || a.Address.Contains(input.Filter) ||
                      a.EmailAddress.Contains(input.Filter));
@@ -79,6 +94,9 @@ namespace SMIC.PhoneBooks.Persons
 
             //var personListDtos = ObjectMapper.Map<List <PersonListDto>>(persons);
             var personListDtos = persons.MapTo<List<PersonListDto>>();
+
+            sw.Stop();
+            Logger.Error("耗时:" + sw.ElapsedMilliseconds + (sw.ElapsedMilliseconds > 1000 ? "#####" : string.Empty) + "毫秒\n"); // 可以记录操作
 
             return new PagedResultDto<PersonListDto>(
                 personCount,

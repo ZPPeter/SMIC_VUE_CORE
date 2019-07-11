@@ -1,0 +1,16 @@
+EntityTypeConfiguration -> EF 配置主从键等信息
+
+public class PersonMapper : ClassMapper<Person>  这个是 Dapper 用的
+
+
+和ef一样，需要配置映射关系
+public class PersonMapper : ClassMapper<Category>
+{
+    public PersonMapper()
+    {
+        Table("Categories");
+        AutoMap();
+    }
+}
+
+PS: 如果同时使用ef，它的映射最好使用ToTable指定表名，不然ef会自动转换最后一个单词为复数

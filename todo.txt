@@ -13,14 +13,14 @@ https://www.cnblogs.com/wer-ltm/p/6722737.html
 基于Dapper的Lambda扩展.支持分库分表
 https://liningit.github.io/LnskyDB/#/join
 
+学习映射
+https://blog.csdn.net/wangwengrui40/article/details/86609037
+https://www.cnblogs.com/CreateMyself/p/6995403.html
+
+
 +Zero:user role 权限配置，审计日志，组织部门设置
 
 去掉：姓 字段
 邮箱地址可空，＋电话号码
 
-user分页:角色 - 多表查询，一对多
-条件查询
-
-学习映射
-https://blog.csdn.net/wangwengrui40/article/details/86609037
-https://www.cnblogs.com/CreateMyself/p/6995403.html
+user分页:条件查询

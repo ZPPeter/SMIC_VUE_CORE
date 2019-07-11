@@ -9,6 +9,7 @@ namespace SMIC.Members.Dto
         public string Keyword { get; set; }
         public DateTimeOffset? From { get; set; }
         public DateTimeOffset? To { get; set; }
+        public string IsActive { get; set; }
 
         public void Normalize()
         {

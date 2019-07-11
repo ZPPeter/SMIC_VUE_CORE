@@ -18,6 +18,7 @@ namespace SMIC.Members
 
         public string Surname { get; set; }
 
+        //[Column("Email")] //字段映射
         public string EmailAddress { get; set; }
 
         public bool IsActive { get; set; }
@@ -31,7 +32,11 @@ namespace SMIC.Members
         [NotMapped]
         public string[] RoleNames { get; set; }
 
-        public ICollection<SMIC.Authorization.Roles.Role> Roles { get; set; }
+        /*
+          // 没有作用
+          // Role 继承于 AbpRole,User Role 是多对多，有中间表 UserRole        
+          public ICollection<SMIC.Authorization.Roles.Role> Roles { get; set; } 
+        */
 
         public bool IsTransient()
         {

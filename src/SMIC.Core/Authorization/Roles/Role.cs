@@ -2,6 +2,9 @@
 using Abp.Authorization.Roles;
 using SMIC.Authorization.Users;
 
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace SMIC.Authorization.Roles
 {
     public class Role : AbpRole<User>
