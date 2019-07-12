@@ -1,9 +1,9 @@
 ﻿
 using DapperExtensions.Mapper;
-
-namespace SMIC.Members
+using SMIC.Members;
+namespace SMIC.EntityFrameworkCore.EntityMapper
 {
-    public class AbpUserMapper : AutoClassMapper<AbpUser>
+    public class AbpUserMapper : ClassMapper<AbpUser>
     {
         public AbpUserMapper()
         {

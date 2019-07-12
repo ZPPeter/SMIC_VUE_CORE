@@ -9,7 +9,7 @@ namespace SMIC.EntityFrameworkCore.EntityMapper
         {
             Table("Persons");
             //Map(x => x.Id).Key(KeyType.Identity); //设置主键， ABP 已经默认设置
-            //Map(x => x.Roles).Ignore();
+            Map(x => x.PhoneNumbers).Ignore();
             AutoMap();
 
             /*

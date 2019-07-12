@@ -1,0 +1,109 @@
+﻿using Abp.Application.Services;
+using Abp.Domain.Repositories;
+using SMIC.Members.Dto;
+using System.Collections.Generic;
+using Abp.Dapper.Repositories;
+using SMIC.Authorization.Roles;
+using DapperExtensions;
+using System.Data.SqlClient;
+using System.Reflection;
+using DapperExtensions.Mapper;
+using DapperExtensions.Sql;
+
+using Microsoft.Extensions.Configuration;
+using SMIC.Configuration;
+using SMIC.Web;
+using SMIC.PhoneBooks.Persons;
+using System;
+
+namespace SMIC.Members
+{
+    /// <summary>
+    /// 仅供后台查询会员信息
+    /// </summary>
+    public class DapperExtensionAppService : SMICAppServiceBase
+    // AsyncCrudAppService<MemberUser, MemberUserDto, long, PagedMemberUserResultRequestDto, CreateMemberUserDto, MemberUserDto>, IMemberUserAppService
+    // 会自动 CRUD
+    {
+        protected IDatabase Db;
+
+        public IEnumerable<Person> GetAbpUsersDapperEx()
+        {
+
+            // "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=AbpProjectNameDb2;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"
+            // "Server=DEEP-1704241155; Database=SMICDbVue; Trusted_Connection=True;"
+            var _appConfiguration = AppConfigurations.Get(WebContentDirectoryFinder.CalculateContentRootFolder());            
+            var connection = new SqlConnection(_appConfiguration.GetConnectionString(SMICConsts.SDIMConnectionStringName));
+
+            // ExternallyMappedMap.AbpUserMapper
+            // DapperExtensions.DapperExtensions.SetMappingAssemblies(new[] { typeof(ExternallyMappedMap).Assembly });
+            // var mapper = DapperExtensions.DapperExtensions.GetMap<AbpUserMapper>();
+
+            //全局配置
+            DapperExtensions.DapperExtensions.DefaultMapper = typeof(CustomPluralizedMapper<>);
+
+            var config = new DapperExtensionsConfiguration(typeof(AutoClassMapper<>), new List<Assembly>(), new SqlServerDialect());            
+
+            var sqlGenerator = new SqlGeneratorImpl(config);
+            Db = new Database(connection, sqlGenerator);
+            IEnumerable<Person> list = Db.GetList<Person>();
+            return list;
+        }
+    }
+
+    /*
+    通俗的话来讲，就是说数据库表名和POCOs的命名可能会因为英文语义或者说文化等的影响而不同，这时候Dapper Extensions提供给我们PluralizedAutoClassMapper，提供一些转换的规则。
+    例如Person和Person。
+    下面的例子，使用CustomPluralizedMapper对来Person到Persons数据表进行映射。如果不重写，PluralizedAutoClassMapper默认会把Person映射到People表。     
+    */
+    public class CustomPluralizedMapper<T> : PluralizedAutoClassMapper<T> where T : class
+    {
+        public override void Table(string tableName)
+        {
+            if (tableName.Equals("Person", StringComparison.CurrentCultureIgnoreCase))
+            {
+                TableName = "Persons";
+            }
+
+            base.Table(tableName);
+        }
+    }
+
+    public static class Mappings
+    {
+
+        public static void Initialize()
+        {
+            DapperExtensions.DapperExtensions.DefaultMapper = typeof(PluralizedAutoClassMapper<>);
+
+            DapperExtensions.DapperExtensions.SetMappingAssemblies(new[]
+            {
+               typeof(Mappings).Assembly
+           });
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        public class PotoUsersMapper : ClassMapper<Person>
+        {
+            /// <summary>
+            ///
+            /// </summary>
+            public PotoUsersMapper()
+            {
+                Table("Persons"); //DuPotoUsers        
+                /*
+                Map(Ducel => Ducel.UserID).Column("UserID").Key(KeyType.Identity); //主键类型
+                Map(Ducel => Ducel.UserName).Column("UserName");
+                Map(Ducel => Ducel.FirstName).Column("FirstName");
+                Map(Ducel => Ducel.LastName).Column("LastName");
+                Map(Ducel => Ducel.MiddleName).Column("MiddleName");
+                Map(Ducel => Ducel.EmailID).Column("EmailID");
+                Map(Ducel => Ducel.Adddate).Column("Adddate");
+                */
+                AutoMap();
+            }
+        }
+    }
+
+}
