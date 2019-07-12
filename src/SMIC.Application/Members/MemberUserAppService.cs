@@ -26,7 +26,9 @@ using SMIC.Roles;
 using SMIC.Authorization.Users;
 using SMIC.Authorization.Roles;
 using System.Linq.Expressions;
-using System.Text; // String 字符串一旦创建就不可修改大小,在需要对字符串执行重复修改的情况下，与创建新的String对象相关的系统开销可能会非常昂贵。如果要修改字符串而不创建新的对象，则可以使用System.Text.StringBuilder类。例如当在一个循环中将许多字符串连接在一起时，使用StringBuilder类可以提升性能。
+using System.Text;
+// String 字符串一旦创建就不可修改大小,在需要对字符串执行重复修改的情况下，与创建新的String对象相关的系统开销可能会非常昂贵。
+// 如果要修改字符串而不创建新的对象，则可以使用System.Text.StringBuilder类。例如当在一个循环中将许多字符串连接在一起时，使用StringBuilder类可以提升性能。
 using DapperExtensions;
 using Abp.Data;
 
@@ -68,11 +70,10 @@ namespace SMIC.Members
         /// <returns></returns>
         public PagedResultDto<AbpUser> GetPagedMemberUsers(PagedMemberUserResultRequestDto input)
         {            
-            var sw = new Stopwatch();
-            sw.Start();
+            //var sw = new Stopwatch();
+            //sw.Start();
 
             //Expression<Func<AbpUser,Role, bool>> predicat = (p,b) => (p.TenantId == null &&  p.RoleNames );
-
             /*
              _repository -> MemberUser -> 查询记录 from AbpUsers where UserType =1
                             user -> UserType =0 也会显示，TenantId = 1 不显示，未启用租户,User 没有 LastLoginTime 的
@@ -112,24 +113,28 @@ namespace SMIC.Members
                 input.MaxResultCount,
                 input.Sorting, input.Order == "asc"); // input.Order=="asc"  true/false
 
-            //List<AbpUser> tempList2 = ret.MapTo<List<AbpUser>>();
-            List<AbpUser> tempList = new List<AbpUser>();
+            List<AbpUser> tempList = ret.MapTo<List<AbpUser>>();
+
+            /*
+            List<AbpUser> tempList2 = new List<AbpUser>();
             IEnumerator<AbpUser> currentEnumerator = ret.GetEnumerator();
             if (currentEnumerator != null)
             {
                 for (int count = 0; currentEnumerator.MoveNext(); count++)
                 {
-                    //currentEnumerator.Current.RoleNames = GetRoles(currentEnumerator.Current.Id); // conn 嵌套错误
+                    //currentEnumerator.Current.RoleNames = GetRoles(currentEnumerator.Current.Id); // conn 嵌套错误,在下面处理
                     tempList.Add(currentEnumerator.Current);
                 }
             }
+            */
 
+            // Abp.Dapper 不支持一对多，只能 Dapper 进行
             foreach (AbpUser o in tempList) {
                 o.RoleNames = GetRoles(o.Id);
             }
 
-            sw.Stop();
-            Logger.Error("耗时:" + sw.ElapsedMilliseconds + (sw.ElapsedMilliseconds > 1000 ? "#####" : string.Empty) + "毫秒\n"); // 可以记录操作
+            //sw.Stop();
+            //Logger.Error("耗时:" + sw.ElapsedMilliseconds + (sw.ElapsedMilliseconds > 1000 ? "#####" : string.Empty) + "毫秒\n"); // 可以记录操作
 
             return new PagedResultDto<AbpUser>(
                 totalCount,

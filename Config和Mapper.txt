@@ -14,3 +14,6 @@ public class PersonMapper : ClassMapper<Category>
 }
 
 PS: 如果同时使用ef，它的映射最好使用ToTable指定表名，不然ef会自动转换最后一个单词为复数
+
+Abp.Dapper 的 Map 文件：
+SMIC.EntityFrameworkCore\EntityMapper\AbpUserMapper.cs
