@@ -115,8 +115,14 @@
 
     <text name="FieldIsRequired"  value="不能为空"></text>
     <text name="ConfirmPasswordMsg"  value="密码需要确认"></text>
-    
-
+    <text name="Pages"  value="页面"></text>
+    <text name="Administration"  value="管理"></text>
+    <text name="Task"  value="任务"></text>
+    <text name="QueryTask"  value="任务查询"></text>
+    <text name="CreateTask"  value="新建任务"></text>
+    <text name="EditTask"  value="编辑任务"></text>
+    <text name="DeleteTask"  value="删除任务"></text>
+    <text name="BatchDeleteTask"  value="批量删除任务"></text>
   </texts>
 </localizationDictionary>
 
