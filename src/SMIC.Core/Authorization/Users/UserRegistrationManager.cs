@@ -37,7 +37,8 @@ namespace SMIC.Authorization.Users
             AbpSession = NullAbpSession.Instance;
         }
 
-        public async Task<T> RegisterAsync<T>(string name, string surname, string emailAddress, string userName, string plainPassword, bool isEmailConfirmed) where T : User, new()
+        public async Task<T> RegisterAsync<T>(string surname, string emailAddress, string userName, string plainPassword, bool isEmailConfirmed) where T : User, new()
+        // public async Task<T> RegisterAsync<T>(string name, string surname, string emailAddress, string userName, string plainPassword, bool isEmailConfirmed) where T : User, new()
         {
             CheckForTenant();
 
@@ -46,7 +47,7 @@ namespace SMIC.Authorization.Users
             var user = new T
             {
                 TenantId = tenant?.Id,
-                Name = name,
+                // Name = name, // 可空
                 Surname = surname,
                 EmailAddress = emailAddress,
                 IsActive = true,

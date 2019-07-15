@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SMIC.Authorization.Users;
 using SMIC.EntityFrameworkCore;
@@ -10,9 +11,10 @@ using SMIC.EntityFrameworkCore;
 namespace SMIC.Migrations
 {
     [DbContext(typeof(SMICDbContext))]
-    partial class SMICDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190715013656_Remove_Name")]
+    partial class Remove_Name
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -78,7 +78,7 @@ namespace SMIC.EntityFrameworkCore.Seed.Host
                 {
                     TenantId = null,
                     UserName = AbpUserBase.AdminUserName,
-                    Name = "admin",
+                    //Name = "admin",
                     Surname = "admin",
                     EmailAddress = "admin@aspnetboilerplate.com",
                     IsEmailConfirmed = true,

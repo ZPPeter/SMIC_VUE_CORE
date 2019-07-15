@@ -34,17 +34,15 @@ namespace SMIC.EntityFrameworkCore
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {                        
             optionsBuilder.UseLoggerFactory(new EFLoggerFactory()); // OK - 输出来源在 ASP.NET Core Web 服务器
+            
             //方案二：在 VS2017 【企业版】 IntelliTrace 窗口 查看 ADO.NET 事件
-
             /*
             // 下面也可以 
             //输出来源选择 ASP.NET Web 服务器
             var loggerFactory = new LoggerFactory();
             loggerFactory.AddProvider(new EFLoggerProvider());
             optionsBuilder.UseLoggerFactory(loggerFactory);
-
-            base.OnConfiguring(optionsBuilder);
-                        
+            base.OnConfiguring(optionsBuilder);                        
             //if (!optionsBuilder.IsConfigured)  // 不能有此句
             //{
                 // 输出来源在 ASP.NET Core Web 服务器
@@ -57,8 +55,10 @@ namespace SMIC.EntityFrameworkCore
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            //modelBuilder.Entity<User>().Ignore(a => a.Name);
+                        
+            modelBuilder.Entity<User>().Ignore(a => a.Name);                               // 忽略该字段
+            // modelBuilder.Entity<User>().Ignore(a => a.Surname);                            // 忽略该字段
+            // modelBuilder.Entity<User>().Property(a => a.EmailAddress).IsRequired(false);   // 设置可空
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly()); // MemberUserConfiguration 等
 

@@ -14,7 +14,7 @@ namespace SMIC.Members
         public int? TenantId { get; set; }
         public string UserName { get; set; }
 
-        public string Name { get; set; }
+        // public string Name { get; set; } // ---> 可空
 
         public string Surname { get; set; }
 

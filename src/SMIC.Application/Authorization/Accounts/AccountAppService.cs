@@ -56,7 +56,7 @@ namespace SMIC.Authorization.Accounts
         public async Task<RegisterOutput> Register(RegisterInput input)
         {
             var user = await _userRegistrationManager.RegisterAsync<MemberUser>(
-                input.Name,
+                //input.Name,
                 input.Surname,
                 input.EmailAddress,
                 input.UserName,

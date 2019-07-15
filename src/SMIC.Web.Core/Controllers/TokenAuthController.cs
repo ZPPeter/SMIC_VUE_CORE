@@ -168,10 +168,10 @@ namespace SMIC.Controllers
 
             //var user = await _userRegistrationManager.RegisterAsync(
             var user = await _userRegistrationManager.RegisterAsync < MemberUser > (
-                externalUser.Name,
+                // externalUser.Name,
                 externalUser.Surname,
                 externalUser.EmailAddress,
-                externalUser.EmailAddress,
+                externalUser.EmailAddress, // Username
                 Authorization.Users.User.CreateRandomPassword(),
                 true
             );

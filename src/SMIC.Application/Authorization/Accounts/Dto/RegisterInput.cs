@@ -9,9 +9,11 @@ namespace SMIC.Authorization.Accounts.Dto
 {
     public class RegisterInput : IValidatableObject
     {
-        [Required]
+        /*
+        [Required]  --- 可空
         [StringLength(AbpUserBase.MaxNameLength)]
         public string Name { get; set; }
+        */
 
         [Required]
         [StringLength(AbpUserBase.MaxSurnameLength)]

@@ -36,7 +36,7 @@ namespace SMIC.Tests.Users
                 {
                     EmailAddress = "john@volosoft.com",
                     IsActive = true,
-                    Name = "John",
+                    //Name = "John",
                     Surname = "Nash",
                     Password = "123qwe",
                     UserName = "john.nash"

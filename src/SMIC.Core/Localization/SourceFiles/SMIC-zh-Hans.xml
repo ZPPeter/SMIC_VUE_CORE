@@ -57,7 +57,8 @@
     <text name="PasswordRequireNonAlphanumeric">密码至少需要包含一个特殊字符（非字母或数字的字符）.</text>
     <text name="PasswordRequireUppercase">密码至少需要一位是A到Z的大写字母.</text>
     <text name="PasswordTooShort">密码长度太短</text>
-    <text name="UserName">用户名</text>
+    <text name="UserName">登录名</text>    
+    <text name="Surname">用户名</text>
     <text name="Name">名称</text>
     <text name="IsActive">是否启用</text>
     <text name="LastLoginTime">最近登录时间</text>
@@ -85,8 +86,8 @@
     <text name="UserDetails">用户详情</text>
     <text name="UserRoles">用户角色</text>
     <text name="ConfirmPassword">确认密码</text>
-    <text name="EmailAddress">邮箱地址</text>
-    <text name="Surname">姓</text>
+    <text name="EmailAddress">邮箱地址</text>   
+    
     <text name="DeleteUserConfirm">确认删除该用户？</text>
     <text name="EditUser">编辑用户</text>
 
