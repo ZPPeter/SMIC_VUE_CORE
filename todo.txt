@@ -17,14 +17,15 @@ https://liningit.github.io/LnskyDB/#/join
 https://blog.csdn.net/wangwengrui40/article/details/86609037
 https://www.cnblogs.com/CreateMyself/p/6995403.html
 
+邮箱地址 EmailAddress - 取回密码/待实现
+
+日志 - logs 和 审计日记
+
 /*
 1、用户状态使用jwt token，也就是每一个http请求头里都需要加入类似：
-Authorization= {token}
-这个token是通过登陆接口获得的，/v1/core/user/login接口
+     Authorization= {token}
+     这个token是通过登陆接口获得的，/v1/core/user/login接口
 2、后端返回json包括code、msg两个固定自定，code=200表示成功，msg是报错信息一般
 */
 
-+Zero:user role 权限配置，审计日志，组织部门设置,Notice,Message
-
-去掉：姓 字段
-邮箱地址 EmailAddress - 取回密码用
+插件 - 执行任意SQL

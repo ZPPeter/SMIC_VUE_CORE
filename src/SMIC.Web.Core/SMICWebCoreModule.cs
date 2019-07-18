@@ -12,11 +12,12 @@ using Abp.Zero.Configuration;
 using SMIC.Authentication.JwtBearer;
 using SMIC.Configuration;
 using SMIC.EntityFrameworkCore;
-
+//using TestPlugIn;
 namespace SMIC
 {
     [DependsOn(
-         typeof(SMICApplicationModule),
+         typeof(SMICApplicationModule), // SMIC.Application 应用层
+         //typeof(FirstABPPluginModule),  // 第二个 应用层，目前不知道怎么用插件实现
          typeof(SMICEntityFrameworkModule),
          typeof(AbpAspNetCoreModule)
         ,typeof(AbpAspNetCoreSignalRModule)
@@ -45,6 +46,9 @@ namespace SMIC
                  .CreateControllersForAppServices(
                      typeof(SMICApplicationModule).GetAssembly()
                  );
+
+            //设置生成webapi
+            //Configuration.Modules.AbpAspNetCore().CreateControllersForAppServices(typeof(FirstABPPluginModule).Assembly, moduleName: "cline", useConventionalHttpVerbs: true);
 
             ConfigureTokenAuth();
         }

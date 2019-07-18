@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
@@ -25,10 +26,12 @@ namespace SMIC.Web.Host.Startup
         private const string _defaultCorsPolicyName = "localhost";
 
         private readonly IConfigurationRoot _appConfiguration;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
         public Startup(IHostingEnvironment env)
         {
             _appConfiguration = env.GetAppConfiguration();
+            _hostingEnvironment = env;
         }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
@@ -77,7 +80,10 @@ namespace SMIC.Web.Host.Startup
                 });
             });
 
-            // Configure Abp and Dependency Injection
+            services.AddSingleton<IConfiguration>(_appConfiguration); // 暴露给 DLL 插件用
+
+
+            /*
             return services.AddAbp<SMICWebHostModule>(
                 // Configure Log4Net logging
                 options => options.IocManager.IocContainer.AddFacility<LoggingFacility>(
@@ -85,6 +91,21 @@ namespace SMIC.Web.Host.Startup
                     f => f.UseAbpNLog().WithConfig("nlog.config")
                 )
             );
+            */
+
+            // Configure Abp and Dependency Injection
+            return services.AddAbp<SMICWebHostModule>(options =>
+            {
+                //Configure nLog logging
+                options.IocManager.IocContainer.AddFacility<LoggingFacility>(
+                                    //f => f.UseAbpLog4Net().WithConfig("log4net.config")
+                                    f => f.UseAbpNLog().WithConfig("nlog.config")
+                                );
+                
+                options.PlugInSources.Add(new Abp.PlugIns.FolderPlugInSource(Path.Combine(_hostingEnvironment.WebRootPath, "Plugins")));// @"C:\MyPlugIns"
+                //options.PlugInSources.AddFolder(Path.Combine(_hostingEnvironment.ContentRootPath, "Areas/Plugins"), SearchOption.AllDirectories);
+
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

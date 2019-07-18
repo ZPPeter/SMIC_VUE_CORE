@@ -33,14 +33,14 @@ namespace SMIC
         {
             var thisAssembly = typeof(SMICApplicationModule).GetAssembly();
 
-            IocManager.RegisterAssemblyByConvention(thisAssembly);
+            // IocManager.RegisterAssemblyByConvention(thisAssembly); // 注册2遍???
 
             Configuration.Modules.AbpAutoMapper().Configurators.Add(
                 // Scan the assembly for classes which inherit from AutoMapper.Profile
                 cfg => cfg.AddProfiles(thisAssembly)
             );
 
-            IocManager.RegisterAssemblyByConvention(typeof(SMICApplicationModule).GetAssembly());
+            IocManager.RegisterAssemblyByConvention(typeof(SMICApplicationModule).GetAssembly()); // 注册2遍???
             
         }
     }
