@@ -35,6 +35,18 @@ namespace TestPlugIn.Application
 
         public dynamic GetTestAbpDapper()  // 需要设置 SMIC.EntityFrameworkCore\EntityMapper\PersonMapper.cs
         {
+            /*
+            var a = 0;
+            try
+            {
+                dynamic ret1 = 1 / a;
+            }
+            catch (System.Exception ex)
+            {
+                Logger.Error($"{GetType().FullName}:Logger详情测试!{ex}", ex);
+            }
+            */
+
             // Person -> PhoneNumbers
             dynamic ret = _personDapperRepository.GetAllPaged(x => x.Address != "SD.JN", 0, 10, "ID").ToDynamicList<dynamic>(); //OK
             return ret;
