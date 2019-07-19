@@ -7,7 +7,7 @@ using SMIC;
 using Abp.Reflection.Extensions;
 using Abp.AspNetCore.Configuration;
 
-namespace TestPlugIn
+namespace MyPlugIn
 {
     //[DependsOn(typeof(AbpZeroCoreModule))]
     [DependsOn(
@@ -30,41 +30,26 @@ namespace TestPlugIn
             IocManager.RegisterAssemblyByConvention(typeof(FirstABPPluginModule).GetAssembly()); // using Abp.Reflection.Extensions;
         }
                 
-        public override void PostInitialize()
+        public override void PostInitialize()  // 启动定时操作业务,目前未用
         {            
-            var workManager = IocManager.Resolve<IBackgroundWorkerManager>();
-            workManager.Add(IocManager.Resolve<DeleteOldAuditLogsWorker>());
+            // var workManager = IocManager.Resolve<IBackgroundWorkerManager>();
+            // workManager.Add(IocManager.Resolve<DeleteOldAuditLogsWorker>());
         }
 
         public override void PreInitialize()
         {
-            TestModule.Hello = "888888";
+            //TestModule.Hello = "888888";
 
             // SMIC.Web.Host.dll.config
-            System.Configuration.Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            string a = config.AppSettings.Settings["owin:AutomaticAppStartup"].Value;
+            //System.Configuration.Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            //string a = config.AppSettings.Settings["owin:AutomaticAppStartup"].Value;
             
-            //注册权限
-            Configuration.Authorization.Providers.Add<Authorization.PlugInZeroAuthorizationProvider>();
+            //注册权限- 目前未用
+            //Configuration.Authorization.Providers.Add<Authorization.PlugInZeroAuthorizationProvider>();
 
             //设置生成webapi
-            Configuration.Modules.AbpAspNetCore().CreateControllersForAppServices(typeof(FirstABPPluginModule).Assembly, moduleName: "app2", useConventionalHttpVerbs: true);
+            Configuration.Modules.AbpAspNetCore().CreateControllersForAppServices(typeof(FirstABPPluginModule).Assembly, moduleName: "save_error_logger", useConventionalHttpVerbs: true);
 
         }
     }
 }
-
-/*
-
-//插件配置(直接从当前执行的程序集的config文件读取数据库连接串)
-var config = ConfigurationManager.OpenExeConfiguration(
-    Assembly.GetExecutingAssembly().Location);
-string connectStr = config.ConnectionStrings.ConnectionStrings["PlugInZeroDB"].ConnectionString;
-//注册DbContext,构建时使用指定参数
-IocManager.IocContainer.Register(
-    Component.For<PlugInZeroDbContext>()
-    .DependsOn(
-        Dependency.OnValue(
-            "connectionString", connectStr))); 
-
-*/

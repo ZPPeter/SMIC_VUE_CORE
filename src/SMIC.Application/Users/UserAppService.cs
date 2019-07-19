@@ -200,14 +200,14 @@ namespace SMIC.Users
         {
             if (_abpSession.UserId == null)
             {
-                throw new UserFriendlyException("Please log in before attemping to change password.");
+                throw new UserFriendlyException("请登录后再进行操作！");
             }
             long userId = _abpSession.UserId.Value;
             var user = await _userManager.GetUserByIdAsync(userId);
             var loginAsync = await _logInManager.LoginAsync(user.UserName, input.CurrentPassword, shouldLockout: false);
             if (loginAsync.Result != AbpLoginResultType.Success)
             {
-                throw new UserFriendlyException("Your 'Existing Password' did not match the one on record.  Please try again or contact an administrator for assistance in resetting your password.");
+                throw new UserFriendlyException("当前密码输入错误，请检查后再试或者联系管理员重置您的密码！");
             }
             /*
             if (!new Regex(AccountAppService.PasswordRegex).IsMatch(input.NewPassword))
@@ -224,7 +224,7 @@ namespace SMIC.Users
         {
             if (_abpSession.UserId == null)
             {
-                throw new UserFriendlyException("Please log in before attemping to reset password.");
+                throw new UserFriendlyException("请登录后再进行操作！");
             }
             long currentUserId = _abpSession.UserId.Value;
             var currentUser = await _userManager.GetUserByIdAsync(currentUserId);
@@ -240,7 +240,7 @@ namespace SMIC.Users
             var roles = await _userManager.GetRolesAsync(currentUser);
             if (!roles.Contains(StaticRoleNames.Tenants.Admin))
             {
-                throw new UserFriendlyException("Only administrators may reset passwords.");
+                throw new UserFriendlyException("只有管理员才能进行该操作！");
             }
 
             var user = await _userManager.GetUserByIdAsync(input.UserId);

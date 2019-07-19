@@ -15,7 +15,7 @@ using Microsoft.Extensions.Configuration;
 using SMIC.Configuration;
 using SMIC.Web;
 
-namespace TestPlugIn.Application
+namespace MyPlugIn.Application
 {
     public class TestAppService : SMIC.SMICAppServiceBase
     {

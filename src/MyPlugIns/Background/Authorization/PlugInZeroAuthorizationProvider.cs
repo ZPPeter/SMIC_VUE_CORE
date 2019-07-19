@@ -1,7 +1,7 @@
 ﻿using Abp.Authorization;
 using Abp.Localization;
 
-namespace TestPlugIn.Authorization
+namespace MyPlugIn.Authorization
 {
     public class PlugInZeroAuthorizationProvider : AuthorizationProvider
     {

@@ -12,7 +12,7 @@ using Abp.Zero.Configuration;
 using SMIC.Authentication.JwtBearer;
 using SMIC.Configuration;
 using SMIC.EntityFrameworkCore;
-//using TestPlugIn;
+//using MyPlugIn;
 namespace SMIC
 {
     [DependsOn(

@@ -101,8 +101,15 @@ namespace SMIC.Web.Host.Startup
                                     //f => f.UseAbpLog4Net().WithConfig("log4net.config")
                                     f => f.UseAbpNLog().WithConfig("nlog.config")
                                 );
-                
-                options.PlugInSources.Add(new Abp.PlugIns.FolderPlugInSource(Path.Combine(_hostingEnvironment.WebRootPath, "Plugins")));// @"C:\MyPlugIns"
+
+                //获取应用程序所在目录的2种方式（绝对,不受工作目录影响,建议采用此方法获取路径）.如:d:\Users\xk\Desktop\WebApplication1\WebApplication1\bin\Debug\netcoreapp2.0\
+                String basePath1 = AppContext.BaseDirectory;
+                String basePath2 = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+                //注意:对于 Linux 或非 Windows 操作系统，文件名和路径区分大小写。 例如，“SwaggerDemo.xml”文件在 Windows 上有效，但在 CentOS 上无效。
+                //String path = Path.Combine(basePath2, "SwaggerDemo.xml");
+
+                options.PlugInSources.Add(new Abp.PlugIns.FolderPlugInSource(Path.Combine(basePath2, "Plugins")));// @"C:\MyPlugIns"
+                //options.PlugInSources.Add(new Abp.PlugIns.FolderPlugInSource(Path.Combine(_hostingEnvironment.ContentRootPath, "Plugins")));// @"C:\MyPlugIns"
                 //options.PlugInSources.AddFolder(Path.Combine(_hostingEnvironment.ContentRootPath, "Areas/Plugins"), SearchOption.AllDirectories);
 
             });

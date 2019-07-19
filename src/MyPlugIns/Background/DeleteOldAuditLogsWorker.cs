@@ -9,7 +9,7 @@ using Abp.Timing;
 
 // 必须安装 abp.zero.common
 // 否则找不到 AuditLog 
-namespace TestPlugIn
+namespace MyPlugIn
 {
     public class DeleteOldAuditLogsWorker : PeriodicBackgroundWorkerBase, ISingletonDependency
     {        

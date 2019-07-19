@@ -1,4 +1,4 @@
-﻿namespace TestPlugIn
+﻿namespace MyPlugIn
 {
     public static class PlugInZeroConsts
     {
