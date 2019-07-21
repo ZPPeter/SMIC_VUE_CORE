@@ -66,9 +66,15 @@ namespace SMIC.Web.Host.Startup
 
             // Swagger - Enable this line and the related lines in Configure method to enable swagger UI
             services.AddSwaggerGen(options =>
-            {
+            {                
                 options.SwaggerDoc("v1", new Info { Title = "SMIC API", Version = "v1" });
                 options.DocInclusionPredicate((docName, description) => true);
+
+                options.OperationFilter<SwaggerFileUploadFilter>(); //Swagger选项过滤器代码 ,不起作用, MVC用 ???
+                /*
+                   Action中的参数设置特性，测试。
+                   public void TestSwaggerUploadFile([SwaggerFileUpload] file){ }
+                */
 
                 // Define the BearerAuth scheme that's in use
                 options.AddSecurityDefinition("bearerAuth", new ApiKeyScheme()
@@ -113,7 +119,7 @@ namespace SMIC.Web.Host.Startup
                 //options.PlugInSources.AddFolder(Path.Combine(_hostingEnvironment.ContentRootPath, "Areas/Plugins"), SearchOption.AllDirectories);
 
             });
-        }
+        }                   
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {

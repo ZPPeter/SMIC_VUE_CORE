@@ -13,6 +13,8 @@
   <ItemGroup>
     <Compile Remove="Members\AbpUserMapper_.cs" />
     <Compile Remove="Person.cs" />
+    <Compile Remove="SwaggerFileUploadAttribute.cs" />
+    <Compile Remove="SwaggerFileUploadFilter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Members\DapperExtensionAppService_.cs.txt" />

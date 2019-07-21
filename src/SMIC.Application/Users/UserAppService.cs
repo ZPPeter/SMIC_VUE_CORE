@@ -231,7 +231,7 @@ namespace SMIC.Users
             var loginAsync = await _logInManager.LoginAsync(currentUser.UserName, input.AdminPassword, shouldLockout: false);
             if (loginAsync.Result != AbpLoginResultType.Success)
             {
-                throw new UserFriendlyException("管理密码有误，请检查！");
+                throw new UserFriendlyException("管理员密码错误，操作失败！");
             }
             if (currentUser.IsDeleted || !currentUser.IsActive)
             {
