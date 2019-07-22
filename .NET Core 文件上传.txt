@@ -1,0 +1,31 @@
+﻿几个重点：
+
+1：引用  IFormCollection 类 获取  Asp.Net.Core 中 Http 请求的一个类，就可以直接获取form表单中的参数，
+
+   应为 ASP.NET Core 中，没有了 IIS ，它的 HttpContext 只能用 IFormCollection 生成获取form表单中的数据
+
+   它的 HttpContext 没有 Current 概念，可以模拟一个，但不如直接用 IFormCollection
+
+命名空间为 ：namespace Microsoft.AspNetCore.Http
+
+2： 引用 IFormFileCollection 类 获取上传图片的文件名
+
+      命名空间为 ：namespace Microsoft.AspNetCore.Http
+
+       IFormFile GetFile(string name);，获取一张图片的名称
+        IReadOnlyList<IFormFile> GetFiles(string name);获取多张图片的名称
+
+3：创建一个  Hashtable hash = new Hashtable(); 类 保存图片路劲进行返回数据
+
+总结：
+
+asp.net mvc 与 asp.net core 中上传图片区别点是
+
+net core没有httpContext 不能采用这种方式获取 http请求中的form 数据，只能使用  IFormCollection 接口类
+
+多熟悉操作IO流自能而能就可以轻松搞定上传图片
+--------------------- 
+作者：十年河东，十年河西，莫欺骚年穷 
+来源：CSDN 
+原文：https://blog.csdn.net/weixin_41600552/article/details/83015725 
+版权声明：本文为博主原创文章，转载请附上博文链接！
