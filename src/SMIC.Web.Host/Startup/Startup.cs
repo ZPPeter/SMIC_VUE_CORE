@@ -18,6 +18,8 @@ using SMIC.Configuration;
 using SMIC.Identity;
 
 using Abp.AspNetCore.SignalR.Hubs;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace SMIC.Web.Host.Startup
 {
@@ -88,7 +90,10 @@ namespace SMIC.Web.Host.Startup
 
             services.AddSingleton<IConfiguration>(_appConfiguration); // 暴露给 DLL 插件用
 
-
+            // 在ASP.NET Core中怎么使用 HttpContext.Current
+            // https://www.cnblogs.com/maxzhang1985/p/6186455.html
+            // services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            
             /*
             return services.AddAbp<SMICWebHostModule>(
                 // Configure Log4Net logging

@@ -21,6 +21,16 @@ using Microsoft.AspNetCore.Http;
 using Abp.Runtime.Session;
 using Abp.UI;
 using SMIC.Common.Dto;
+using System;
+using System.IO;
+
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.PixelFormats;
+using Microsoft.AspNetCore.Mvc;
+
+
+
 namespace SMIC.Common
 {
     public class UploadAvatarAppService : SMICAppServiceBase
@@ -29,23 +39,82 @@ namespace SMIC.Common
         public UploadAvatarAppService(IAbpSession abpSession)
         {
             _abpSession = abpSession;
-        }
-                
-        public string UploadFile(UploadAvatarDto input)
+        }             
+
+        public void UploadFile1([FromBody]UploadAvatarDto input)
         {
-            Logger.Error("Upload: ");
+            Logger.Error("Upload: ... ...");
             if (_abpSession.UserId == null)
             {
                 throw new UserFriendlyException("请登录后再进行操作！");
             }
             long userId = _abpSession.UserId.Value;
-            Logger.Error("Upload: "+userId.ToString());
-            //var files = HttpRequest.Form.Files;
-            //HttpContext.Current.Request.Files
 
-            //string Ex = "";
-            //Logger.Error();
-            return userId + ":" + input.File.Name;
+            var stream = input.File.OpenReadStream();
+            var filename = "logo_" + userId + ".png";
+            var path = $"{filename.Substring(0, 2)}/{filename.Substring(2, 2)}";
+            var dir = $"{Environment.CurrentDirectory}\\wwwroot\\upload\\{path}";
+
+            Logger.Error("Dir:"+dir);
+
+            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            using (var fileStream = new FileStream($"{dir}\\{filename}", FileMode.Create))
+            {
+                //await input.File.CopyToAsync(fileStream);
+                input.File.CopyToAsync(fileStream);
+            }
+            /*
+            using (var image = Image.Load<Rgba32>($"{dir}\\{filename}"))
+            {
+                image.Mutate(x => x
+                    .Resize(160, 160));
+                image.Save($"{dir}\\thumbnail_{filename}");
+            }*/
+        }
+
+        public string UploadFile(IFormFile file)
+        //public ActionResult UploadFile(IFormFile file)
+        {
+            try
+            {
+                //var ddf = long.Parse(Request.Headers["token"]);
+                //if ((ddf & 178) == 178)
+                {
+                    //定义图片数组后缀格式
+                    string[] LimitPictureType = { ".JPG", ".JPEG", ".GIF", ".PNG", ".BMP" };
+                    
+                    //获取图片后缀是否存在数组中
+                    string currentPictureExtension = Path.GetExtension(file.FileName).ToUpper();
+                    if (LimitPictureType.Contains(currentPictureExtension))
+                    {
+                        //为了查看图片就不在重新生成文件名称了
+                        // var new_path = DateTime.Now.ToString("yyyyMMdd")+ file.FileName;
+
+                        var new_path = Path.Combine("uploads/images/", file.FileName);
+                        var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", new_path);
+                        //var path = @"E:\JLMISIII\SMIC_VUE\vue\public\img";
+                        using (var stream = new FileStream(path, FileMode.Create))
+                        {
+                            //图片路径保存到数据库里面去
+                            //bool flage = QcnApplyDetm.FinancialCreditQcnApplyDetmAdd(EntId, CrtUser, new_path);
+                            //if (flage == true)
+                            {
+                                //再把文件保存的文件夹中
+                                file.CopyTo(stream);
+                            }
+                        }
+                    }
+                    //return Json(new { status = 0, message = "上传成功" });
+                }
+                //return Json(new { status = -1, message = "没有授权" });
+                return "OK";
+            }
+            catch (Exception ex)
+            {
+                //return Json(new { status = -3, message = "上传失败", data = ex.Message });
+                return ex.Message;
+            }
+
         }
     }
 }
