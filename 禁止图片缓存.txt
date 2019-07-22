@@ -1,0 +1,2 @@
+ÐÞ¸ÄÍ·Ïñ£º
+picStr = "http://localhost:21021/images/logo.png?t="+(+new Date());
