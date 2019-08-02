@@ -28,7 +28,7 @@ namespace SMIC
             var user = UserManager.FindByIdAsync(AbpSession.GetUserId().ToString());
             if (user == null)
             {
-                throw new Exception("There is no current user!");
+                throw new Exception("没有找到该用户!");
             }
 
             return user;

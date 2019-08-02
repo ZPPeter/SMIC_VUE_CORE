@@ -28,11 +28,12 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using Microsoft.AspNetCore.Mvc;
-
-
+using Abp.Authorization;
+using SMIC.Authorization;
 
 namespace SMIC.Common
 {
+    [AbpAuthorize(PermissionNames.Pages_ChangeAvatar)]
     public class UploadAvatarAppService : SMICAppServiceBase
     {
         private readonly IAbpSession _abpSession;
@@ -44,7 +45,7 @@ namespace SMIC.Common
         public void UploadFile1([FromBody]UploadAvatarDto input)
         {
             Logger.Error("Upload: ... ...");
-            if (_abpSession.UserId == null)
+            if (_abpSession.UserId == null)  // 此处错误，怎么取用户 ID？
             {
                 throw new UserFriendlyException("请登录后再进行操作！");
             }
@@ -71,9 +72,8 @@ namespace SMIC.Common
                 image.Save($"{dir}\\thumbnail_{filename}");
             }*/
         }
-
-        public string UploadFile(IFormFile file)
-        //public ActionResult UploadFile(IFormFile file)
+                
+        public string UploadFile(IFormFile file)        
         {
             try
             {
@@ -82,16 +82,25 @@ namespace SMIC.Common
                 {
                     //定义图片数组后缀格式
                     string[] LimitPictureType = { ".JPG", ".JPEG", ".GIF", ".PNG", ".BMP" };
-                    
-                    //获取图片后缀是否存在数组中
-                    string currentPictureExtension = Path.GetExtension(file.FileName).ToUpper();
-                    if (LimitPictureType.Contains(currentPictureExtension))
-                    {
-                        //为了查看图片就不在重新生成文件名称了
-                        // var new_path = DateTime.Now.ToString("yyyyMMdd")+ file.FileName;
 
-                        var new_path = Path.Combine("uploads/images/", file.FileName);
-                        var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", new_path);
+                    //获取图片后缀是否存在数组中
+                    //string currentPictureExtension = Path.GetExtension(input.File.FileName).ToUpper();
+                    //if (LimitPictureType.Contains(currentPictureExtension))
+                    //{
+                    //为了查看图片就不在重新生成文件名称了
+
+                    // var new_path = DateTime.Now.ToString("yyyyMMdd")+ file.FileName;
+                    // var new_path = Path.Combine("uploads/images/", file.FileName);                                        
+
+                    // AbpSession.GetUserId().ToString()
+                    // _abpSession.UserId.Value
+
+                    long userId = _abpSession.UserId.Value;
+                    
+                    var filename = "logo_" + userId + ".png"; //文件改名                    
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/", filename);
+                        //var path = Path.Combine(AppContext.BaseDirectory, "images", new_path);                        
+
                         //var path = @"E:\JLMISIII\SMIC_VUE\vue\public\img";
                         using (var stream = new FileStream(path, FileMode.Create))
                         {
@@ -101,9 +110,10 @@ namespace SMIC.Common
                             {
                                 //再把文件保存的文件夹中
                                 file.CopyTo(stream);
+
                             }
                         }
-                    }
+                    //}
                     //return Json(new { status = 0, message = "上传成功" });
                 }
                 //return Json(new { status = -1, message = "没有授权" });
@@ -111,6 +121,7 @@ namespace SMIC.Common
             }
             catch (Exception ex)
             {
+                Logger.Error(ex.StackTrace);
                 //return Json(new { status = -3, message = "上传失败", data = ex.Message });
                 return ex.Message;
             }

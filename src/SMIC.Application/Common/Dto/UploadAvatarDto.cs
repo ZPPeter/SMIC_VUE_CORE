@@ -8,7 +8,8 @@ namespace SMIC.Common.Dto
 {
     public class UploadAvatarDto
     {
-        public string Desc { get; set; }
+        [Required]
+        public long UserId { get; set; }
         [Required]
         public IFormFile File { get; set; }
 
