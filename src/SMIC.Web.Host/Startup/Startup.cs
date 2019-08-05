@@ -21,6 +21,8 @@ using Abp.AspNetCore.SignalR.Hubs;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.AspNetCore.Http;
 
+using Exceptionless;
+
 namespace SMIC.Web.Host.Startup
 {
     public class Startup
@@ -168,6 +170,19 @@ namespace SMIC.Web.Host.Startup
                 options.IndexStream = () => Assembly.GetExecutingAssembly()
                     .GetManifestResourceStream("SMIC.Web.Host.wwwroot.swagger.ui.index.html");
             }); // URL: /swagger
+
+            app.UseExceptionless("zf8yUfIwRAVKqrzke8P9hsfLxDy8fucgsE2VmcYM");
+
+
+            /* 收费的  Exceptionless
+             * https://be.exceptionless.io/ 注册账号，选择项目类型
+             * 安装
+             * 引用
+             * Submit
+            Exception ex = new Exception("Hello,World");
+            ex.ToExceptionless().Submit();
+            */
+
         }
     }
 }

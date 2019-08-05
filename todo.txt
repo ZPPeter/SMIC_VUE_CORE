@@ -28,4 +28,4 @@ https://www.cnblogs.com/CreateMyself/p/6995403.html
 2、后端返回json包括code、msg两个固定自定，code=200表示成功，msg是报错信息一般
 */
 
-插件 - 执行任意SQL
+插件 - Exceptionless
