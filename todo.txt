@@ -29,8 +29,3 @@ https://www.cnblogs.com/CreateMyself/p/6995403.html
 */
 
 插件 - Exceptionless
-http://www.likecs.com/default/index/show?id=62737
-本地部署：注册的是Exceptionless官网账号，服务器如果不能访问外网，本地部署的Exceptionless也就直接不能登录。
-https://github.com/exceptionless/Exceptionless
-https://www.cnblogs.com/guolianyu/p/10112194.html
-https://www.cnblogs.com/indexlang/p/8963684.html
