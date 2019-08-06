@@ -11,12 +11,16 @@
   <ItemGroup>
     <Compile Remove="App_Data\**" />
     <Compile Remove="Controllers\Dto\**" />
+    <Compile Remove="Plugins1\**" />
     <Content Remove="App_Data\**" />
     <Content Remove="Controllers\Dto\**" />
+    <Content Remove="Plugins1\**" />
     <EmbeddedResource Remove="App_Data\**" />
     <EmbeddedResource Remove="Controllers\Dto\**" />
+    <EmbeddedResource Remove="Plugins1\**" />
     <None Remove="App_Data\**" />
     <None Remove="Controllers\Dto\**" />
+    <None Remove="Plugins1\**" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Controllers\UploadController.cs" />
@@ -32,7 +36,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="wwwroot\Plugins\MyJobPlugIn.dll" />
-    <None Include="wwwroot\Plugins\MyJobPlugIn.pdb" />
     <None Update="Dockerfile">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
