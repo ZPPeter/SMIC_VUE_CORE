@@ -177,7 +177,9 @@ namespace SMIC.Web.Host.Startup
                     .GetManifestResourceStream("SMIC.Web.Host.wwwroot.swagger.ui.index.html");
             }); // URL: /swagger
 
-            app.UseExceptionless(_appConfiguration); // 来自于 class ExceptionlessBuilderExtensions.cs
+
+            // 本地 Exceptionless 部署
+            // app.UseExceptionless(_appConfiguration); // 来自于 class ExceptionlessBuilderExtensions.cs
 
             // 以下内容已经封装到 写入 ExceptionlessBuilderExtensions.cs 类
             // 本地配置的 appsettings.json
@@ -191,7 +193,8 @@ namespace SMIC.Web.Host.Startup
             //    ExceptionlessClient.Default.SubmittingEvent += OnSubmittingEvent;
             //    app.UseExceptionless();
             //}
-
+            
+            app.UseExceptionless("zf8yUfIwRAVKqrzke8P9hsfLxDy8fucgsE2VmcYM");
             /* 收费的  Exceptionless
              * app.UseExceptionless("zf8yUfIwRAVKqrzke8P9hsfLxDy8fucgsE2VmcYM");
              * ServerUrl 为空即可

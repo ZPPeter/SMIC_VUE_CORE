@@ -26,7 +26,7 @@ namespace MyPlugIn
         protected override void DoWork()
         {
             Logger.Info("---------------- DeleteOldAuditLogsWorker 正在工作 ----------------");
-            Logger.Info(TestModule.Hello);
+            // Logger.Info(TestModule.Hello);
 
             using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.MayHaveTenant))
             {

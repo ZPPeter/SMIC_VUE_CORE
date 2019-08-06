@@ -29,3 +29,10 @@ https://www.cnblogs.com/CreateMyself/p/6995403.html
 */
 
 插件 - Exceptionless
+
+
+ASP.NET Core 2.2 入门
+https://docs.microsoft.com/zh-cn/aspnet/core/getting-started/?view=aspnetcore-2.2&tabs=windows
+
+CodeFirst 自动迁移数据库学习
+https://docs.microsoft.com/zh-cn/ef/ef6/modeling/code-first/migrations/index
