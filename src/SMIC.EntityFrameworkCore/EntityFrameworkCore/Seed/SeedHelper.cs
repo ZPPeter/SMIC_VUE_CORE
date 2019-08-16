@@ -30,6 +30,8 @@ namespace SMIC.EntityFrameworkCore.Seed
 
             // My Tasks
             new DefaultTestDataForTask(context).Create();
+
+            new DefaultDataForHomeInfo(context).Create();
         }
 
         private static void WithDbContext<TDbContext>(IIocResolver iocResolver, Action<TDbContext> contextAction)

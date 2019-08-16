@@ -6,7 +6,13 @@ namespace SMIC.EntityFrameworkCore
     // 2. DbContext
     public class SDIMDbContext : AbpDbContext
     {
-        public virtual DbSet<VW_SJMX> Courses { get; set; }
+        public virtual DbSet<VW_SJMX> VW_SJMX { get; set; }
+
+        public virtual DbSet<WTD> WTD { get; set; }
+
+        public virtual DbSet<SJMX> SJMX { get; set; }
+
+        public virtual DbSet<STATS> STATS { get; set; }
 
         public SDIMDbContext(DbContextOptions<SDIMDbContext> options)
             : base(options)

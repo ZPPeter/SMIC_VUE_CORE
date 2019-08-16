@@ -1,0 +1,3 @@
+
+// Í³¼Æ
+update YQSF_SJD set YQJS = (select count(0) from YQSF_SJMX where sjdid=YQSF_SJD.ID)

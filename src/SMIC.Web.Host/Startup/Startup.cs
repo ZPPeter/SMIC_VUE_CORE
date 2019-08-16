@@ -22,7 +22,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.AspNetCore.Http;
 
 using Exceptionless;
-
+using SMIC.Utils;
 namespace SMIC.Web.Host.Startup
 {
     public class Startup
@@ -41,8 +41,8 @@ namespace SMIC.Web.Host.Startup
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
 
-            // 注入
-            services.AddSingleton<ILogger, ExceptionlessLogger>();
+            // 注入 Exceptionless
+            services.AddSingleton<SMIC.Utils.ILogger, ExceptionlessLogger>();
             
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             
@@ -176,37 +176,8 @@ namespace SMIC.Web.Host.Startup
                 options.IndexStream = () => Assembly.GetExecutingAssembly()
                     .GetManifestResourceStream("SMIC.Web.Host.wwwroot.swagger.ui.index.html");
             }); // URL: /swagger
-
-
-            // 本地 Exceptionless 部署
-            // app.UseExceptionless(_appConfiguration); // 来自于 class ExceptionlessBuilderExtensions.cs
-
-            // 以下内容已经封装到 写入 ExceptionlessBuilderExtensions.cs 类
-            // 本地配置的 appsettings.json
-            // 封装使用Exceptionless分布式日志组件
-            // elasticsearch 和 kibana 都是 0 配置的
-            //var isEnableLogger = Convert.ToBoolean(_appConfiguration["Exceptionless:Enabled"] ?? "false");
-            //if (isEnableLogger)
-            //{
-            //ExceptionlessClient.Default.Configuration.ApiKey = _appConfiguration["Exceptionless:ApiKey"];
-            //    ExceptionlessClient.Default.Configuration.ServerUrl = _appConfiguration["Exceptionless:ServerUrl"];
-            //    ExceptionlessClient.Default.SubmittingEvent += OnSubmittingEvent;
-            //    app.UseExceptionless();
-            //}
             
-            app.UseExceptionless("zf8yUfIwRAVKqrzke8P9hsfLxDy8fucgsE2VmcYM");
-            /* 收费的  Exceptionless
-             * app.UseExceptionless("zf8yUfIwRAVKqrzke8P9hsfLxDy8fucgsE2VmcYM");
-             * ServerUrl 为空即可
-             * https://be.exceptionless.io/ 注册账号，选择项目类型
-             * 安装
-             * 引用
-             * Submit
-             * 免费版只能一个项目，每月3000条记录，保留3天
-             * 使用 elasticsearch 进行实时搜索，这个是基于 Java 的，所以需要 Java环境。 
-            */
-
-            ExceptionlessClient.Default.CreateLog("日志信息", Exceptionless.Logging.LogLevel.Debug).AddTags("tag10", "tag11").Submit();
+            app.UseExceptionless(_appConfiguration); // 来自于 class ExceptionlessBuilderExtensions.cs
 
             /*
             在你想要Logging的地方调用
@@ -228,62 +199,18 @@ namespace SMIC.Web.Host.Startup
                 return "Login Success.";       
             }
             }
-            */
 
-            ExceptionlessLogger _logger = new ExceptionlessLogger();                                             
-
-            Exception ex = new Exception("Hello,World 2019");
+            // 直接使用
+            ExceptionlessClient.Default.CreateLog("日志信息 2019 v3", Exceptionless.Logging.LogLevel.Debug).AddTags("tag10", "tag11").Submit();
+            ExceptionlessLogger _logger = new ExceptionlessLogger();
+            Exception ex = new Exception("Hello,World 2019 v3");
             ex.ToExceptionless().AddTags("tag1", "tag2").Submit();
             ex.ToExceptionless().Submit();
+            _logger.Info("Test msg v3", "tag21", "tag22");
 
-            _logger.Info("Test msg", "tag21", "tag22");
+            */
 
         }
-
-        /*
-         * 写入 ExceptionlessBuilderExtensions.cs
-        private static void OnSubmittingEvent(object sender, EventSubmittingEventArgs e)
-        {
-            // 只处理未处理的异常
-            //if (!e.IsUnhandledError)
-            //{
-            //    return;
-            //}
-
-            // 忽略404错误
-            if (e.Event.IsNotFound())
-            {
-                e.Cancel = true;
-                return;
-            }
-
-            // 忽略没有错误体的错误
-            var error = e.Event.GetError();
-            if (error == null)
-            {
-                return;
-            }
-
-            // 忽略 401 (Unauthorized) 和 请求验证的错误.
-            if (error.Code == "401" || error.Type == "System.Web.HttpRequestValidationException")
-            {
-                e.Cancel = true;
-                return;
-            }
-
-            // Ignore any exceptions that were not thrown by our code.
-            //var handledNamespaces = new List<string> { "Exceptionless" };
-            //if (!error.StackTrace.Select(s => s.DeclaringNamespace).Distinct().Any(ns => handledNamespaces.Any(ns.Contains)))
-            //{
-            //    e.Cancel = true;
-            //    return;
-            //}
-
-            // 添加附加信息.
-            //e.Event.Tags.Add("EDC.Core");
-            //e.Event.MarkAsCritical();
-        }
-        */
 
     }
 }

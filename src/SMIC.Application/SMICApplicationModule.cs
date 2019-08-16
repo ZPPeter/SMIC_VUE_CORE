@@ -7,6 +7,8 @@ using SMIC.PhoneBooks.Persons.Authorization;
 using SMIC.PhoneBooks.Persons.Dtos.LTMAutoMapper;
 using SMIC.MyTasks.Mapper;
 using SMIC.MyTasks.Authorization;
+using SMIC.HomeData.Mapper;
+using SMIC.HomeData.Authorization;
 namespace SMIC
 {
     [DependsOn(
@@ -21,11 +23,13 @@ namespace SMIC
 
             Configuration.Authorization.Providers.Add<PersonAppAuthorizationProvider>();  // SMIC.PhoneBooks.Persons.Authorization
             Configuration.Authorization.Providers.Add<TaskAuthorizationProvider>();
+            Configuration.Authorization.Providers.Add<HomeInfoAuthorizationProvider>();
 
             Configuration.Modules.AbpAutoMapper().Configurators.Add(configuration =>
             {
                 CustomerPersonMapper.CreateMappings(configuration);   // 自定义类型映射 - SMIC.PhoneBooks.Persons.Dtos.LTMAutoMapper
                 TaskMapper.CreateMappings(configuration);             // MyTasks.Task的AutoMapper
+                HomeInfoMapper.CreateMappings(configuration);
             });
         }
 

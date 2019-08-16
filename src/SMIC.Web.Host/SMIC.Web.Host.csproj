@@ -25,7 +25,9 @@
   <ItemGroup>
     <Compile Remove="Controllers\UploadController.cs" />
     <Compile Remove="Controllers\UploadController_.cs" />
+    <Compile Remove="ExceptionlessLogger.cs" />
     <Compile Remove="HttpContext.cs" />
+    <Compile Remove="ILogger.cs" />
     <Compile Remove="ValuesController.cs" />
   </ItemGroup>
   <ItemGroup>

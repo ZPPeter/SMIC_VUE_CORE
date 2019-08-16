@@ -13,3 +13,11 @@
 注意检查 logs (不仅仅 Error 和 Fatal 还有 Info) 和 Windows 事件查看器
 
 重要：：：把原来目录系统文件清空再发布(用户文件保留)，避免缓存问题
+
+发布到 Linux 有问题
+1：logs 空
+2：session.js 登录后取不到 user 信息
+3：头像取不到
+
+注意：发布后数据库连接字符串在
+appsettings.production.json

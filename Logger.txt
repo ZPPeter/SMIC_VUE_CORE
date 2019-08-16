@@ -1,0 +1,20 @@
+SMIC.EntityFrameworkCore EFLogger 
+用于命令行输出 EF Core Command
+
+SMIC.Util\ExceptionEx.cs 
+远程存储重要信息，官网账号具有短信通知
+
+nlog /log4net 
+日志记录 logs
+
+using SMIC.Utils;//Exceptionless;
+
+                      
+// 远程存储
+ExceptionEx.SendException("Hello,World Exceptionless 2019 v1", "tag1", "tag2");
+
+ExceptionlessLogger _logger = new ExceptionlessLogger();
+_logger.Info("Hello,World Exceptionless 2019 v2", "tag21", "tag22");
+
+
+Logger.Info($"User Login Successfully. Time:{DateTime.Now.ToString()}"); // logs 目录

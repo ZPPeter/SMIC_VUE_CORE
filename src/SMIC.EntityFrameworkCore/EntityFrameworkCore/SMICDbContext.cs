@@ -11,6 +11,8 @@ using SMIC.PhoneBooks.PhoneNumbers;
 using SMIC.PhoneBooks.Persons;
 using SMIC.EntityMapper.Tasks;
 using SMIC.Utils; //EFLogger
+using SMIC.HomeData;
+using SMIC.EntityMapper.HomeInfos;
 namespace SMIC.EntityFrameworkCore
 {
     public class SMICDbContext : AbpZeroDbContext<Tenant, Role, User, SMICDbContext>
@@ -24,7 +26,7 @@ namespace SMIC.EntityFrameworkCore
         public virtual DbSet<Person> Persons { get; set;}
         //public virtual DbSet<MyUser> MyUsers { get; set; }
         public virtual DbSet<PhoneNumber> PhoneNumbers { get; set; }
-
+        public DbSet<HomeInfo> HomeInfos { get; set; }
         public SMICDbContext(DbContextOptions<SMICDbContext> options)
             : base(options)
         {
@@ -63,8 +65,9 @@ namespace SMIC.EntityFrameworkCore
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly()); // MemberUserConfiguration 等
 
             modelBuilder.ApplyConfiguration(new TaskCfg());
+            modelBuilder.ApplyConfiguration(new HomeInfoCfg());
 
-            modelBuilder.Entity<MyTask>().Ignore(o => o.AssignedPerson);
+            modelBuilder.Entity<MyTask>().Ignore(o => o.AssignedPerson);            
             // [NotMapped] 
         }
     }

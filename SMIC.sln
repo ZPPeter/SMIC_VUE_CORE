@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		google_fonts.txt = google_fonts.txt
 		LastLoginTime.txt = LastLoginTime.txt
 		linq_lambda表达式.txt = linq_lambda表达式.txt
+		Logger.txt = Logger.txt
+		SQL.txt = SQL.txt
 		There is no permission.txt = There is no permission.txt
 		todo.txt = todo.txt
 		发布.txt = 发布.txt
@@ -41,6 +43,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyJobPlugIn", "src\MyPlugIns\Background\MyJobPlugIn.csproj", "{33C47214-C5DB-432F-91C8-91025031C53F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMIC.Util", "src\SMIC.Util\SMIC.Util.csproj", "{7DC90EAE-C1D6-48B2-8908-D713EB509B8D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +84,10 @@ Global
 		{33C47214-C5DB-432F-91C8-91025031C53F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33C47214-C5DB-432F-91C8-91025031C53F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33C47214-C5DB-432F-91C8-91025031C53F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DC90EAE-C1D6-48B2-8908-D713EB509B8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DC90EAE-C1D6-48B2-8908-D713EB509B8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DC90EAE-C1D6-48B2-8908-D713EB509B8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DC90EAE-C1D6-48B2-8908-D713EB509B8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,6 +101,7 @@ Global
 		{22CFE0D2-8DCA-42D7-AD7D-784C3862493F} = {AFAA0841-BD93-466F-B8F4-FB4EEC86F1FC}
 		{E0580562-F8F2-4EBB-B07A-ABFC6F2C314F} = {AFAA0841-BD93-466F-B8F4-FB4EEC86F1FC}
 		{33C47214-C5DB-432F-91C8-91025031C53F} = {AFAA0841-BD93-466F-B8F4-FB4EEC86F1FC}
+		{7DC90EAE-C1D6-48B2-8908-D713EB509B8D} = {AFAA0841-BD93-466F-B8F4-FB4EEC86F1FC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5E08878C-E2B6-46B1-9A06-3170F3499A4D}

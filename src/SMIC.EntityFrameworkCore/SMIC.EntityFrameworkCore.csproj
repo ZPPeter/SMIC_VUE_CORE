@@ -24,6 +24,7 @@
     <Compile Remove="Migrations\20190702133631_add_phoneBooks.cs" />
     <Compile Remove="Migrations\20190709083848_add_userEx_remove_lastlogintime2.cs" />
     <Compile Remove="Migrations\20190715011520_Remove_Name_SurName.cs" />
+    <Compile Remove="Migrations\20190815015938_add_homedata_info.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Abp.Dapper" Version="4.3.0" />

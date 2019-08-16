@@ -51,9 +51,9 @@ namespace SMIC.EntityFrameworkCore.Seed.Host
                             !grantedPermissions.Contains(p.Name))
                 .ToList();
 
-            // 将 Task 相关权限赋予给 Admin
-            var taskPermissions = PermissionFinder.GetAllPermissions(new PersonAppAuthorizationProvider()).ToList();
-            permissions.AddRange(taskPermissions);
+            // 将 SMIC.PhoneBooks.Persons 相关权限赋予给 Admin
+            var smicPermissions = PermissionFinder.GetAllPermissions(new PersonAppAuthorizationProvider()).ToList();
+            permissions.AddRange(smicPermissions);
 
             if (permissions.Any())
             {

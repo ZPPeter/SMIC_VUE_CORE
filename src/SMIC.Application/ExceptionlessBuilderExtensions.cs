@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Exceptionless;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -33,19 +31,14 @@ namespace SMIC.Web.Host
 
             return app;
         }
-        /// <summary>
-        /// 统一修改未处理的异常报告
-        /// 你可以在通过SubmittingEvent 事件设置全局的忽略异常信息添加一些自定义信息等等
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+
         private static void OnSubmittingEvent(object sender, EventSubmittingEventArgs e)
         {
-            //只处理未处理的异常
-            if (!e.IsUnhandledError)
-            {
-                return;
-            }
+            // 只处理未处理的异常
+            //if (!e.IsUnhandledError)
+            //{
+            //    return;
+            //}
 
             // 忽略404错误
             if (e.Event.IsNotFound())
@@ -69,16 +62,16 @@ namespace SMIC.Web.Host
             }
 
             // Ignore any exceptions that were not thrown by our code.
-            var handledNamespaces = new List<string> { "Exceptionless" };
-            if (!error.StackTrace.Select(s => s.DeclaringNamespace).Distinct().Any(ns => handledNamespaces.Any(ns.Contains)))
-            {
-                e.Cancel = true;
-                return;
-            }
+            //var handledNamespaces = new List<string> { "Exceptionless" };
+            //if (!error.StackTrace.Select(s => s.DeclaringNamespace).Distinct().Any(ns => handledNamespaces.Any(ns.Contains)))
+            //{
+            //    e.Cancel = true;
+            //    return;
+            //}
 
             // 添加附加信息.
-            e.Event.Tags.Add("SMIC");
-            e.Event.MarkAsCritical();
+            //e.Event.Tags.Add("EDC.Core");
+            //e.Event.MarkAsCritical();
         }
     }
 }

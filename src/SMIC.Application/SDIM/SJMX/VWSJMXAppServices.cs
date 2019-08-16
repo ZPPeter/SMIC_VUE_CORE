@@ -13,8 +13,8 @@ using Abp.Dapper.Repositories;
 using System.Linq.Expressions;
 using System.Linq;
 using System;
-using SMIC.SDIM.SJMX.Dtos;
-namespace SMIC.SDIM.SJMX
+using SMIC.SDIM.Dtos;
+namespace SMIC.SDIM
 {
     public class VWSJMXAppServices : SMICAppServiceBase
     {

@@ -125,6 +125,17 @@
     <text name="EditTask"  value="编辑任务"></text>
     <text name="DeleteTask"  value="删除任务"></text>
     <text name="BatchDeleteTask"  value="批量删除任务"></text>
+  
+    <text name="title"  value="消息标题"></text>
+    <text name="description"  value="消息内容"></text>
+    <text name="HomeInfo" value="主页消息通知"></text>
+    <text name="QueryHomeInfo"  value="查询主页消息通知"></text>
+    <text name="CreateHomeInfo"  value="添加主页消息通知"></text>
+    <text name="EditHomeInfo"  value="编辑主页消息通知"></text>
+    <text name="DeleteHomeInfo"  value="删除主页消息通知"></text>
+    <text name="BatchDeleteHomeInfo" value="批量删除主页消息通知"></text>
+    <text name="ExportHomeInfo"  value="导出主页消息通知"></text>
+
   </texts>
 </localizationDictionary>
 

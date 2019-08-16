@@ -2,7 +2,7 @@
 using Abp.Runtime.Validation;
 using SMIC.Dto;
 
-namespace SMIC.SDIM.SJMX.Dtos
+namespace SMIC.SDIM.Dtos
 {
     public class GetVwSjmxsInput : PagedAndSortedInputDto, IShouldNormalize
     {

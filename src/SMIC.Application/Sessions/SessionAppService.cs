@@ -24,6 +24,7 @@ using Newtonsoft.Json;
 
 using SMIC.Members;
 using System.Linq.Expressions;
+using SMIC.Utils;//Exceptionless;
 
 namespace SMIC.Sessions
 {
@@ -57,7 +58,7 @@ namespace SMIC.Sessions
 
         [DisableAuditing]
         public async Task<GetCurrentLoginInformationsOutput> GetCurrentLoginInformations()
-        {            
+        {
             var output = new GetCurrentLoginInformationsOutput
             {
                 Application = new ApplicationInfoDto

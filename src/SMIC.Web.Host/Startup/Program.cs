@@ -14,6 +14,7 @@ namespace SMIC.Web.Host.Startup
         {
             return WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                .UseUrls("http://*:21021") 
                 .Build();
         }
     }
