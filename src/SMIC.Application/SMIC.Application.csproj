@@ -14,6 +14,7 @@
     <Compile Remove="ExceptionlessBuilderExtensions.cs" />
     <Compile Remove="ExceptionlessLogger.cs" />
     <Compile Remove="Members\AbpUserMapper_.cs" />
+    <Compile Remove="Members\MemberUserCacheAppService.cs" />
     <Compile Remove="Person.cs" />
     <Compile Remove="SwaggerFileUploadAttribute.cs" />
     <Compile Remove="SwaggerFileUploadFilter.cs" />

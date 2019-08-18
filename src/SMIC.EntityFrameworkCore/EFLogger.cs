@@ -43,16 +43,20 @@ namespace SMIC.Utils
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
             //ef core执行数据库查询时的categoryName为Microsoft.EntityFrameworkCore.Database.Command,日志级别为Information
-            if (categoryName == "Microsoft.EntityFrameworkCore.Database.Command"
-                && logLevel == LogLevel.Information)
+            if (categoryName == "Microsoft.EntityFrameworkCore.Database.Command" && logLevel == LogLevel.Information)
             {
                 var logContent = formatter(state, exception);
-                //TODO: 拿到日志内容想怎么玩就怎么玩吧
-                Console.WriteLine();
-                Console.ForegroundColor = ConsoleColor.Green;
-                if(!logContent.Contains("FROM [AbpBackgroundJobs] AS [t]"))
+
+                // Console.ForegroundColor = ConsoleColor.Green;  // 无效
+
+                //if (logContent.Contains("AbpUser") || logContent.Contains("MemberUser") )
+                if (!logContent.Contains("[AbpBackgroundJobs]") && !logContent.Contains("[AbpAuditLogs]") && !logContent.Contains("[AbpEditions]") && !logContent.Contains("[AbpLanguages]") && !logContent.Contains("[AbpRoles]") && !logContent.Contains("[AbpPermissions]") && !logContent.Contains("[AbpSettings]")) {
+                    Console.WriteLine("EF Logger-----------------------------------------------------------------------");
                     Console.WriteLine(logContent);
-                Console.ResetColor();
+                    Console.WriteLine("EF Logger-----------------------------------------------------------------------");
+                }                    
+
+                // Console.ResetColor(); // 无效
             }
         }
 

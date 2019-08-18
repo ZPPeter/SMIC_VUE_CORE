@@ -31,6 +31,7 @@ using System.Text;
 // 如果要修改字符串而不创建新的对象，则可以使用System.Text.StringBuilder类。例如当在一个循环中将许多字符串连接在一起时，使用StringBuilder类可以提升性能。
 using DapperExtensions;
 using Abp.Data;
+using Abp.Runtime.Caching;
 
 namespace SMIC.Members
 {
@@ -42,13 +43,15 @@ namespace SMIC.Members
         //private readonly IDapperRepository<MemberUser, long> _memberDapperRepository;
         private readonly IDapperRepository<AbpUser, long> _userRepository;
         private readonly IDapperRepository<Role, int> _roleRepository;
+        private readonly ICacheManager _cacheManager;//依赖注入缓存
 
         public MemberUserAppService(
-            IRepository<MemberUser, long> repository, IDapperRepository<AbpUser, long> userRepository, IDapperRepository<Role, int> roleRepository)//, IDapperRepository<MemberUser, long> memberDapperRepository)
+            IRepository<MemberUser, long> repository, IDapperRepository<AbpUser, long> userRepository, IDapperRepository<Role, int> roleRepository, ICacheManager cacheManager)//, IDapperRepository<MemberUser, long> memberDapperRepository)
             : base(repository)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
+            _cacheManager = cacheManager;//依赖注入缓存
 
             //_memberDapperRepository = memberDapperRepository;            
             LocalizationSourceName = SMICConsts.LocalizationSourceName;
@@ -62,6 +65,40 @@ namespace SMIC.Members
                 .WhereIf(input.To.HasValue, b => b.CreationTime <= input.To.Value.LocalDateTime);
             //CreationTime是按照服务器时间存储，故表单提交的UTC时间可转为服务器LocalDateTime进行比较
         }
+
+
+        /// <summary>
+        /// 缓存
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<AbpUser>> GetCacheAll()
+        {
+            //IEnumerable<AbpUser> ret = _userRepository.GetAll();
+            //return ret;
+
+            var entityCache = await _cacheManager.GetCache("MemberUserCache")
+                              .Get("MemberUser", () => _userRepository.GetAllAsync());// 缓存之后这句就不执行了，_userRepository.GetAllAsync() 断点调试
+
+            var entityCache1 = _cacheManager.GetCache("MemberUserCache")
+                              .Get("User_1", () => _userRepository.FirstOrDefault(1));//  .GetAllAsync());
+
+            // _cacheManager.GetCache("MemberUserCache").Clear();             // 打开监视器可以看到已经去除掉了
+            // await _cacheManager.GetCache("MemberUserCache").ClearAsync();  // 打开监视器可以看到已经去除掉了
+
+
+            // ITypedCache泛型版本
+            var entityCache2 = _cacheManager.GetCache("MemberUserCache") // ControllerCache
+                                  .AsTyped<string, IEnumerable<AbpUser>>()
+                                  .Get("AllUsers", () => _userRepository.GetAll());
+            // 注意对应 IEnumerable<AbpUser> , 不是 List<AbpUser>
+
+            // _cacheManager.GetCache("MemberUserCache").Remove("AllUsers");            //  打开监视器可以看到已经去除掉了
+            // await _cacheManager.GetCache("MemberUserCache").RemoveAsync("AllUsers"); //  打开监视器可以看到已经去除掉了
+
+            return entityCache;
+        }
+
+
 
         /// <summary>
         /// 增加 LastLogintime,Dapper 实现
@@ -141,6 +178,7 @@ namespace SMIC.Members
                 tempList
             );
         }
+
 
         public string[] GetRoles(long userid) {
                         
