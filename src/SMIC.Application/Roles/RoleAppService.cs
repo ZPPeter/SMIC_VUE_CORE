@@ -70,13 +70,15 @@ namespace SMIC.Roles
 
             ObjectMapper.Map(input, role);
 
-            CheckErrors(await _roleManager.UpdateAsync(role));
+            CheckErrors(await _roleManager.UpdateAsync(role));          
 
+            // 修改权限
             var grantedPermissions = PermissionManager
                 .GetAllPermissions()
                 .Where(p => input.Permissions.Contains(p.Name))
                 .ToList();
 
+            // await _roleManager.GrantPermissionAsync(role, grantedPermissions[0]); 
             await _roleManager.SetGrantedPermissionsAsync(role, grantedPermissions);
 
             return MapToEntityDto(role);

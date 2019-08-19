@@ -14,16 +14,19 @@ using System.Linq.Expressions;
 using System.Linq;
 using System;
 using Abp.Domain.Entities;
+using Abp.Runtime.Caching;
 
 namespace SMIC.SDIM
 {
     public class SJMXAppServices : SMICAppServiceBase
     {
         private readonly IDapperRepository<SJMX, long> _sjmxDapperRepository;
-        private double[] StatsData;
-        public SJMXAppServices(IDapperRepository<SJMX, long> sjmxDapperRepository)
+        private readonly ICacheManager _cacheManager;//依赖注入缓存
+
+        public SJMXAppServices(IDapperRepository<SJMX, long> sjmxDapperRepository, ICacheManager cacheManager)
         {
             _sjmxDapperRepository = sjmxDapperRepository;
+            _cacheManager = cacheManager;//依赖注入缓存
         }
 
         public dynamic GetRecentSJMX()

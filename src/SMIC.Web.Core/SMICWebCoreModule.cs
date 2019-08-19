@@ -51,6 +51,29 @@ namespace SMIC
             //Configuration.Modules.AbpAspNetCore().CreateControllersForAppServices(typeof(FirstABPPluginModule).Assembly, moduleName: "cline", useConventionalHttpVerbs: true);
 
             ConfigureTokenAuth();
+
+            // 相对过期时间 默认 60 min
+            // DefaultSlidingExpireTime -> 多久未访问，超过多少时间不调用就失效            
+            // 只要在相对过期时间内，被访问,那么永远不会过期（由于内存不足删除除外）
+
+            // 绝对过期时间 默认 60 min
+            // DefaultAbsoluteExpireTime -> 定时销毁，超过多少秒后过期，不管有没有操作缓存都过期
+                        
+            //配置所有Cache的默认 相对过期 时间为2小时,默认 60 min
+            Configuration.Caching.ConfigureAll(
+            cache =>
+            {
+                // cache.DefaultAbsoluteExpireTime 
+                cache.DefaultSlidingExpireTime = TimeSpan.FromHours(2);
+            });
+
+            //配置指定的Cache绝对过期时间为1天，统计图表
+            Configuration.Caching.Configure(
+            "StatsCacheBy", cache =>
+            {
+                cache.DefaultAbsoluteExpireTime = TimeSpan.FromDays(1);                
+            });
+
         }
 
         private void ConfigureTokenAuth()

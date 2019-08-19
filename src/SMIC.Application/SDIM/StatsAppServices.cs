@@ -14,19 +14,22 @@ using System.Linq.Expressions;
 using System.Linq;
 using System;
 using Abp.Domain.Entities;
+using Abp.Runtime.Caching;
 
 namespace SMIC.SDIM
 {
     public class StatsAppServices : SMICAppServiceBase
     {
-        private readonly IDapperRepository<STATS, long> _sjmxDapperRepository;        
-        
-        public StatsAppServices(IDapperRepository<STATS, long> sjmxDapperRepository)
+        private readonly IDapperRepository<STATS, long> _sjmxDapperRepository;
+        private readonly ICacheManager _cacheManager;//依赖注入缓存
+
+        public StatsAppServices(IDapperRepository<STATS, long> sjmxDapperRepository, ICacheManager cacheManager)
         {
             _sjmxDapperRepository = sjmxDapperRepository;
+            _cacheManager = cacheManager;//依赖注入缓存
         }
 
-        public double[] getStatsData()
+        private double[] _getStatsData()
         {
             /*
             1000 全站仪             
@@ -65,7 +68,7 @@ namespace SMIC.SDIM
         }
 
 
-        public double[][] getStatsDataBy(NullableIdDto<int> input)
+        private double[][] _getStatsDataBy(NullableIdDto<int> input)
         {
             double[] StatsData = new double[12];
             string strSQL = @"select 
@@ -128,13 +131,23 @@ order by
             return Datas;
 
         }
+
+
+        /// <summary>
+        /// 缓存
+        /// </summary>
+        /// <returns></returns>
+        public double[] getStatsData()
+        {
+            var entityCache = _cacheManager.GetCache("StatsCache").Get("AllDatas", () => _getStatsData());
+            return entityCache;
+        }
+
+        public double[][] getStatsDataBy(NullableIdDto<int> input)
+        {
+            var entityCache = _cacheManager.GetCache("StatsCacheBy").Get("DatasBy"+ input.Id, () => _getStatsDataBy(input));
+            return entityCache;
+        }
+
     }
 }
-
-/*    
-    getQzyStatsData
-       0=[183,198,93,135,74,344,125,512,626,377,238,499];
-       1=[193,210,113,154,99,432,151,498,324,356,181,520];
-    getGpsStatsData
-    getQtyStatsData 
-*/

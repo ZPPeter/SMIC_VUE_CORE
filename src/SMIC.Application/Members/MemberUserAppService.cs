@@ -54,7 +54,7 @@ namespace SMIC.Members
             _cacheManager = cacheManager;//依赖注入缓存
 
             //_memberDapperRepository = memberDapperRepository;            
-            LocalizationSourceName = SMICConsts.LocalizationSourceName;
+            //LocalizationSourceName = SMICConsts.LocalizationSourceName;
         }
 
         protected override IQueryable<MemberUser> CreateFilteredQuery(PagedMemberUserResultRequestDto input)
