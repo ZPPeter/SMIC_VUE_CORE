@@ -122,7 +122,7 @@ namespace SMIC.SDIM
             }
             */
 
-            List<VW_SJMX> tempList2 = ret.MapTo<List<VW_SJMX>>();
+            List<VW_SJMX> tempList2 =  ObjectMapper.Map<List<VW_SJMX>>(ret);
             return new PagedResultDto<VW_SJMX>(
                 totalCount,
                 tempList2

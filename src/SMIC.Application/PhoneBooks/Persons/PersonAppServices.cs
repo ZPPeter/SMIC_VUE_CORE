@@ -92,8 +92,8 @@ namespace SMIC.PhoneBooks.Persons
                 .PageBy(input)
                 .ToListAsync();
 
-            //var personListDtos = ObjectMapper.Map<List <PersonListDto>>(persons);
-            var personListDtos = persons.MapTo<List<PersonListDto>>();
+            var personListDtos = ObjectMapper.Map<List <PersonListDto>>(persons);
+            //var personListDtos = persons.MapTo<List<PersonListDto>>();
 
             sw.Stop();
             Logger.Error("耗时:" + sw.ElapsedMilliseconds + (sw.ElapsedMilliseconds > 1000 ? "#####" : string.Empty) + "毫秒\n"); // 可以记录操作
@@ -111,7 +111,7 @@ namespace SMIC.PhoneBooks.Persons
         {
             var entity = await _personRepository.GetAsync(input.Id);
 
-            return entity.MapTo<PersonListDto>();
+            return ObjectMapper.Map<PersonListDto>(entity);
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace SMIC.PhoneBooks.Persons
             {
                 var entity = await _personRepository.GetAsync(input.Id.Value);
 
-                personEditDto = entity.MapTo<PersonEditDto>();
+                personEditDto = ObjectMapper.Map<PersonEditDto>(entity);
 
                 //personEditDto = ObjectMapper.Map<List <personEditDto>>(entity);
             }
@@ -231,7 +231,7 @@ namespace SMIC.PhoneBooks.Persons
             var entity = ObjectMapper.Map<Person>(input);
 
             entity = await _personRepository.InsertAsync(entity);
-            return entity.MapTo<PersonEditDto>();
+            return ObjectMapper.Map<PersonEditDto>(entity);
         }
 
         /// <summary>
@@ -242,9 +242,9 @@ namespace SMIC.PhoneBooks.Persons
         {
             //TODO:更新前的逻辑判断，是否允许更新
             var entity = await _personRepository.GetAsync(input.Id.Value);
-            input.MapTo(entity);
+            //input.MapTo(entity);
 
-            // ObjectMapper.Map(input, entity);
+            ObjectMapper.Map(input, entity);
             await _personRepository.UpdateAsync(entity);
         }
    }

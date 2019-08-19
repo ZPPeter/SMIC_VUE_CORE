@@ -69,8 +69,8 @@ namespace SMIC.MyTasks
 					.PageBy(input)
 					.ToListAsync();
 
-			// var entityListDtos = ObjectMapper.Map<List<TaskListDto>>(entityList);
-			var entityListDtos =entityList.MapTo<List<TaskListDto>>();
+			var entityListDtos = ObjectMapper.Map<List<TaskListDto>>(entityList);
+			//var entityListDtos =entityList.MapTo<List<TaskListDto>>();
 
 			return new PagedResultDto<TaskListDto>(count,entityListDtos);
 		}
@@ -84,7 +84,7 @@ namespace SMIC.MyTasks
 		{
 			var entity = await _entityRepository.GetAsync(input.Id);
 
-		    return entity.MapTo<TaskListDto>();
+		    return ObjectMapper.Map<TaskListDto>(entity);
 		}
 
 		/// <summary>
@@ -102,7 +102,7 @@ namespace SMIC.MyTasks
 			{
 				var entity = await _entityRepository.GetAsync(input.Id.Value);
 
-				editDto = entity.MapTo<TaskEditDto>();
+				editDto = ObjectMapper.Map<TaskEditDto>(entity);
 
 				//taskEditDto = ObjectMapper.Map<List<taskEditDto>>(entity);
 			}
@@ -143,12 +143,11 @@ namespace SMIC.MyTasks
 		{
 			//TODO:新增前的逻辑判断，是否允许新增
 
-            // var entity = ObjectMapper.Map <Task>(input);
-            var entity=input.MapTo<MyTask>();
-			
+            var entity = ObjectMapper.Map <MyTask>(input);
+            //var entity=input.MapTo<MyTask>();            
 
 			entity = await _entityRepository.InsertAsync(entity);
-			return entity.MapTo<TaskEditDto>();
+			return ObjectMapper.Map<TaskEditDto>(entity);
 		}
 
 		/// <summary>
@@ -160,9 +159,9 @@ namespace SMIC.MyTasks
 			//TODO:更新前的逻辑判断，是否允许更新
 
 			var entity = await _entityRepository.GetAsync(input.Id.Value);
-			input.MapTo(entity);
+			//input.MapTo(entity);
 
-			// ObjectMapper.Map(input, entity);
+			 ObjectMapper.Map(input, entity);
 		    await _entityRepository.UpdateAsync(entity);
 		}
 

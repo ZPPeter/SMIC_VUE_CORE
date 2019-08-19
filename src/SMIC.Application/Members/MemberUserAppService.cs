@@ -150,7 +150,7 @@ namespace SMIC.Members
                 input.MaxResultCount,
                 input.Sorting, input.Order == "asc"); // input.Order=="asc"  true/false
 
-            List<AbpUser> tempList = ret.MapTo<List<AbpUser>>();
+            List<AbpUser> tempList = ObjectMapper.Map<List<AbpUser>>(ret);
 
             /*
             List<AbpUser> tempList2 = new List<AbpUser>();

@@ -69,10 +69,10 @@ namespace SMIC.HomeData
 					.PageBy(input)
 					.ToListAsync();
 
-			// var entityListDtos = ObjectMapper.Map<List<HomeInfoListDto>>(entityList);
-			var entityListDtos =entityList.MapTo<List<HomeInfoListDto>>();
-
-			return new PagedResultDto<HomeInfoListDto>(count,entityListDtos);
+			var entityListDtos = ObjectMapper.Map<List<HomeInfoListDto>>(entityList);
+			//var entityListDtos = entityList.MapTo<List<HomeInfoListDto>>();
+            
+            return new PagedResultDto<HomeInfoListDto>(count,entityListDtos);
 		}
 
 
@@ -84,8 +84,9 @@ namespace SMIC.HomeData
 		{
 			var entity = await _entityRepository.GetAsync(input.Id);
 
-		    return entity.MapTo<HomeInfoListDto>();
-		}
+		    //return entity.MapTo<HomeInfoListDto>();
+            return ObjectMapper.Map<HomeInfoListDto>(entity);
+        }
 
 		/// <summary>
 		/// 获取编辑 HomeInfo
@@ -102,7 +103,7 @@ namespace SMIC.HomeData
 			{
 				var entity = await _entityRepository.GetAsync(input.Id.Value);
 
-				editDto = entity.MapTo<HomeInfoEditDto>();
+				editDto = ObjectMapper.Map<HomeInfoEditDto>(entity);
 
 				//homeInfoEditDto = ObjectMapper.Map<List<homeInfoEditDto>>(entity);
 			}
@@ -144,12 +145,11 @@ namespace SMIC.HomeData
 		{
 			//TODO:新增前的逻辑判断，是否允许新增
 
-            // var entity = ObjectMapper.Map <HomeInfo>(input);
-            var entity=input.MapTo<HomeInfo>();
+            var entity = ObjectMapper.Map<HomeInfo>(input);
+            //var entity=input.MapTo<HomeInfo>();
 			
-
 			entity = await _entityRepository.InsertAsync(entity);
-			return entity.MapTo<HomeInfoEditDto>();
+			return ObjectMapper.Map<HomeInfoEditDto>(entity);
 		}
 
         /// <summary>
@@ -161,9 +161,9 @@ namespace SMIC.HomeData
 			//TODO:更新前的逻辑判断，是否允许更新
 
 			var entity = await _entityRepository.GetAsync(input.Id.Value);
-			input.MapTo(entity);
 
-			// ObjectMapper.Map(input, entity);
+            //input.MapTo(entity);
+			ObjectMapper.Map(input, entity);
 		    await _entityRepository.UpdateAsync(entity);
 		}
 
