@@ -19,20 +19,12 @@ https://www.cnblogs.com/CreateMyself/p/6995403.html
 
 邮箱地址 EmailAddress - 取回密码/待实现
 
-日志 - logs 和 审计日记
-
-/*
-1、用户状态使用jwt token，也就是每一个http请求头里都需要加入类似：
-     Authorization= {token}
-     这个token是通过登陆接口获得的，/v1/core/user/login接口
-2、后端返回json包括code、msg两个固定自定，code=200表示成功，msg是报错信息一般
-*/
-
 插件 - Exceptionless
-
 
 ASP.NET Core 2.2 入门
 https://docs.microsoft.com/zh-cn/aspnet/core/getting-started/?view=aspnetcore-2.2&tabs=windows
 
 CodeFirst 自动迁移数据库学习
 https://docs.microsoft.com/zh-cn/ef/ef6/modeling/code-first/migrations/index
+
+DPII 代码移植

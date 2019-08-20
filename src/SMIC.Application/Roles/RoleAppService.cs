@@ -145,6 +145,13 @@ namespace SMIC.Roles
                 GrantedPermissionNames = grantedPermissions.Select(p => p.Name).ToList()
             };
         }
+        public async Task<List<string>> GetGrantedPermissions(EntityDto<int> input)
+        {
+            var role = await _roleManager.GetRoleByIdAsync(input.Id);
+            var grantedPermissions = (await _roleManager.GetGrantedPermissionsAsync(role)).ToArray();
+            return grantedPermissions.Select(p => p.Name).ToList();
+        }
+
     }
 }
 

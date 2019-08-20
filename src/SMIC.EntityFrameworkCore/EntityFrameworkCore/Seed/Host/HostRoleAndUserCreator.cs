@@ -33,6 +33,7 @@ namespace SMIC.EntityFrameworkCore.Seed.Host
             var adminRoleForHost = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == null && r.Name == StaticRoleNames.Host.Admin);
             if (adminRoleForHost == null)
             {
+                // IsStatic: «∑Òƒ⁄÷√
                 adminRoleForHost = _context.Roles.Add(new Role(null, StaticRoleNames.Host.Admin, StaticRoleNames.Host.Admin) { IsStatic = true, IsDefault = true }).Entity;
                 _context.SaveChanges();
             }

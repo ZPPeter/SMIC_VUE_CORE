@@ -28,7 +28,7 @@ namespace SMIC.EntityFrameworkCore
         /* Used it tests to skip dbcontext registration, in order to use in-memory database of EF Core */
         public bool SkipDbContextRegistration { get; set; }
 
-        public bool SkipDbSeed { get; set; }
+        public bool SkipDbSeed { get; set; }               
 
         public override void PreInitialize()
         {
@@ -73,6 +73,7 @@ namespace SMIC.EntityFrameworkCore
 
         public override void PostInitialize()
         {
+            SkipDbSeed = true; // 默认 false ，会重复添加  Permission
             if (!SkipDbSeed)
             {
                 SeedHelper.SeedHostDb(IocManager);
