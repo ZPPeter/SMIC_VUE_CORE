@@ -1,0 +1,40 @@
+Dapper中对事务的处理也非常简单，如下代码所示：
+
+private void DapperTransaction()
+{
+    using (IDbConnection con = OpenConnection())
+    {
+         IDbTransaction tran = con.BeginTransaction();
+         try
+         {
+             string query = "update T_Role set RoleName='开发主管' where RoleId=4";//更新一条记录
+             con.Execute(query, null, tran, null, null);
+             //throw new Exception();
+             query = "delete from T_Role where RoleId=8";//删除一条记录
+             con.Execute(query, null, tran, null, null);
+             tran.Commit();
+         }
+         catch (Exception ex)
+         {
+             tran.Rollback();
+         }
+    }
+}
+
+//--------------------------------------------------------------------------------------------------------
+            try
+            {
+                using (IUnitOfWorkCompleteHandle uow = Resolve<IUnitOfWorkManager>().Begin(new UnitOfWorkOptions {IsTransactional = true}))
+                {
+                    await _blogDapperRepository.ExecuteAsync("Update Blogs Set Name = @name where Id =@id", new { id = blogId, name = "Oguzhan_New_Blog" });
+
+                    throw new Exception("uow rollback");
+
+                    uow.Complete();
+                }
+
+            }
+            catch (Exception exception)
+            {
+                //no handling.
+            }

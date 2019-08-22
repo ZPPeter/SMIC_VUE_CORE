@@ -13,6 +13,8 @@ namespace SMIC.EntityFrameworkCore
         public virtual DbSet<SJMX> SJMX { get; set; }
 
         public virtual DbSet<STATS> STATS { get; set; }
+        public virtual DbSet<JBCS> JBCSS { get; set; }
+        public virtual DbSet<JDRQ> JDRQS { get; set; }
 
         public SDIMDbContext(DbContextOptions<SDIMDbContext> options)
             : base(options)

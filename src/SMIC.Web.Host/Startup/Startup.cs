@@ -180,26 +180,6 @@ namespace SMIC.Web.Host.Startup
             app.UseExceptionless(_appConfiguration); // 来自于 class ExceptionlessBuilderExtensions.cs
 
             /*
-            在你想要Logging的地方调用
-　　          比如我们要记录一个User登录的日志：
-
-            public class LoginController : Controller
-            {
-                public ILogger Logger { get; }
-
-                public LoginController(ILogger logger)
-                {
-                    Logger = logger;
-                }
-
-            [HttpGet("{id}")]
-            public string Get(int id)
-            {
-                Logger.Info($"User {id} Login Successfully. Time:{DateTime.Now.ToString()}", "Tag1", "Tag2");
-                return "Login Success.";       
-            }
-            }
-
             // 直接使用
             ExceptionlessClient.Default.CreateLog("日志信息 2019 v3", Exceptionless.Logging.LogLevel.Debug).AddTags("tag10", "tag11").Submit();
             ExceptionlessLogger _logger = new ExceptionlessLogger();
@@ -207,9 +187,7 @@ namespace SMIC.Web.Host.Startup
             ex.ToExceptionless().AddTags("tag1", "tag2").Submit();
             ex.ToExceptionless().Submit();
             _logger.Info("Test msg v3", "tag21", "tag22");
-
             */
-
         }
 
     }

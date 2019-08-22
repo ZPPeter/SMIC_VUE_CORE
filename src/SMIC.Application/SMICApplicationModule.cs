@@ -35,9 +35,7 @@ namespace SMIC
 
         public override void Initialize()
         {
-            var thisAssembly = typeof(SMICApplicationModule).GetAssembly();
-
-            // IocManager.RegisterAssemblyByConvention(thisAssembly); // 注册2遍???
+            var thisAssembly = typeof(SMICApplicationModule).GetAssembly();                        
 
             Configuration.Modules.AbpAutoMapper().Configurators.Add(
                 // Scan the assembly for classes which inherit from AutoMapper.Profile
@@ -45,8 +43,10 @@ namespace SMIC
                 cfg => cfg.AddMaps(thisAssembly)
             );
 
-            IocManager.RegisterAssemblyByConvention(typeof(SMICApplicationModule).GetAssembly()); // 注册2遍???
+            // IocManager.RegisterAssemblyByConvention(thisAssembly); // 或者
+            IocManager.RegisterAssemblyByConvention(typeof(SMICApplicationModule).GetAssembly());
             
+
         }
     }
 }

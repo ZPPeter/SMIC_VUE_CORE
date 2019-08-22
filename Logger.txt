@@ -1,11 +1,33 @@
+日志记录 logs
+nlog /log4net 
+
+在你想要Logging的地方调用
+比如我们要记录一个User登录的日志：
+
+public class LoginController : Controller
+{
+    public ILogger Logger { get; }
+    public LoginController(ILogger logger)
+    {
+        Logger = logger;
+    }
+
+    [HttpGet("{id}")]
+    public string Get(int id)
+    {
+         Logger.Info($"User {id} Login Successfully. Time:{DateTime.Now.ToString()}", "Tag1", "Tag2");
+         return "Login Success.";       
+    }
+}
+
+
+
 SMIC.EntityFrameworkCore EFLogger 
 用于命令行输出 EF Core Command
 
 SMIC.Util\ExceptionEx.cs 
-远程存储重要信息，官网账号具有短信通知
+远程存储重要信息，官网账号具有邮件通知
 
-nlog /log4net 
-日志记录 logs
 
 using SMIC.Utils;//Exceptionless;
 
