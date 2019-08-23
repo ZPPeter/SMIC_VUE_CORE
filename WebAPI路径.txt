@@ -1,0 +1,20 @@
+
+
+
+Configuration.Modules.AbpAspNetCore().CreateControllersForAppServices(typeof(FirstABPPluginModule).Assembly, moduleName: "save_error_logger", useConventionalHttpVerbs: true);
+
+当前模块下的 AppService 
+
+api/services/app/  ->  api/services/save_error_logger/
+
+moduleName: "save_error_logger"
+
+moduleName 默认值 app
+
+源码：
+namespace Abp.AspNetCore.Configuration
+{
+    public interface IAbpAspNetCoreConfiguration
+	...
+	AbpControllerAssemblySettingBuilder CreateControllersForAppServices(Assembly assembly, string moduleName = "app", bool useConventionalHttpVerbs = true);
+}

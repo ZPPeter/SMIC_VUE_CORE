@@ -39,6 +39,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SQL.txt = SQL.txt
 		There is no permission.txt = There is no permission.txt
 		todo.txt = todo.txt
+		WebAPI路径.txt = WebAPI路径.txt
 		发布.txt = 发布.txt
 		禁止图片缓存.txt = 禁止图片缓存.txt
 		耗时监测.txt = 耗时监测.txt
