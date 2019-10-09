@@ -23,14 +23,16 @@ namespace SMIC.SDIM
     {
         private readonly IUnitOfWorkManager _unitOfWorkManager;
         private readonly IDapperRepository<JDRQ, long> _jdrqDapperRepository;
+        private readonly IDapperRepository<STATS, long> _DapperRepository;
         private readonly ICacheManager _cacheManager;//依赖注入缓存
-        private readonly SJMXAppServices _AppServices;
-        public JDRQAppServices(IUnitOfWorkManager unitOfWorkManager, IDapperRepository<JDRQ, long> jdrqDapperRepository, ICacheManager cacheManager, SJMXAppServices AppServices)
+        //private readonly SJMXAppServices _AppServices;
+        public JDRQAppServices(IUnitOfWorkManager unitOfWorkManager, IDapperRepository<JDRQ, long> jdrqDapperRepository, ICacheManager cacheManager, IDapperRepository<STATS, long> DapperRepository) //, SJMXAppServices AppServices)
         {
             _unitOfWorkManager = unitOfWorkManager;
             _jdrqDapperRepository = jdrqDapperRepository;
             _cacheManager = cacheManager; // 依赖注入缓存
-            _AppServices = AppServices;
+            _DapperRepository = DapperRepository;
+            //_AppServices = AppServices;
         }
 
         public int Add(int id, string jdy) //string jdy = (Int32.Parse(context.Request.Form["jdy"].ToString())-100000).ToString();
@@ -60,9 +62,8 @@ namespace SMIC.SDIM
         {
             string strSQL = "update YQSF_DPII_JDRQ set jdzt = " + jdzt + ",jwrq='" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "' where id = " + id;
             _jdrqDapperRepository.Execute(strSQL);
-            _AppServices.CheckSjmxJdzt(id);
+            CheckSjmxJdzt(id);
         }
-        
 
         /// <summary>
         /// 200
@@ -82,7 +83,7 @@ namespace SMIC.SDIM
                 strSQL = "update YQSF_DPII_JDRQ set jdzt = 222,pzr='" + p + "',pzyj='全部批准' where jdzt = 200";
 
             _jdrqDapperRepository.Execute(strSQL);
-            _AppServices.CheckSjmxJdzt(id);
+            CheckSjmxJdzt(id);
         }
         
 
@@ -102,6 +103,32 @@ namespace SMIC.SDIM
             else
                 return null; // AddNew 
         }
-        
+
+        public void CheckSjmxJdzt(int id)
+        {
+            string strSQL = "select 0 as y, 0 as m, qzyjs as count, id as bm from YQSF_SJD where ID = (select sjdid from YQSF_SJMX as b where b.id = {0}";
+            STATS st = _DapperRepository.Query(string.Format(strSQL, id)).FirstOrDefault();
+            int yqjs = st.count;
+            int wtdid = st.bm;
+            strSQL = @"SELECT 0 as y, 0 as m, qzyjs as count, 0 as bm
+        FROM dbo.YQSF_SJMX AS a LEFT JOIN
+        dbo.YQSF_SJD as e on a.sjdid = e.id LEFT JOIN
+        dbo.JCXX_XHGG_BM AS b ON a.XHGGBM = b.XHGGBM LEFT JOIN
+        dbo.JCXX_QJMC_BM AS d ON b.QJMCBM = d.QJMCBM								
+        where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and jdzt=222 and e.sjdid={0}";
+            st = _DapperRepository.Query(string.Format(strSQL, wtdid)).FirstOrDefault();
+            int yqjs1 = st.count;
+
+            strSQL = "select 0 as y, 0 as m, count(0) as count,0 as bm from YQSF_SJMX where jdzt = '检完' and ID = {0}";
+            st = _DapperRepository.Query(string.Format(strSQL, id)).FirstOrDefault();
+            int yqjs2 = st.count;
+
+            if (yqjs == yqjs1 || yqjs == yqjs2)
+            {
+                strSQL = "update YQSF_SJD set qzyjdzt = N'检定完毕' where id = {0}";
+                st = _DapperRepository.Query(string.Format(strSQL, wtdid)).FirstOrDefault();
+            }
+        }
+
     }
 }

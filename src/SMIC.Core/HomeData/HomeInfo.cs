@@ -17,10 +17,11 @@ namespace SMIC.HomeData
             CreationTime = DateTime.Now;
         }
 
-        public HomeInfo(string description,string title=null) : this()
+        public HomeInfo(string description, DateTime? creationTime, string title = null) : this()
         {
             Title = title;
             Description = description;
+            CreationTime = creationTime;
         }
     }
 

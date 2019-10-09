@@ -25,14 +25,23 @@ using Newtonsoft.Json;
 using SMIC.Members;
 using System.Linq.Expressions;
 using SMIC.Utils;//Exceptionless;
+using SMIC.Authorization.Roles;
+
+using Abp.Notifications;
+using Abp;
 
 namespace SMIC.Sessions
 {
     public class SessionAppService : SMICAppServiceBase, ISessionAppService
     {
         private readonly IDapperRepository<MemberUser, long> _memberDapperRepository;
-        public SessionAppService(IDapperRepository<MemberUser, long> memberDapperRepository) {
+        private readonly IDapperRepository<AbpUser, long> _userRepository;
+        private readonly IDapperRepository<Role, int> _roleRepository;
+        public SessionAppService(IDapperRepository<MemberUser, long> memberDapperRepository, IDapperRepository<Role, int> roleRepository, IDapperRepository<AbpUser, long> userRepository)
+        {
             _memberDapperRepository = memberDapperRepository;
+            _roleRepository = roleRepository;
+            _userRepository = userRepository;
         }
 
         private void SetLastLoginTime()
@@ -56,6 +65,11 @@ namespace SMIC.Sessions
             _memberDapperRepository.Execute("update AbpUsers set LastLoginTime = '" + Clock.Now + "' where Id = " + AbpSession.UserId);
         }
 
+        public async void SetReadLastNoticeTime()
+        {
+            _memberDapperRepository.Execute("update AbpUsers set ReadLastNoticeTime = '" + Clock.Now + "' where Id = " + AbpSession.UserId);            
+        }
+
         [DisableAuditing]
         public async Task<GetCurrentLoginInformationsOutput> GetCurrentLoginInformations()
         {
@@ -69,6 +83,9 @@ namespace SMIC.Sessions
                 }
             };
 
+            output.Application.Features.Add("SignalR", true);
+            output.Application.Features.Add("SignalR.AspNetCore", true);            
+
             if (AbpSession.TenantId.HasValue)
             {
                 output.Tenant = ObjectMapper.Map<TenantLoginInfoDto>(await GetCurrentTenantAsync());
@@ -77,10 +94,28 @@ namespace SMIC.Sessions
             if (AbpSession.UserId.HasValue)
             {
                 output.User = ObjectMapper.Map<UserLoginInfoDto>(await GetCurrentUserAsync());
+                output.User.Roles = GetRoles(output.User.Id);
+                output.User.ReadLastNoticeTime = GetReadLastNoticeTime();
                 SetLastLoginTime();
             }
 
             return output;
         }
+
+        public string[] GetRoles(long userid)
+        {
+            var param = new { Id = userid };
+            var ret = _roleRepository.Query("select b.NormalizedName from AbpRoles b where b.Id in (select RoleId from AbpUserRoles a where a.UserId = @Id)", param);
+
+            List<string> list = new List<string>();
+            foreach (Role r in ret)
+                list.Add(r.NormalizedName);
+            return list.ToArray();
+        }
+
+        private DateTime? GetReadLastNoticeTime() {
+            return _userRepository.Get((long)AbpSession.UserId).ReadLastNoticeTime;
+        }
+
     }
 }

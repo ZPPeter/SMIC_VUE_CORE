@@ -23,9 +23,13 @@ namespace SMIC.Members
 
         public bool IsActive { get; set; }
 
+        public bool IsDeleted { get; set; }
+        
         //public string FullName { get; set; }
 
         public DateTime? LastLoginTime { get; set; }
+
+        public DateTime? ReadLastNoticeTime { get; set; }
 
         public DateTime CreationTime { get; set; }
         

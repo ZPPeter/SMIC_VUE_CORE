@@ -1,6 +1,7 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.AutoMapper;
 using SMIC.Authorization.Users;
+using System;
 
 namespace SMIC.Sessions.Dto
 {
@@ -16,5 +17,9 @@ namespace SMIC.Sessions.Dto
         public string UserName { get; set; }
 
         public string EmailAddress { get; set; }
+                
+        public  DateTime? ReadLastNoticeTime { get; set; } // LastLoginTime Abp内部无法读取
+
+        public string[] Roles { get; set; }
     }
 }

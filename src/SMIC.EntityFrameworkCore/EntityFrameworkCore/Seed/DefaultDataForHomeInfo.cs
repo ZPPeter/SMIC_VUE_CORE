@@ -22,7 +22,7 @@ namespace SMIC.EntityFrameworkCore.Seed
             _homeInfos = new List<HomeInfo>()
             {
                 // Description,Title 可空
-                new HomeInfo("在使用过程中如有什么问题，请联系管理员!","欢迎使用本系统"),
+                new HomeInfo("在使用过程中如有什么问题，请联系管理员!",DateTime.Now,"欢迎使用本系统"),
             };
         }
 

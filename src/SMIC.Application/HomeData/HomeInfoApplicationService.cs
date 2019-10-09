@@ -22,7 +22,9 @@ using SMIC.HomeData;
 using SMIC.HomeData.Dtos;
 using SMIC.HomeData.DomainService;
 using SMIC.HomeData.Authorization;
-
+using Abp.Authorization.Users;
+using Abp.Dapper.Repositories;
+using SMIC.Members;
 
 namespace SMIC.HomeData
 {
@@ -33,6 +35,7 @@ namespace SMIC.HomeData
     public class HomeInfoAppService : SMICAppServiceBase, IHomeInfoAppService
     {
         private readonly IRepository<HomeInfo, int> _entityRepository;
+        private readonly IDapperRepository<AbpUser, long> _userRepository;
 
         private readonly IHomeInfoManager _entityManager;
 
@@ -41,11 +44,12 @@ namespace SMIC.HomeData
         ///</summary>
         public HomeInfoAppService(
         IRepository<HomeInfo, int> entityRepository
-        ,IHomeInfoManager entityManager
+        ,IHomeInfoManager entityManager, IDapperRepository<AbpUser, long> userRepository
         )
         {
             _entityRepository = entityRepository; 
-             _entityManager=entityManager;
+             _entityManager = entityManager;
+            _userRepository = userRepository;
         }
 
 
@@ -54,47 +58,94 @@ namespace SMIC.HomeData
         ///</summary>
         /// <param name="input"></param>
         /// <returns></returns>
-		[AbpAuthorize(HomeInfoPermissions.Query)] 
+		// [AbpAuthorize(HomeInfoPermissions.Query)] 
         public async Task<PagedResultDto<HomeInfoListDto>> GetPaged(GetHomeInfosInput input)
 		{
+            Expression<Func<HomeInfo, bool>> predicate = p => (p.Id != 1);
+            if (!input.FilterText.IsNullOrWhiteSpace())            
+            {
+                predicate = predicate.And(p => (p.Title.Contains(input.FilterText) || p.Description.Contains(input.FilterText)));
+            }
 
-		    var query = _entityRepository.GetAll();
-			// TODO:根据传入的参数添加过滤条件
-            
+            if (input.LastDate.HasValue)
+            {
+                predicate = predicate.And(p => p.CreationTime>= input.LastDate);
+            }
 
-			var count = await query.CountAsync();
+            var totalCount = _entityRepository.Count(predicate);
 
-			var entityList = await query
-					.OrderBy(input.Sorting).AsNoTracking()
-					.PageBy(input)
-					.ToListAsync();
+            // .Skip(1) // 第一条记录给 HomeInfo 用, Skip 排序后不可用
+            // Id = 1 表示第一条数据，不要删除！！！  -> .Where(r=>r.Id!=1)
+
+            var entityList = await _entityRepository.GetAll()
+                .Where(r=>r.Id!=1)
+                .WhereIf(!input.FilterText.IsNullOrWhiteSpace(),r=>(r.Title.Contains(input.FilterText) || r.Description.Contains(input.FilterText)))
+                .WhereIf(input.LastDate.HasValue, r => r.CreationTime > input.LastDate)
+                .OrderByDescending(t=>t.Id)
+                //.OrderBy(input.Sorting).AsNoTracking()
+                .PageBy(input)
+				.ToListAsync();
 
 			var entityListDtos = ObjectMapper.Map<List<HomeInfoListDto>>(entityList);
 			//var entityListDtos = entityList.MapTo<List<HomeInfoListDto>>();
             
-            return new PagedResultDto<HomeInfoListDto>(count,entityListDtos);
-		}
+            return new PagedResultDto<HomeInfoListDto>(totalCount,entityListDtos); // 第一条记录给 HomeInfo 用
+        }
+                
+        public async Task<PagedResultDto<HomeInfoListDto>> GetPagedNoReadNotice(GetHomeInfosInput input)
+        {
+            Expression<Func<HomeInfo, bool>> predicate = p => (p.Id != 1);
+            input.LastDate = _userRepository.Get((long)AbpSession.UserId).ReadLastNoticeTime;
+            predicate = predicate.And(p => p.CreationTime >= input.LastDate);
 
+            var totalCount = _entityRepository.Count(predicate);
 
-		/// <summary>
-		/// 通过指定id获取HomeInfoListDto信息
-		/// </summary>
-		// [AbpAuthorize(HomeInfoPermissions.Query)] 
-		public async Task<HomeInfoListDto> GetById(EntityDto<int> input)
+            var entityList = await _entityRepository.GetAll()
+                .Where(r => r.Id != 1)
+                .WhereIf(!input.FilterText.IsNullOrWhiteSpace(), r => (r.Title.Contains(input.FilterText) || r.Description.Contains(input.FilterText)))
+                .WhereIf(input.LastDate.HasValue, r => r.CreationTime > input.LastDate)
+                .OrderByDescending(t => t.Id)
+                //.OrderBy(input.Sorting).AsNoTracking()
+                .PageBy(input)
+                .ToListAsync();
+            var entityListDtos = ObjectMapper.Map<List<HomeInfoListDto>>(entityList);
+            return new PagedResultDto<HomeInfoListDto>(totalCount, entityListDtos); // 第一条记录给 HomeInfo 用            
+        }
+
+        public int GetNoReadNoticeCount()
+        {
+            Expression<Func<HomeInfo, bool>> predicate = p => (p.Id != 1);
+            predicate = predicate.And(p => p.CreationTime >= _userRepository.Get((long)AbpSession.UserId).ReadLastNoticeTime);
+            return _entityRepository.Count(predicate);            
+        }
+
+        /// <summary>
+        /// 通过指定id获取HomeInfoListDto信息
+        /// </summary>
+        // [AbpAuthorize(HomeInfoPermissions.Query)] 
+        public async Task<HomeInfoListDto> GetById(EntityDto<int> input)
 		{
 			var entity = await _entityRepository.GetAsync(input.Id);
 
 		    //return entity.MapTo<HomeInfoListDto>();
             return ObjectMapper.Map<HomeInfoListDto>(entity);
         }
+        // 第一条记录给 HomeInfo 用
+        public HomeInfo GetFirst()
+        {
+            var entity = _entityRepository.FirstOrDefault(1);
 
-		/// <summary>
-		/// 获取编辑 HomeInfo
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		//[AbpAuthorize(HomeInfoPermissions.Create,HomeInfoPermissions.Edit)]
-		public async Task<GetHomeInfoForEditOutput> GetForEdit(NullableIdDto<int> input)
+            //return entity.MapTo<HomeInfoListDto>();
+            return ObjectMapper.Map<HomeInfo>(entity);
+        }
+
+        /// <summary>
+        /// 获取编辑 HomeInfo
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        //[AbpAuthorize(HomeInfoPermissions.Create,HomeInfoPermissions.Edit)]
+        public async Task<GetHomeInfoForEditOutput> GetForEdit(NullableIdDto<int> input)
 		{
 			var output = new GetHomeInfoForEditOutput();
             HomeInfoEditDto editDto;
@@ -122,7 +173,7 @@ namespace SMIC.HomeData
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		[AbpAuthorize(HomeInfoPermissions.Create,HomeInfoPermissions.Edit)]
+		// [AbpAuthorize(HomeInfoPermissions.Create,HomeInfoPermissions.Edit)]
 		public async Task CreateOrUpdate(CreateOrUpdateHomeInfoInput input)
 		{
 
@@ -140,7 +191,7 @@ namespace SMIC.HomeData
 		/// <summary>
 		/// 新增HomeInfo
 		/// </summary>
-		[AbpAuthorize(HomeInfoPermissions.Create)]
+		// [AbpAuthorize(HomeInfoPermissions.Create)]
 		protected virtual async Task<HomeInfoEditDto> Create(HomeInfoEditDto input)
 		{
 			//TODO:新增前的逻辑判断，是否允许新增
@@ -174,7 +225,7 @@ namespace SMIC.HomeData
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		[AbpAuthorize(HomeInfoPermissions.Delete)]
+		// [AbpAuthorize(HomeInfoPermissions.Delete)]
 		public async Task Delete(EntityDto<int> input)
 		{
 			//TODO:删除前的逻辑判断，是否允许删除
@@ -186,7 +237,7 @@ namespace SMIC.HomeData
 		/// <summary>
 		/// 批量删除HomeInfo的方法
 		/// </summary>
-		[AbpAuthorize(HomeInfoPermissions.BatchDelete)]
+		// [AbpAuthorize(HomeInfoPermissions.BatchDelete)]
 		public async Task BatchDelete(List<int> input)
 		{
 			// TODO:批量删除前的逻辑判断，是否允许删除

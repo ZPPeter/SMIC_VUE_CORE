@@ -2,12 +2,12 @@
 using Abp.Runtime.Validation;
 using SMIC.Dtos;
 using SMIC.HomeData;
+using System;
 
 namespace SMIC.HomeData.Dtos
 {
     public class GetHomeInfosInput : PagedSortedAndFilteredInputDto, IShouldNormalize
     {
-
         /// <summary>
         /// 正常化排序使用
         /// </summary>
@@ -18,6 +18,6 @@ namespace SMIC.HomeData.Dtos
                 Sorting = "Id";
             }
         }
-
+        public DateTime? LastDate { get; set; }
     }
 }

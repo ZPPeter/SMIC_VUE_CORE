@@ -82,6 +82,7 @@ namespace SMIC.Members
             var entityCache1 = _cacheManager.GetCache("MemberUserCache")
                               .Get("User_1", () => _userRepository.FirstOrDefault(1));//  .GetAllAsync());
 
+            // 清除缓存
             // _cacheManager.GetCache("MemberUserCache").Clear();             // 打开监视器可以看到已经去除掉了
             // await _cacheManager.GetCache("MemberUserCache").ClearAsync();  // 打开监视器可以看到已经去除掉了
 
@@ -116,7 +117,7 @@ namespace SMIC.Members
                             user -> UserType =0 也会显示，TenantId = 1 不显示，未启用租户,User 没有 LastLoginTime 的
              */
 
-            Expression<Func<AbpUser, bool>> predicate = p => p.TenantId == null;
+            Expression<Func<AbpUser, bool>> predicate = p => ( p.TenantId == null && p.IsDeleted==false);
 
             //if (input.From != null) // DateTime? 会有问题
             if (input.From != null && input.From > DateTimeOffset.MinValue)

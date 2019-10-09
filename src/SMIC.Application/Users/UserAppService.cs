@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -85,6 +86,14 @@ namespace SMIC.Users
             }
 
             CurrentUnitOfWork.SaveChanges();
+
+            /*
+             默认头像
+             */
+            var filename = "logo_" + user.Id + ".png"; //文件改名                    
+            var path1 = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/null.png");
+            var path2 = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/", filename);
+            File.Copy(path1,path2);
 
             return MapToEntityDto(user);
         }

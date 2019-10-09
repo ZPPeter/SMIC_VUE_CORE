@@ -10,15 +10,18 @@ namespace SMIC.Authorization.Users
     {
         public const string DefaultPassword = "123qwe";
                 
-        //private DateTime? LastLoginTime2 { get; set; }
-        
+        //private DateTime? LastLoginTime2 { get; set; }        
+
+        // 修改 Name 可空
+        private new string Name { get; set; }
+
+        // 最后一次读取通知时间, LastLoginTime 字段 Abp 内部无法读取
+        public DateTime? ReadLastNoticeTime { get; set; }
+
         public static string CreateRandomPassword()
         {
             return Guid.NewGuid().ToString("N").Truncate(16);
         }
-
-        // 修改 Name 可空
-        private new string Name { get; set; }
 
         /*
         // SureName,EmailAddress 可为空
@@ -36,6 +39,7 @@ namespace SMIC.Authorization.Users
         // 在userManager领域服务中的CreateAsync提供的方法中，检查了EmailAddress 所以我们要重写方法。
         // 在 SMIC.Application\Users\Dto\CreateUserDto.cs 修改
         // 在 SMIC.Application\Authorization\Accounts\AccountAppService.cs Register 模块
+
 
         public static User CreateTenantAdminUser(int tenantId, string emailAddress)
         {

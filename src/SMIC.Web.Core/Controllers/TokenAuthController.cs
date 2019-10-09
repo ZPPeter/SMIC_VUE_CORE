@@ -18,6 +18,8 @@ using SMIC.Authorization.Users;
 using SMIC.Models.TokenAuth;
 using SMIC.MultiTenancy;
 using SMIC.Members;
+using SMIC.Users;
+
 namespace SMIC.Controllers
 {
     [Route("api/[controller]/[action]")]
@@ -31,6 +33,8 @@ namespace SMIC.Controllers
         private readonly IExternalAuthManager _externalAuthManager;
         private readonly UserRegistrationManager _userRegistrationManager;
 
+        private readonly UserAppService _userAppService;
+
         public TokenAuthController(
             LogInManager logInManager,
             ITenantCache tenantCache,
@@ -38,7 +42,8 @@ namespace SMIC.Controllers
             TokenAuthConfiguration configuration,
             IExternalAuthConfiguration externalAuthConfiguration,
             IExternalAuthManager externalAuthManager,
-            UserRegistrationManager userRegistrationManager)
+            UserRegistrationManager userRegistrationManager,
+            UserAppService userAppService)
         {
             _logInManager = logInManager;
             _tenantCache = tenantCache;
@@ -47,6 +52,7 @@ namespace SMIC.Controllers
             _externalAuthConfiguration = externalAuthConfiguration;
             _externalAuthManager = externalAuthManager;
             _userRegistrationManager = userRegistrationManager;
+            _userAppService = userAppService;
         }
 
         [HttpPost]
@@ -59,13 +65,16 @@ namespace SMIC.Controllers
             );
 
             var accessToken = CreateAccessToken(CreateJwtClaims(loginResult.Identity));
+            var user = await _userAppService.GetEntityById(loginResult.User.Id);
 
             return new AuthenticateResultModel
             {
                 AccessToken = accessToken,
                 EncryptedAccessToken = GetEncrpyedAccessToken(accessToken),
                 ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds,
-                UserId = loginResult.User.Id
+                UserId = loginResult.User.Id,
+                SurName = user.Surname,
+                Roles = user.RoleNames
             };
         }
 
