@@ -4,12 +4,13 @@ using Abp.Modules;
 using Abp.Reflection.Extensions;
 using SMIC.Configuration;
 //using Abp.Web.SignalR;
-
+using Abp.AspNetCore.SignalR;
 namespace SMIC.Web.Host.Startup
-{
-    //[DependsOn(typeof(AbpWebSignalRModule))]
+{   
     [DependsOn(
-       typeof(SMICWebCoreModule))]
+       typeof(SMICWebCoreModule),
+        typeof(AbpAspNetCoreSignalRModule)
+    )]
     public class SMICWebHostModule: AbpModule
     {
         private readonly IHostingEnvironment _env;

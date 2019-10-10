@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Http;
 
 using Exceptionless;
 using SMIC.Utils;
+using SMIC.Web.Host.Hubs;
 namespace SMIC.Web.Host.Startup
 {
     public class Startup
@@ -154,6 +155,7 @@ namespace SMIC.Web.Host.Startup
             app.UseSignalR(routes =>
             {
                 routes.MapHub<AbpCommonHub>("/signalr");
+                routes.MapHub<MyChatHub>("/signalr-myChatHub"); // Prefix with '/signalr'
             });
 
             app.UseMvc(routes =>

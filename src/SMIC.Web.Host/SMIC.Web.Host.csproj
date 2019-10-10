@@ -7,6 +7,7 @@
     <OutputType>Exe</OutputType>
     <PackageId>SMIC.Web.Host</PackageId>
     <UserSecretsId>AbpCompanyName-SMIC-56C2EF2F-ABD6-4EFC-AAF2-2E81C34E8FB1</UserSecretsId>
+    <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="App_Data\**" />
@@ -53,9 +54,11 @@
     <ProjectReference Include="..\SMIC.Web.Core\SMIC.Web.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Abp.AspNetCore.SignalR" Version="4.8.1" />
     <PackageReference Include="Abp.Castle.NLog" Version="4.6.0.1" />
     <PackageReference Include="Exceptionless.AspNetCore" Version="4.3.2027" />
-    <PackageReference Include="Microsoft.AspNet.SignalR.Core" Version="2.4.1" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
