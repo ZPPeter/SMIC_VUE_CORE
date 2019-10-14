@@ -26,7 +26,14 @@ namespace SMIC.SDIM
         
         public dynamic GetRecentWTD()
         {
-            string strSQL = @"SELECT TOP(10) a.ID, a.SJDID , f.DWMC , a.SJRQ,YQJS
+            string strSQL = @"
+            UPDATE YQSF_SJD
+            SET yqjs = (
+                SELECT COUNT(*) FROM YQSF_SJMX WHERE SJDID = YQSF_SJD.id
+            )";
+            _wtdDapperRepository.Execute(strSQL);
+
+            strSQL = @"SELECT TOP(10) a.ID, a.SJDID , f.DWMC , a.SJRQ,YQJS
                               FROM dbo.YQSF_SJD AS a INNER JOIN 
                                    dbo.YQSF_KH AS f ON f.khid = a.khid
                               ORDER BY a.ID DESC";

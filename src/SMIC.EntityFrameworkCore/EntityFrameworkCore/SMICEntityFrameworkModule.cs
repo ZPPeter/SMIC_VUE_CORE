@@ -73,7 +73,7 @@ namespace SMIC.EntityFrameworkCore
 
         public override void PostInitialize()
         {
-            SkipDbSeed = true; // 默认 false ，会重复添加  Permission
+            SkipDbSeed = true; // 默认 false ，会重复添加  Permission ！！！
             if (!SkipDbSeed)
             {
                 SeedHelper.SeedHostDb(IocManager);

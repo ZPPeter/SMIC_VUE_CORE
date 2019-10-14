@@ -65,9 +65,9 @@ namespace SMIC.Sessions
             _memberDapperRepository.Execute("update AbpUsers set LastLoginTime = '" + Clock.Now + "' where Id = " + AbpSession.UserId);
         }
 
-        public async void SetReadLastNoticeTime()
+        public void SetReadLastNoticeTime()
         {
-            _memberDapperRepository.Execute("update AbpUsers set ReadLastNoticeTime = '" + Clock.Now + "' where Id = " + AbpSession.UserId);            
+            _memberDapperRepository.Execute("update AbpUsers set ReadLastNoticeTime = '" + Clock.Now + "' where Id = " + AbpSession.UserId);
         }
 
         [DisableAuditing]

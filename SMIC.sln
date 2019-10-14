@@ -43,6 +43,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		发布.txt = 发布.txt
 		禁止图片缓存.txt = 禁止图片缓存.txt
 		耗时监测.txt = 耗时监测.txt
+		触发器.txt = 触发器.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyJobPlugIn", "src\MyPlugIns\Background\MyJobPlugIn.csproj", "{33C47214-C5DB-432F-91C8-91025031C53F}"

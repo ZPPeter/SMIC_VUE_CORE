@@ -188,12 +188,13 @@ namespace SMIC.HomeData
 		}
 
 
-		/// <summary>
-		/// 新增HomeInfo
-		/// </summary>
-		// [AbpAuthorize(HomeInfoPermissions.Create)]
-		protected virtual async Task<HomeInfoEditDto> Create(HomeInfoEditDto input)
-		{
+        /// <summary>
+        /// 新增HomeInfo
+        /// </summary>
+        // [AbpAuthorize(HomeInfoPermissions.Create)]
+        //protected virtual async Task<HomeInfoEditDto> Create(HomeInfoEditDto input)
+        public async Task<HomeInfoEditDto> Create(HomeInfoEditDto input)
+        {
 			//TODO:新增前的逻辑判断，是否允许新增
 
             var entity = ObjectMapper.Map<HomeInfo>(input);
@@ -213,8 +214,9 @@ namespace SMIC.HomeData
 
 			var entity = await _entityRepository.GetAsync(input.Id.Value);
 
+            entity.CreationTime = DateTime.Now;
             //input.MapTo(entity);
-			ObjectMapper.Map(input, entity);
+            ObjectMapper.Map(input, entity);
 		    await _entityRepository.UpdateAsync(entity);
 		}
 
