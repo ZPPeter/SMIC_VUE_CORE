@@ -19,6 +19,7 @@ using SMIC.Models.TokenAuth;
 using SMIC.MultiTenancy;
 using SMIC.Members;
 using SMIC.Users;
+using SMIC.Sessions;
 
 namespace SMIC.Controllers
 {
@@ -34,6 +35,7 @@ namespace SMIC.Controllers
         private readonly UserRegistrationManager _userRegistrationManager;
 
         private readonly UserAppService _userAppService;
+        private readonly SessionAppService _sessionAppService;
 
         public TokenAuthController(
             LogInManager logInManager,
@@ -43,7 +45,8 @@ namespace SMIC.Controllers
             IExternalAuthConfiguration externalAuthConfiguration,
             IExternalAuthManager externalAuthManager,
             UserRegistrationManager userRegistrationManager,
-            UserAppService userAppService)
+            UserAppService userAppService,
+            SessionAppService sessionAppService)
         {
             _logInManager = logInManager;
             _tenantCache = tenantCache;
@@ -53,6 +56,7 @@ namespace SMIC.Controllers
             _externalAuthManager = externalAuthManager;
             _userRegistrationManager = userRegistrationManager;
             _userAppService = userAppService;
+            _sessionAppService = sessionAppService;
         }
 
         [HttpPost]
@@ -66,6 +70,7 @@ namespace SMIC.Controllers
 
             var accessToken = CreateAccessToken(CreateJwtClaims(loginResult.Identity));
             var user = await _userAppService.GetEntityById(loginResult.User.Id);
+            var lastReadTime = _sessionAppService.GetReadLastNoticeTime(loginResult.User.Id);
 
             return new AuthenticateResultModel
             {
@@ -74,7 +79,8 @@ namespace SMIC.Controllers
                 ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds,
                 UserId = loginResult.User.Id,
                 SurName = user.Surname,
-                Roles = user.RoleNames
+                Roles = user.RoleNames,
+                LastReadNoticeTime = lastReadTime
             };
         }
 

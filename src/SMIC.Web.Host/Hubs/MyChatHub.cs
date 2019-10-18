@@ -28,12 +28,14 @@ namespace SMIC.Web.Host.Hubs
         {
             await base.OnConnectedAsync();
             Logger.Debug("A client connected to MyChatHub: " + Context.ConnectionId);
+            Console.WriteLine("A client connected to MyChatHub: " + Context.ConnectionId);
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             await base.OnDisconnectedAsync(exception);
             Logger.Debug("A client disconnected from MyChatHub: " + Context.ConnectionId);
+            Console.WriteLine("A client disconnected from MyChatHub: " + Context.ConnectionId);
         }
     }
 }

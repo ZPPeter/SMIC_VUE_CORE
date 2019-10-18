@@ -117,5 +117,10 @@ namespace SMIC.Sessions
             return _userRepository.Get((long)AbpSession.UserId).ReadLastNoticeTime;
         }
 
+        public DateTime? GetReadLastNoticeTime(long Id)
+        {
+            return _userRepository.Get(Id).ReadLastNoticeTime;
+        }
+
     }
 }

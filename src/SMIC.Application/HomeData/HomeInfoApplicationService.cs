@@ -91,7 +91,7 @@ namespace SMIC.HomeData
             
             return new PagedResultDto<HomeInfoListDto>(totalCount,entityListDtos); // 第一条记录给 HomeInfo 用
         }
-                
+        
         public async Task<PagedResultDto<HomeInfoListDto>> GetPagedNoReadNotice(GetHomeInfosInput input)
         {
             Expression<Func<HomeInfo, bool>> predicate = p => (p.Id != 1);
@@ -137,6 +137,22 @@ namespace SMIC.HomeData
 
             //return entity.MapTo<HomeInfoListDto>();
             return ObjectMapper.Map<HomeInfo>(entity);
+        }
+
+
+        public async Task<List<HomeInfoListDto>> GetHomeInfos() // 第一条 + 未读消息 / 10之内
+        {
+            Expression<Func<HomeInfo, bool>> predicate = p => (p.Id == 1);
+            DateTime? LastDate = _userRepository.Get((long)AbpSession.UserId).ReadLastNoticeTime;
+            predicate = predicate.And(p => p.CreationTime >= LastDate);
+            var entityList = await _entityRepository.GetAll()
+                .Where(r => r.Id == 1 || r.CreationTime > LastDate)
+                .Take(6) // 5 条新消息
+                //.WhereIf(LastDate.HasValue, r => r.CreationTime >LastDate)
+                .OrderBy(t => t.Id)
+                .ToListAsync();
+            var entityListDtos = ObjectMapper.Map<List<HomeInfoListDto>>(entityList);
+            return entityListDtos;
         }
 
         /// <summary>

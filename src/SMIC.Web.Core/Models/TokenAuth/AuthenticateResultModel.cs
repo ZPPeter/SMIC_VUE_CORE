@@ -1,4 +1,5 @@
 ﻿using Abp.Authorization.Users;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -17,5 +18,7 @@ namespace SMIC.Models.TokenAuth
         public string SurName { get; set; }
 
         public string[] Roles { get; set; }
+
+        public DateTime? LastReadNoticeTime { get; set; }
     }
 }
