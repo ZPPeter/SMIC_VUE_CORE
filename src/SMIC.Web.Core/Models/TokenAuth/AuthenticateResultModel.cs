@@ -17,7 +17,9 @@ namespace SMIC.Models.TokenAuth
 
         public string SurName { get; set; }
 
-        public string[] Roles { get; set; }
+        public string[] Roles { get; set; }//NormalizedName
+
+        public string[] RoleNames { get; set; } //DisplayName
 
         public DateTime? LastReadNoticeTime { get; set; }
     }

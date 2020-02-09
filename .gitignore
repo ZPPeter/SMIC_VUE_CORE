@@ -252,3 +252,10 @@ paket-files/
 *.sln.iml
 
 appsettings.json
+/src/SMIC.Web.Host/wwwroot/Templates/Src/2019.12.31.rar
+/src/SMIC.Web.Host/wwwroot/Templates/Src/1020/Desktop.ini
+/src/SMIC.Web.Host/wwwroot/Templates/Bak
+/src/SMIC.Web.Host/wwwroot/Results
+/src/SMIC.Web.Host/wwwroot/Plugins/netcoreapp2.2
+/src/SMIC.Web.Host/wwwroot/DocTemp/Bak
+/src/SMIC.Web.Host/Hubs/Hubs.rar

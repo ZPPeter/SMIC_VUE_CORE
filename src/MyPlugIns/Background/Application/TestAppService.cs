@@ -33,7 +33,7 @@ namespace MyPlugIn.Application
         }
 
 
-        public dynamic GetTestAbpDapper()  // 需要设置 SMIC.EntityFrameworkCore\EntityMapper\PersonMapper.cs
+        public dynamic GetTestAbpDapper()  // 需要设置 SMIC.EntityFrameworkCore\EntityMapper\PersonMapper.cs ---> Map(x => x.PhoneNumbers).Ignore();
         {
             /*
             var a = 0;

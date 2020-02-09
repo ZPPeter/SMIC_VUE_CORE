@@ -52,6 +52,8 @@ namespace SMIC.Web.Host.Startup
                 options => options.Filters.Add(new CorsAuthorizationFilterFactory(_defaultCorsPolicyName))
             );
 
+            services.Configure<PluginsOptions>(_appConfiguration.GetSection("Plugins"));
+
             IdentityRegistrar.Register(services);
             AuthConfigurer.Configure(services, _appConfiguration);
 
@@ -154,7 +156,7 @@ namespace SMIC.Web.Host.Startup
 
             app.UseSignalR(routes =>
             {
-                routes.MapHub<AbpCommonHub>("/signalr");
+                routes.MapHub<AbpCommonHub>("/signalr");                
                 routes.MapHub<MyChatHub>("/signalr-myChatHub"); // Prefix with '/signalr'
             });
 

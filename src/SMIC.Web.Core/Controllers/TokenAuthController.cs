@@ -72,6 +72,9 @@ namespace SMIC.Controllers
             var user = await _userAppService.GetEntityById(loginResult.User.Id);
             var lastReadTime = _sessionAppService.GetReadLastNoticeTime(loginResult.User.Id);
 
+            // AbpSessions.SaveUserToCache(loginResult); // 记住登录不经过此
+            // SessionAppService - GetCurrentLoginInformations
+
             return new AuthenticateResultModel
             {
                 AccessToken = accessToken,
@@ -80,6 +83,7 @@ namespace SMIC.Controllers
                 UserId = loginResult.User.Id,
                 SurName = user.Surname,
                 Roles = user.RoleNames,
+                RoleNames = user.Roles,
                 LastReadNoticeTime = lastReadTime
             };
         }

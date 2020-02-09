@@ -36,7 +36,11 @@ namespace SMIC.Members
         [NotMapped]
         public string[] RoleNames { get; set; }
 
+        //[NotMapped]
+        //public string[] QJMCRoleNames { get; set; }
+
         /*
+          // 列名无效
           // 没有作用
           // Role 继承于 AbpRole,User Role 是多对多，有中间表 UserRole        
           public ICollection<SMIC.Authorization.Roles.Role> Roles { get; set; } 

@@ -190,8 +190,12 @@ namespace SMIC.Users
             var user = await Repository.GetAllIncluding(x => x.Roles).FirstOrDefaultAsync(x => x.Id == id);
 
             var roles = _roleManager.Roles.Where(r => user.Roles.Any(ur => ur.RoleId == r.Id)).Select(r => r.NormalizedName);
+            var roleNames = _roleManager.Roles.Where(r => user.Roles.Any(ur => ur.RoleId == r.Id)).Select(r => r.DisplayName);
+
             var userDto = base.MapToEntityDto(user);
             userDto.RoleNames = roles.ToArray();
+            userDto.Roles = roleNames.ToArray();
+
             return userDto;
         }
 

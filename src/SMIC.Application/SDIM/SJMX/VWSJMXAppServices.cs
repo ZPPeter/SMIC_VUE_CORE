@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Abp.Dapper.Repositories;
 using System.Linq.Expressions;
 using System.Linq;
+using Abp.Specifications;
 using System;
 using SMIC.SDIM.Dtos;
 namespace SMIC.SDIM
@@ -28,11 +29,11 @@ namespace SMIC.SDIM
 
         public dynamic GetSjmx1()
         {
-            dynamic ret = _vwsjmxDapperRepository.GetAllPaged(x => x.器具名称 == "全站仪", 1, 20, "ID").ToDynamicList<dynamic>(); //OK
+            // Pages 从 0 开始
+            dynamic ret = _vwsjmxDapperRepository.GetAllPaged(x => x.器具名称 == "全站仪", 0, 20, "ID").ToDynamicList<dynamic>(); //OK
             //IEnumerable<VW_SJMX> ret = _vwsjmxDapperRepository.Query("select top 20 * from VW_SJMX"); //OK                        
             return ret;
         }
-
 
         public int GetVW_SJMXCount()
         {
@@ -129,6 +130,15 @@ namespace SMIC.SDIM
             );
         }
 
+        //Search By WTDH
+        public IEnumerable<VW_SJMX> GetSjmxBySjdid(double sjdid)
+        {
+            //Expression<Func<VW_SJMX, bool>> predicate = p => p.送检单号 == wtdh;
+            Expression<Func<VW_SJMX, bool>> predicate = p => p.送检单ID == sjdid;
+            IEnumerable<VW_SJMX> ret = _vwsjmxDapperRepository.GetAll(predicate);
+            return ret;
+        }
+               
         /*
         public int GetSjmx3()
         {

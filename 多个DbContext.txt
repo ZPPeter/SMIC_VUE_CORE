@@ -1,0 +1,4 @@
+add-migration   -Context SMICDbContext add_tb1
+update-database -Context SMICDbContext
+
+vw_sjcl_100 是一个视图，不要操作

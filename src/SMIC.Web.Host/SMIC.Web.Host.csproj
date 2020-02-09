@@ -37,6 +37,10 @@
     <Content Remove="wwwroot\swagger\ui\index.html" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Hubs\Hubs.rar" />
+    <None Remove="Hubs\MyChatHub.cs_" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="app.config" />
     <None Include="wwwroot\Plugins\MyJobPlugIn.dll" />
     <None Update="Dockerfile">

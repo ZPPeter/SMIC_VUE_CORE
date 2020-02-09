@@ -22,12 +22,8 @@ namespace SMIC.EntityFrameworkCore.EntityMapper
                     //Map(p => p.Date).Ignore();
                     AutoMap();
                 }
-            }          
-
-                */
-
-
-
+            }
+            */
         }
     }
 }

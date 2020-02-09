@@ -15,18 +15,21 @@ using System.Linq;
 using System;
 using Abp.Domain.Entities;
 using Abp.Runtime.Caching;
+using SMIC.Members;
+using SMIC.Authorization.Roles;
 
 namespace SMIC.SDIM
 {
     public class StatsAppServices : SMICAppServiceBase
     {
         private readonly IDapperRepository<STATS, long> _sjmxDapperRepository;
-        private readonly ICacheManager _cacheManager;//依赖注入缓存
+        private readonly ICacheManager _cacheManager;//依赖注入缓存        
+        
 
         public StatsAppServices(IDapperRepository<STATS, long> sjmxDapperRepository, ICacheManager cacheManager)
         {
             _sjmxDapperRepository = sjmxDapperRepository;
-            _cacheManager = cacheManager;//依赖注入缓存
+            _cacheManager = cacheManager;//依赖注入缓存            
         }
 
         private double[] _getStatsData()
@@ -147,8 +150,9 @@ order by
         }
 
         // 首页工作统计数字 - 全站仪
-        private string[] _GetHomeCountData(int id) // id -> JDYID
+        private string[] _GetHomeCountData(long id) // id -> JDYID
         {
+
             string strSQL = @"
 SELECT 0 as y, 0 as m, count(0) as count,0 as bm 
 FROM dbo.YQSF_SJMX LEFT JOIN dbo.YQSF_SJD ON dbo.YQSF_SJD.ID = dbo.YQSF_SJMX.sjdid 
@@ -156,8 +160,10 @@ LEFT JOIN dbo.YQSF_KH ON dbo.YQSF_SJD.khid = dbo.YQSF_KH.khid
 LEFT JOIN dbo.JCXX_XHGG_BM ON dbo.YQSF_SJMX.XHGGBM = dbo.JCXX_XHGG_BM.XHGGBM 
 LEFT JOIN dbo.JCXX_QJMC_BM ON dbo.JCXX_XHGG_BM.QJMCBM = dbo.JCXX_QJMC_BM.QJMCBM
 where dbo.JCXX_QJMC_BM.QJMC = N'全站仪'";
-            string cnt0 = _sjmxDapperRepository.Query(strSQL + " and year(dbo.YQSF_SJD.sjrq)= year(getdate())").FirstOrDefault().count.ToString() ;     // 今年
-            string cnt5 = _sjmxDapperRepository.Query(strSQL + " and year(dbo.YQSF_SJD.sjrq)= year(getdate())-1").FirstOrDefault().count.ToString();    // 去年
+            string cnt0 = _sjmxDapperRepository.Query(strSQL + " and year(dbo.YQSF_SJD.sjrq)= year(getdate())").FirstOrDefault().count.ToString() ;         // 今年
+            string cnt5 = _sjmxDapperRepository.Query(strSQL + " and year(dbo.YQSF_SJD.sjrq)= year(getdate())-1").FirstOrDefault().count.ToString();        // 去年
+            //string cnt9 = _sjmxDapperRepository.Query(strSQL + " and datediff(month,dbo.YQSF_SJD.sjrq,getdate())=0").FirstOrDefault().count.ToString();   // 本月
+
             strSQL = @"
 SELECT  0 as y, 0 as m, count(0) as count,0 as bm 
 FROM dbo.YQSF_SJMX AS a LEFT JOIN
@@ -169,10 +175,17 @@ dbo.JCXX_QJMC_BM AS d ON b.QJMCBM = d.QJMCBM LEFT JOIN
 dbo.YQSF_DPII_JDRQ as g on g.id = a.id";
             string cnt1 = _sjmxDapperRepository.Query(strSQL + " where d.QJMCBM = 1000 and e.djrq>'2019-04-21'").FirstOrDefault().count.ToString();
             string cnt2 = _sjmxDapperRepository.Query(strSQL + " where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and g.jdzt = 222 or a.jdzt = '检完'").FirstOrDefault().count.ToString();
-            string cnt3 = _sjmxDapperRepository.Query(strSQL + " where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and g.jdzt is null and a.jdzt<>'检完'").FirstOrDefault().count.ToString();
-            string cnt4 = _sjmxDapperRepository.Query(strSQL + " where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and g.jdzt is not null and g.jdzt<> 222 and a.jdzt<>'检完'").FirstOrDefault().count.ToString();            
-            string cnt6 = _sjmxDapperRepository.Query(string.Format(strSQL + " where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and g.jdzt = 122 and a.jdzt<>'检完' and jdy<>{0}-100000",id)).FirstOrDefault().count.ToString(); //待核验记录
+
+            string cnt3 = _sjmxDapperRepository.Query(strSQL + " where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and (g.jdzt is null or g.jdzt=100) and a.jdzt<>'检完'").FirstOrDefault().count.ToString(); //待检
+            
+            string cnt4 = _sjmxDapperRepository.Query(strSQL + " where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and (g.jdzt>100 and g.jdzt < 122) and a.jdzt<>'检完'").FirstOrDefault().count.ToString();  //在检
+            //"and g.jdzt is not null and g.jdzt<> 222 and a.jdzt<>'检完'").FirstOrDefault().count.ToString();
+            
+            string cnt6 = _sjmxDapperRepository.Query(string.Format(strSQL + " where d.QJMCBM = 1000 and e.djrq>'2019-04-21' " +
+                "and g.jdzt = 122 and a.jdzt<>'检完' and jdy<>{0}-100000",id)).FirstOrDefault().count.ToString(); //待核验记录
+
             string cnt8 = _sjmxDapperRepository.Query(strSQL + " where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and g.jdzt = 200 and a.jdzt<>'检完'").FirstOrDefault().count.ToString(); //待批准
+            string cnt9 = _sjmxDapperRepository.Query(strSQL + " where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and a.jdzt<>'检完' and g.jdzt<>222").FirstOrDefault().count.ToString();
 
             strSQL = @"
 SELECT top 1 0 as y, 0 as m, jwrq as count,0 as bm
@@ -188,14 +201,15 @@ where g.jdzt = 122 and a.jdzt<>'检完' and jdy<>{0}-100000 ORDER BY jwrq asc";
             string cnt7 = DateTime.Now.ToString();
             if (st != null)
                 cnt7 = DateTime.Parse(st.count.ToString()).ToString();
-
-            string[] Datas = new string[] { cnt0, cnt1, cnt2, cnt3, cnt4, cnt5, cnt6, cnt7, cnt8 };
+           
+            string[] Datas = new string[] { cnt0, cnt1, cnt2, cnt3, cnt4, cnt5, cnt6, cnt7, cnt8, cnt9 };
             return Datas;
         }
-        public string[] GetHomeCountData(int id) // ToDo 改为 实体级别的
+        public string[] GetHomeCountData(long id) // ToDo 改为 实体级别的
         {
             var entityCache = _cacheManager.GetCache("HomeCountDataCache").Get("AllDatas", () => _GetHomeCountData(id));
             return entityCache;
         }
+
     }
 }

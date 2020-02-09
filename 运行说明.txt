@@ -1,0 +1,7 @@
+
+
+appsettings.json
+
+SMIC.Web.Host\Properties\launchSettings.json
+
+有可能  微软浏览器 Edge 打不开主页，IE 和 Chrome 却可以！！！

@@ -1,42 +1,56 @@
-﻿using Abp.Dependency;
-using Abp.Runtime.Session;
-using Castle.Core.Logging;
-using Microsoft.AspNetCore.SignalR;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
+
 namespace SMIC.Web.Host.Hubs
 {
-
-    public class MyChatHub : Hub, ITransientDependency
+    public class MyChatHub : Hub
     {
-        public IAbpSession AbpSession { get; set; }
-
-        public ILogger Logger { get; set; }
-
-        public MyChatHub()
-        {
-            AbpSession = NullAbpSession.Instance;
-            Logger = NullLogger.Instance;
-        }
-
+        /// <summary>
+        /// 服务器端中转消息处理方法
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public async Task SendMessage(string message)
         {
-            await Clients.All.SendAsync("getMessage", string.Format("User {0}: {1}", AbpSession.UserId, message));
+            await MessageDealWidth.DealWidth(message, this);
         }
-
-        public override async Task OnConnectedAsync()
+        
+        /*
+        public async Task SendMessage(string user, string message)
         {
-            await base.OnConnectedAsync();
-            Logger.Debug("A client connected to MyChatHub: " + Context.ConnectionId);
-            Console.WriteLine("A client connected to MyChatHub: " + Context.ConnectionId);
+            await Clients.All.SendAsync("ReceiveMessage", user, message);
+        }*/
+
+        /// <summary>
+        /// 用户连接方法重写
+        /// </summary>
+        /// <returns></returns>
+        public override Task OnConnectedAsync()
+        {
+            return base.OnConnectedAsync();
         }
-
-        public override async Task OnDisconnectedAsync(Exception exception)
+        /// <summary>
+        /// 用户断开连接方法重写
+        /// </summary>
+        /// <param name="exception"></param>
+        /// <returns></returns>
+        public override Task OnDisconnectedAsync(Exception exception)
         {
-            await base.OnDisconnectedAsync(exception);
-            Logger.Debug("A client disconnected from MyChatHub: " + Context.ConnectionId);
-            Console.WriteLine("A client disconnected from MyChatHub: " + Context.ConnectionId);
+            try
+            {
+                var item = ConnectionManager.ConnectionUsers.Where(m => m.ConnectionId == Context.ConnectionId).FirstOrDefault();
+                //移除相关联用户
+                ConnectionManager.ConnectionUsers.Remove(item);
+            }
+            catch (Exception ex)
+            {
+                //throw ex;
+            }
+            return base.OnDisconnectedAsync(exception);
         }
     }
 }
-

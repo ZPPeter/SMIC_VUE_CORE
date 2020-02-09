@@ -1,30 +1,20 @@
-
+//using System.Linq.Dynamic.Core;
 using System;
-using System.Data;
-using System.Linq;
-using System.Linq.Dynamic;
-using System.Linq.Dynamic.Core;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
+using Abp.Dapper.Repositories;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-
-using Abp.UI;
-using Abp.AutoMapper;
+using System.Linq.Expressions;
+using Abp.Specifications;
+using System.Linq;
+using Abp.Application.Services.Dto;
 using Abp.Extensions;
+using SMIC.Members;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
-using Abp.Application.Services.Dto;
-using Abp.Linq.Extensions;
-
-
-using SMIC.HomeData;
 using SMIC.HomeData.Dtos;
 using SMIC.HomeData.DomainService;
-using SMIC.HomeData.Authorization;
-using Abp.Authorization.Users;
-using Abp.Dapper.Repositories;
-using SMIC.Members;
+using System.Threading.Tasks;
+using Abp.Linq.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace SMIC.HomeData
 {
@@ -62,6 +52,7 @@ namespace SMIC.HomeData
         public async Task<PagedResultDto<HomeInfoListDto>> GetPaged(GetHomeInfosInput input)
 		{
             Expression<Func<HomeInfo, bool>> predicate = p => (p.Id != 1);
+            
             if (!input.FilterText.IsNullOrWhiteSpace())            
             {
                 predicate = predicate.And(p => (p.Title.Contains(input.FilterText) || p.Description.Contains(input.FilterText)));

@@ -1,0 +1,19 @@
+
+0、Web.Host
+  appsettings.json
+  "Plugins": {
+    "PluginsPath": "wwwroot\\Plugins\\netcoreapp2.2"
+  }
+
+1、Startup.cs
+services.Configure<PluginsOptions>(_appConfiguration.GetSection("Plugins"));
+
+2、SMIC.Core
+  PluginsOptions.cs
+
+3、IPlugin 接口
+
+4、SMIC.SJCL.Common 引用 IPlugin、Doc、Xls、二维码 
+
+5、AppServiceBase
+

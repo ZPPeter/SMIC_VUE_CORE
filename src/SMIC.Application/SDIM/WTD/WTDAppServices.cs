@@ -13,9 +13,12 @@ using Abp.Dapper.Repositories;
 using System.Linq.Expressions;
 using System.Linq;
 using System;
+using SMIC.SDIM.Dtos;
+using Abp.Specifications;
 
 namespace SMIC.SDIM
 {
+    [AbpAuthorize]
     public class WTDAppServices : SMICAppServiceBase
     {
         private readonly IDapperRepository<WTD, long> _wtdDapperRepository;
@@ -30,6 +33,13 @@ namespace SMIC.SDIM
             UPDATE YQSF_SJD
             SET yqjs = (
                 SELECT COUNT(*) FROM YQSF_SJMX WHERE SJDID = YQSF_SJD.id
+            )";
+            _wtdDapperRepository.Execute(strSQL);
+
+            strSQL = @"
+            UPDATE YQSF_SJD
+            SET qzyjs = (
+                SELECT COUNT(*) FROM VW_SJMX WHERE[器具名称] = '全站仪' and 送检单号 = YQSF_SJD.sjdid
             )";
             _wtdDapperRepository.Execute(strSQL);
 
@@ -59,6 +69,30 @@ namespace SMIC.SDIM
             strSQL = string.Format(strSQL, q.Trim());
             IEnumerable<WTD> ret = _wtdDapperRepository.Query(strSQL);
             return ret;
+        }
+
+        public PagedResultDto<WTD> GetPagedWtds(GetWtdInput input)
+        {
+            // 数据库里面必须有 WTD 实体或者视图
+            Expression<Func<WTD, bool>> predicate = p => p.Id > 0;
+            
+            if (!input.FilterText.IsNullOrWhiteSpace())
+            {
+                //predicate = predicate.And(p => (p.sjdid==(input.FilterText) || p.dwmc.Contains(input.FilterText)));
+                predicate = predicate.And(p => (p.sjdid.Contains(input.FilterText) || p.dwmc.Contains(input.FilterText)));
+            }
+
+            var totalCount = _wtdDapperRepository.Count(predicate);
+            IEnumerable<WTD> ret = _wtdDapperRepository.GetAllPaged(
+                predicate,
+                input.SkipCount / input.MaxResultCount,
+                input.MaxResultCount,
+                input.Sorting, input.Order == "desc"); // input.Order=="asc"  true/false
+            List<WTD> tempList2 = ObjectMapper.Map<List<WTD>>(ret);
+            return new PagedResultDto<WTD>(
+                totalCount,
+                tempList2
+            );
         }
 
     }

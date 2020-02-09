@@ -17,26 +17,31 @@ using Abp.Domain.Entities;
 using Abp.Runtime.Caching;
 using System.Text;
 using Abp.Domain.Uow;
+using SMIC.SDIM.Dtos;
+using Abp.Specifications;
 
 namespace SMIC.SDIM
 {
+    [AbpAuthorize]
     public class SJMXAppServices : SMICAppServiceBase
     {
         private readonly IDapperRepository<JDRQ, long> _jdrqDapperRepository;
         private readonly IDapperRepository<SJMX, long> _sjmxDapperRepository;
+        private readonly IDapperRepository<RecentSJMX, long> _sjmxRecentDapperRepository;        
         private readonly IDapperRepository<STATS, long> _DapperRepository;
         private readonly ICacheManager _cacheManager;//依赖注入缓存
 
         private readonly JDRQAppServices _jdrqAppServices;//依赖注入缓存
 
 
-        public SJMXAppServices(IDapperRepository<SJMX, long> sjmxDapperRepository, IDapperRepository<JDRQ, long> jdrqDapperRepository, ICacheManager cacheManager,IDapperRepository<STATS, long> DapperRepository, JDRQAppServices jdrqAppServices)  
+        public SJMXAppServices(IDapperRepository<SJMX, long> sjmxDapperRepository, IDapperRepository<JDRQ, long> jdrqDapperRepository, ICacheManager cacheManager,IDapperRepository<STATS, long> DapperRepository, JDRQAppServices jdrqAppServices, IDapperRepository<RecentSJMX, long> sjmxRecentDapperRepository)  
         {
             _jdrqDapperRepository = jdrqDapperRepository;
             _sjmxDapperRepository = sjmxDapperRepository;
             _cacheManager = cacheManager;//依赖注入缓存
             _DapperRepository = DapperRepository;
-            _jdrqAppServices = jdrqAppServices;            
+            _jdrqAppServices = jdrqAppServices;
+            _sjmxRecentDapperRepository = sjmxRecentDapperRepository;
         }
 
         public SJMX Get(int id)
@@ -54,7 +59,11 @@ namespace SMIC.SDIM
             else
                 return null;
         }
-
+        public dynamic GetLastSJMX() {
+            string strSQL = @"select top 3 * from  VW_DPII_SJD Order By ID Desc";
+            IEnumerable<RecentSJMX> ret = _sjmxRecentDapperRepository.Query(strSQL);
+            return ret;
+        }
         public dynamic GetRecentSJMX()
         {
             string strSQL = @"SELECT TOP (10) a.ID, e.sjdid ,e.djrq ,d.QJMC , b.XHGGMC , a.ccbh ,a.jdzt
@@ -135,7 +144,8 @@ where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and a.sjdid ='{0}'
         public IEnumerable<SJMX> ListSjmxs(string lb, string q, string userId)
         {
 
-            string strSQL = @"select top 20 a.sjdid,qjmc,djrq,xhggmc,b.xhggbm,ccbh,zzcnr as zzc,jdy,a.bzsm,g.jdrq,g.jwrq,f.dwmc as wtdw,DATEADD(day, 14, djrq) as yqjcrq,a.jdzt as jdzt1,g.jdzt as jdzt2
+            string strSQL = @"select top 10 a.id,a.sjdid,qjmc,djrq,xhggmc,b.xhggbm,ccbh,zzcnr as zzc,jdy,a.bzsm,g.jdrq,g.jwrq,f.dwmc as wtdw,DATEADD(day, 14, djrq) as yqjcrq,a.jdzt as jdzt1,
+        g.jdzt as jdzt2,e.sjdid as wtdh
         FROM dbo.YQSF_SJMX AS a LEFT JOIN
         dbo.YQSF_SJD as e on a.sjdid = e.id LEFT JOIN
         dbo.YQSF_KH as f on e.khid = f.khid LEFT JOIN
@@ -156,18 +166,92 @@ where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and a.sjdid ='{0}'
 
             if (q != "")
             {
-                strSQL += " and (出厂编号 like '%" + q + "%' or 型号规格 like '%" + q + "%'";
+                strSQL += " and (ccbh like '%" + q + "%' or xhggmc like '%" + q + "%'";
                 if (lb == "9")
                 {
-                    strSQL += " or 委托单位 like '%" + q + "%'";
-                    strSQL += " or 委托单号码 like '%" + q + "%'";
+                    strSQL += " or f.dwmc like '%" + q + "%'";
+                    strSQL += " or e.sjdid like '%" + q + "%'";
                 }
                 strSQL += ")";
             }
             if (lb == "9")
-                strSQL += " ORDER BY ID DESC";
+                strSQL += " ORDER BY a.ID DESC";
 
             IEnumerable<SJMX> ret = _sjmxDapperRepository.Query(strSQL);
+            return ret;
+        }
+
+        // 待检定列表
+        public IEnumerable<SJMX> ListDjmxs(string q)
+        {
+
+            string strSQL = @"select top 20 a.id,a.sjdid,qjmc,djrq,xhggmc,b.xhggbm,ccbh,zzcnr as zzc,jdy,a.bzsm,g.jdrq,g.jwrq,f.dwmc as wtdw,DATEADD(day, 14, djrq) as yqjcrq,a.jdzt as jdzt1,
+        g.jdzt as jdzt2,e.sjdid as wtdh
+        FROM dbo.YQSF_SJMX AS a LEFT JOIN
+        dbo.YQSF_SJD as e on a.sjdid = e.id LEFT JOIN
+        dbo.YQSF_KH as f on e.khid = f.khid LEFT JOIN
+        dbo.JCXX_XHGG_BM AS b ON a.XHGGBM = b.XHGGBM LEFT JOIN
+        dbo.JCXX_ZZC_BM AS c ON b.ZZCBM = c.ZZCBM LEFT JOIN
+        dbo.JCXX_QJMC_BM AS d ON b.QJMCBM = d.QJMCBM LEFT JOIN
+        dbo.YQSF_DPII_JDRQ as g on g.id = a.id
+        where d.QJMCBM = 1000 and e.djrq > '2019-04-21'";                     // 查询searchAll
+
+        strSQL += " and  g.jdzt is null and a.jdzt<>'检完'";                  // 待检:JDZT is null
+
+            if (q != "")
+            {
+                strSQL += " and (ccbh like '%" + q + "%' or xhggmc like '%" + q + "%'";
+                strSQL += ")";
+            }
+
+            IEnumerable<SJMX> ret = _sjmxDapperRepository.Query(strSQL);
+            return ret;
+        }
+
+        /*
+        public async Task<PagedResultDto<SJMXListDto>> GetPagedSjmxs(GetVwSjmxsInput input)
+        {
+            Expression<Func<SJMX, bool>> predicate = p => (p.Id != 1);
+
+            var totalCount = _sjmxDapperRepository.Count(predicate);
+
+
+            var entityList = await _sjmxDapperRepository.GetAll()
+                .OrderByDescending(t => t.Id)
+                .PageBy(input)
+                .ToListAsync();
+            var entityListDtos = ObjectMapper.Map<List<SJMXListDto>>(entityList);
+
+            return new PagedResultDto<SJMXListDto>(totalCount, entityListDtos);
+        }        
+        */
+
+        public PagedResultDto<SJMX> GetPagedSjmxs(GetVwSjmxsInput input)
+        {
+            // 数据库里面必须有 SJMX 实体或者视图
+            Expression<Func<SJMX, bool>> predicate = p => p.qjmc == "全站仪";
+
+            if (!input.FilterText.IsNullOrWhiteSpace())
+            {
+                predicate = predicate.And(p => (p.xhggmc.Contains(input.FilterText) || p.ccbh.Contains(input.FilterText) || p.wtdh.Contains(input.FilterText) || p.wtdw.Contains(input.FilterText) ));
+            }
+
+            var totalCount = _sjmxDapperRepository.Count(predicate); 
+            IEnumerable<SJMX> ret = _sjmxDapperRepository.GetAllPaged(
+                predicate,
+                input.SkipCount / input.MaxResultCount,
+                input.MaxResultCount,
+                input.Sorting, input.Order == "desc"); // input.Order=="asc"  true/false
+            List<SJMX> tempList2 = ObjectMapper.Map<List<SJMX>>(ret);
+            return new PagedResultDto<SJMX>(
+                totalCount,
+                tempList2
+            );
+        }
+
+        public dynamic GetSjmx1()
+        {
+            dynamic ret = _sjmxDapperRepository.GetAllPaged(x => x.qjmc == "全站仪", 0, 20, "ID").ToDynamicList<dynamic>();
             return ret;
         }
 
@@ -175,7 +259,7 @@ where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and a.sjdid ='{0}'
         public IEnumerable<SJMX> GetSjmxByWtdh(string q) // ???
         {
             string strSQL = @"
-select top 20 a.sjdid,e.sjdid as wtdh,qjmc,djrq,xhggmc,b.xhggbm,ccbh,zzcnr as zzc,jdy,a.bzsm,g.jdrq,g.jwrq,f.dwmc as wtdw,DATEADD(day, 14, djrq) as yqjcrq,a.jdzt as jdzt1,g.jdzt as jdzt2
+        select top 20 a.sjdid,e.sjdid as wtdh,qjmc,djrq,xhggmc,b.xhggbm,ccbh,zzcnr as zzc,jdy,a.bzsm,g.jdrq,g.jwrq,f.dwmc as wtdw,DATEADD(day, 14, djrq) as yqjcrq,a.jdzt as jdzt1,g.jdzt as jdzt2
         FROM dbo.YQSF_SJMX AS a LEFT JOIN
         dbo.YQSF_SJD as e on a.sjdid = e.id LEFT JOIN
         dbo.YQSF_KH as f on e.khid = f.khid LEFT JOIN
@@ -216,9 +300,9 @@ select top 20 a.sjdid,e.sjdid as wtdh,qjmc,djrq,xhggmc,b.xhggbm,ccbh,zzcnr as zz
             _sjmxDapperRepository.Execute(strSQL);
         }
 
-        public int UpdateCcbh(int id, string ccbh)
+        public int UpdateCcbh(UpdateCcbhDto input) //int id, string ccbh)
         {
-            string strSQL = "update YQSF_SJMX set ccbh = '" + ccbh + "' where id = " + id;
+            string strSQL = "update YQSF_SJMX set ccbh = '" + input.Ccbh + "' where id = " + input.ID;
             return _sjmxDapperRepository.Execute(strSQL);
         }
 
@@ -242,7 +326,7 @@ select top 20 a.sjdid,e.sjdid as wtdh,qjmc,djrq,xhggmc,b.xhggbm,ccbh,zzcnr as zz
             int? jdzt1 = null;
             SJMX sjmx = Get(id);
             if (sjmx != null)
-                jdzt0 = sjmx.jdzt;
+                jdzt0 = sjmx.jdzt1;
                         
             JDRQ jdrq = _jdrqAppServices.Get(id);
             //JDRQ jdrq = GetJdrq(id);

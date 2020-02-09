@@ -32,6 +32,7 @@ using System.Text;
 using DapperExtensions;
 using Abp.Data;
 using Abp.Runtime.Caching;
+using Abp.Specifications;
 
 namespace SMIC.Members
 {
@@ -169,6 +170,7 @@ namespace SMIC.Members
             // Abp.Dapper 不支持一对多，只能 Dapper 进行
             foreach (AbpUser o in tempList) {
                 o.RoleNames = GetRoles(o.Id);
+                //o.QJMCRoleNames = GetQJMCRoleNames(o.RoleNames); // 检定器具名称列表                
             }
 
             //sw.Stop();
@@ -189,6 +191,25 @@ namespace SMIC.Members
             List<string> list = new List<string>();
             foreach (Role r in ret)
                 list.Add(r.NormalizedName);            
+            return list.ToArray();
+        }
+
+        public string[] GetQJMCRoleNames(string[] roleNames)
+        {
+            var roles = "";
+            for (var i = 0; i < roleNames.Length; i++)
+            {
+                if (roleNames[i].StartsWith('1'))
+                {
+                    roles = roles + ',' + roleNames[i];
+                }
+            }            
+            
+            var param = new { roles = roles.Substring(1) };
+            var ret = _roleRepository.Query("select DisplayName from AbpRoles where NormalizedName in(@roles)", param);
+            List<string> list = new List<string>();
+            foreach (Role r in ret)
+                list.Add(r.NormalizedName);
             return list.ToArray();
         }
 

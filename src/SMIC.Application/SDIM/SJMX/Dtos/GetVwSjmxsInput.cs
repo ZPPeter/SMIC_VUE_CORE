@@ -14,6 +14,9 @@ namespace SMIC.SDIM.Dtos
         public string QJMC { get; set; }
         public string WTDH { get; set; }
         public string WTDW { get; set; }
+        public string XHGG { get; set; }
+        public string CCBH { get; set; }
+        public string FilterText { get; set; }
         public DateTime? From { get; set; }
         public DateTime? To { get; set; }
                 

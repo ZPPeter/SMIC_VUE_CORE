@@ -37,6 +37,8 @@ namespace SMIC.Users.Dto
 
         public DateTime CreationTime { get; set; }
 
-        public string[] RoleNames { get; set; }
+        public string[] RoleNames { get; set; } //NormalizedName
+
+        public string[] Roles { get; set; } //DisplayName
     }
 }

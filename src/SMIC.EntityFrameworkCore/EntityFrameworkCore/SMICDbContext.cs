@@ -24,9 +24,12 @@ namespace SMIC.EntityFrameworkCore
         public virtual DbSet<MyTask> Tasks { get; set; }
 
         public virtual DbSet<Person> Persons { get; set;}
-        //public virtual DbSet<MyUser> MyUsers { get; set; }
         public virtual DbSet<PhoneNumber> PhoneNumbers { get; set; }
+
+        //public virtual DbSet<MyUser> MyUsers { get; set; }
+
         public DbSet<HomeInfo> HomeInfos { get; set; }
+        
         public SMICDbContext(DbContextOptions<SMICDbContext> options)
             : base(options)
         {

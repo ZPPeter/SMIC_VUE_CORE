@@ -27,4 +27,20 @@ https://docs.microsoft.com/zh-cn/aspnet/core/getting-started/?view=aspnetcore-2.
 CodeFirst 自动迁移数据库学习
 https://docs.microsoft.com/zh-cn/ef/ef6/modeling/code-first/migrations/index
 
-DPII 代码移植
+OWIN
+https://blog.csdn.net/wulex/article/details/87796690
+https://docs.microsoft.com/zh-tw/aspnet/core/fundamentals/owin?view=aspnetcore-3.0
+owin被弃用了？算是吧，只是被间接支持了，现在只能算中间件了。
+
+自宿主
+https://www.cnblogs.com/ziranquliu/p/5872233.html
+https://www.cnblogs.com/yunei/p/7436368.html
+https://blog.csdn.net/sD7O95O/article/details/86746923
+
+
+ASP.NET Core Host Kestrel
+https://blog.csdn.net/nodeman/article/details/88916267
+
+if(!string.IsNullOrWhiteSpace(AbpSession.UserId.ToString()))
+
+主外键: 用户-角色 一对多

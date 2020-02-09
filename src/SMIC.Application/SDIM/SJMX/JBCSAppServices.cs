@@ -16,7 +16,7 @@ using System;
 using Abp.Domain.Entities;
 using Abp.Runtime.Caching;
 using System.Text;
-
+using SMIC.SDIM.Dtos;
 namespace SMIC.SDIM
 {
     public class JBCSAppServices : SMICAppServiceBase
@@ -41,7 +41,7 @@ namespace SMIC.SDIM
                 return null; // AddNew 
         }
 
-        public int AddJbcs(int id,JBCS jbcs)
+        public int AddJbcs(AddJbcsDto jbcs)
         {            
             StringBuilder strSql = new StringBuilder();
 
@@ -49,7 +49,7 @@ namespace SMIC.SDIM
             strSql.Append("xhggbm,bcjda,bcjdb,cjjd,bcfw,axles");
             strSql.Append(")");
             strSql.Append(" values (");
-            strSql.Append(id + ",");
+            strSql.Append(jbcs.ID + ",");
             strSql.Append(jbcs.BCJDA + ",");
             strSql.Append(jbcs.BCJDB + ",");
             strSql.Append(jbcs.CJJD + ",");

@@ -38,7 +38,7 @@ namespace SMIC.PhoneBooks.Persons
         /// 电话号码的导航属性
         /// </summary>
         public ICollection<PhoneNumber> PhoneNumbers { get; set; }
-
+        // 需要设置 SMIC.EntityFrameworkCore\EntityMapper\PersonMapper.cs ---> Map(x => x.PhoneNumbers).Ignore();
     }
 
     public class MyUser : Entity<int>

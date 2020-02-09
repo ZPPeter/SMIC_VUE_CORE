@@ -10,4 +10,12 @@ namespace SMIC.SDIM
         public int count { get; set; }
         public int bm { get; set; }
     }
+
+    public class COUNT : Entity<long>
+    {
+        public int count { get; set; }
+
+    }
+
+
 }

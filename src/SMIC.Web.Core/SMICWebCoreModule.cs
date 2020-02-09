@@ -17,7 +17,7 @@ namespace SMIC
 {
     [DependsOn(
          typeof(SMICApplicationModule), // SMIC.Application 应用层
-         //typeof(FirstABPPluginModule),  // 第二个 应用层，目前不知道怎么用插件实现
+         //typeof(FirstABPPluginModule),  // 第二个 应用层，用插件实现
          typeof(SMICEntityFrameworkModule),
          typeof(AbpAspNetCoreModule)
         ,typeof(AbpAspNetCoreSignalRModule)

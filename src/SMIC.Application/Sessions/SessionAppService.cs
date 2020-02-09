@@ -29,6 +29,7 @@ using SMIC.Authorization.Roles;
 
 using Abp.Notifications;
 using Abp;
+using SMIC.Authorization.Users;
 
 namespace SMIC.Sessions
 {
@@ -62,12 +63,14 @@ namespace SMIC.Sessions
             context.Database.ExecuteSqlCommand("update AbpUsers set LastLoginTime=@LastLoginTime where Id=@Id", parameters);            
             //Logger.Info(user.ToString());
             */
+            if(!string.IsNullOrWhiteSpace(AbpSession.UserId.ToString()))
             _memberDapperRepository.Execute("update AbpUsers set LastLoginTime = '" + Clock.Now + "' where Id = " + AbpSession.UserId);
         }
 
         public void SetReadLastNoticeTime()
         {
-            _memberDapperRepository.Execute("update AbpUsers set ReadLastNoticeTime = '" + Clock.Now + "' where Id = " + AbpSession.UserId);
+            if (!string.IsNullOrWhiteSpace(AbpSession.UserId.ToString()))
+                _memberDapperRepository.Execute("update AbpUsers set ReadLastNoticeTime = '" + Clock.Now + "' where Id = " + AbpSession.UserId);
         }
 
         [DisableAuditing]
@@ -93,10 +96,13 @@ namespace SMIC.Sessions
 
             if (AbpSession.UserId.HasValue)
             {
-                output.User = ObjectMapper.Map<UserLoginInfoDto>(await GetCurrentUserAsync());
+                User user = await GetCurrentUserAsync();
+                //output.User = ObjectMapper.Map<UserLoginInfoDto>(await GetCurrentUserAsync());
+                output.User = ObjectMapper.Map<UserLoginInfoDto>(user);
                 output.User.Roles = GetRoles(output.User.Id);
                 output.User.ReadLastNoticeTime = GetReadLastNoticeTime();
                 SetLastLoginTime();
+                AbpSessions.SaveUserToCache(user);// 记住用户登录信息
             }
 
             return output;

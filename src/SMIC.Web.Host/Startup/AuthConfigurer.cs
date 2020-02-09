@@ -71,7 +71,10 @@ namespace SMIC.Web.Host.Startup
             }
 
             // Set auth token from cookie
-            context.Token = SimpleStringCipher.Instance.Decrypt(qsAuthToken, AppConsts.DefaultPassPhrase);
+            if (context.HttpContext.Request.Path.Value.StartsWith("/signalr"))
+                context.Token = context.HttpContext.Request.Query["enc_auth_token"].FirstOrDefault();
+            else
+                context.Token = SimpleStringCipher.Instance.Decrypt(qsAuthToken, AppConsts.DefaultPassPhrase);
             return Task.CompletedTask;
         }
     }
