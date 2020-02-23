@@ -1,5 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
+    
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <!--> true其实是指的激活服务器GC模式，false不是指不GC，而是指的使用工作站GC模式 <-->
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
     <PreserveCompilationContext>true</PreserveCompilationContext>

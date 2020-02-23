@@ -15,6 +15,7 @@ namespace SMIC.SDIM
         public string sjdid { get; set; }
         public int xhggbm { get; set; }
         public DateTime djrq { get; set; }
+        public DateTime? jdrq { get; set; }
         public DateTime yqjchrq { get; set; }
         
         public string Surname { get; set; }
@@ -23,8 +24,10 @@ namespace SMIC.SDIM
         public string QJMC { get; set; }
         public string xhggmc { get; set; }
         public string ccbh { get; set; }
-        public string ZZCNR { get; set; }
+        public string ZZC { get; set; }
         public string bzsm { get; set; }
+        public string hyyj { get; set; }
+        public string pzyj { get; set; }
 
     }
 

@@ -31,16 +31,16 @@ namespace SMIC.SDIM
         private readonly IDapperRepository<STATS, long> _DapperRepository;
         private readonly ICacheManager _cacheManager;//依赖注入缓存
 
-        private readonly JDRQAppServices _jdrqAppServices;//依赖注入缓存
+        private readonly CZRZAppServices _czrzAppServices;//依赖注入缓存
 
 
-        public SJMXAppServices(IDapperRepository<SJMX, long> sjmxDapperRepository, IDapperRepository<JDRQ, long> jdrqDapperRepository, ICacheManager cacheManager,IDapperRepository<STATS, long> DapperRepository, JDRQAppServices jdrqAppServices, IDapperRepository<RecentSJMX, long> sjmxRecentDapperRepository)  
+        public SJMXAppServices(IDapperRepository<SJMX, long> sjmxDapperRepository, IDapperRepository<JDRQ, long> jdrqDapperRepository, ICacheManager cacheManager,IDapperRepository<STATS, long> DapperRepository, IDapperRepository<RecentSJMX, long> sjmxRecentDapperRepository, CZRZAppServices czrzAppServices) 
         {
             _jdrqDapperRepository = jdrqDapperRepository;
             _sjmxDapperRepository = sjmxDapperRepository;
             _cacheManager = cacheManager;//依赖注入缓存
             _DapperRepository = DapperRepository;
-            _jdrqAppServices = jdrqAppServices;
+            _czrzAppServices = czrzAppServices;
             _sjmxRecentDapperRepository = sjmxRecentDapperRepository;
         }
 
@@ -117,7 +117,7 @@ dbo.YQSF_KH as f on e.khid = f.khid LEFT JOIN
 dbo.JCXX_XHGG_BM AS b ON a.XHGGBM = b.XHGGBM LEFT JOIN
 dbo.JCXX_ZZC_BM AS c ON b.ZZCBM = c.ZZCBM LEFT JOIN
 dbo.JCXX_QJMC_BM AS d ON b.QJMCBM = d.QJMCBM LEFT JOIN
-dbo.YQSF_DPII_JDRQ as g on g.id = a.id 											
+dbo.SJCL_CHYQ as g on g.id = a.id 											
 where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and a.sjdid ='{0}'
 ";
             strSQL = string.Format(strSQL, sjdid);
@@ -152,7 +152,7 @@ where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and a.sjdid ='{0}'
         dbo.JCXX_XHGG_BM AS b ON a.XHGGBM = b.XHGGBM LEFT JOIN
         dbo.JCXX_ZZC_BM AS c ON b.ZZCBM = c.ZZCBM LEFT JOIN
         dbo.JCXX_QJMC_BM AS d ON b.QJMCBM = d.QJMCBM LEFT JOIN
-        dbo.YQSF_DPII_JDRQ as g on g.id = a.id
+        dbo.SJCL_CHYQ as g on g.id = a.id
         where d.QJMCBM = 1000 and e.djrq > '2019-04-21'";                             // 查询searchAll
                         
             if (lb == "2")
@@ -181,10 +181,10 @@ where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and a.sjdid ='{0}'
             return ret;
         }
 
-        // 待检定列表
+        /*
+        // 待检定列表 - SJCLAppServices/GetPagedDjmxs
         public IEnumerable<SJMX> ListDjmxs(string q)
         {
-
             string strSQL = @"select top 20 a.id,a.sjdid,qjmc,djrq,xhggmc,b.xhggbm,ccbh,zzcnr as zzc,jdy,a.bzsm,g.jdrq,g.jwrq,f.dwmc as wtdw,DATEADD(day, 14, djrq) as yqjcrq,a.jdzt as jdzt1,
         g.jdzt as jdzt2,e.sjdid as wtdh
         FROM dbo.YQSF_SJMX AS a LEFT JOIN
@@ -193,7 +193,7 @@ where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and a.sjdid ='{0}'
         dbo.JCXX_XHGG_BM AS b ON a.XHGGBM = b.XHGGBM LEFT JOIN
         dbo.JCXX_ZZC_BM AS c ON b.ZZCBM = c.ZZCBM LEFT JOIN
         dbo.JCXX_QJMC_BM AS d ON b.QJMCBM = d.QJMCBM LEFT JOIN
-        dbo.YQSF_DPII_JDRQ as g on g.id = a.id
+        dbo.SJCL_CHYQ as g on g.id = a.id
         where d.QJMCBM = 1000 and e.djrq > '2019-04-21'";                     // 查询searchAll
 
         strSQL += " and  g.jdzt is null and a.jdzt<>'检完'";                  // 待检:JDZT is null
@@ -207,8 +207,7 @@ where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and a.sjdid ='{0}'
             IEnumerable<SJMX> ret = _sjmxDapperRepository.Query(strSQL);
             return ret;
         }
-
-        /*
+        
         public async Task<PagedResultDto<SJMXListDto>> GetPagedSjmxs(GetVwSjmxsInput input)
         {
             Expression<Func<SJMX, bool>> predicate = p => (p.Id != 1);
@@ -229,12 +228,13 @@ where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and a.sjdid ='{0}'
         public PagedResultDto<SJMX> GetPagedSjmxs(GetVwSjmxsInput input)
         {
             // 数据库里面必须有 SJMX 实体或者视图
-            Expression<Func<SJMX, bool>> predicate = p => p.qjmc == "全站仪";
+            // Expression<Func<SJMX, bool>> predicate = p => p.qjmc == "全站仪";
+            Expression<Func<SJMX, bool>> predicate = p => p.Id > 0;
 
             if (!input.FilterText.IsNullOrWhiteSpace())
             {
                 predicate = predicate.And(p => (p.xhggmc.Contains(input.FilterText) || p.ccbh.Contains(input.FilterText) || p.wtdh.Contains(input.FilterText) || p.wtdw.Contains(input.FilterText) ));
-            }
+            }                      
 
             var totalCount = _sjmxDapperRepository.Count(predicate); 
             IEnumerable<SJMX> ret = _sjmxDapperRepository.GetAllPaged(
@@ -249,9 +249,17 @@ where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and a.sjdid ='{0}'
             );
         }
 
+        /*
         public dynamic GetSjmx1()
         {
             dynamic ret = _sjmxDapperRepository.GetAllPaged(x => x.qjmc == "全站仪", 0, 20, "ID").ToDynamicList<dynamic>();
+            return ret;
+        }*/
+
+        public IEnumerable<SJMX> GetSjmxBySjdid(string sjdid)
+        {
+            Expression<Func<SJMX, bool>> predicate = p => p.sjdid == sjdid;
+            IEnumerable<SJMX> ret = _sjmxDapperRepository.GetAll(predicate);
             return ret;
         }
 
@@ -266,7 +274,7 @@ where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and a.sjdid ='{0}'
         dbo.JCXX_XHGG_BM AS b ON a.XHGGBM = b.XHGGBM LEFT JOIN
         dbo.JCXX_ZZC_BM AS c ON b.ZZCBM = c.ZZCBM LEFT JOIN
         dbo.JCXX_QJMC_BM AS d ON b.QJMCBM = d.QJMCBM LEFT JOIN
-        dbo.YQSF_DPII_JDRQ as g on g.id = a.id
+        dbo.SJCL_CHYQ as g on g.id = a.id
         where d.QJMCBM = 1000 and e.djrq > '2019-04-21' and e.sjdid='" + q + "'";
 
             IEnumerable<SJMX> ret = _sjmxDapperRepository.Query(strSQL);
@@ -274,53 +282,37 @@ where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and a.sjdid ='{0}'
         }
     
         // public static List<int> GetMonthCount(int year) -> StatsAppServices.cs
-
-        public void CheckSetOver()
-        {
-            string strSQL = "Update YQSF_SJD set qzyjdzt='检定完毕' where qzyjs>0 and qzyjdzt<>'检定完毕' and qzyjs=(select count(*) from YQSF_SJMX where jdzt='检完' and SJDID=YQSF_SJD.id)";
-            _sjmxDapperRepository.Execute(strSQL);
-            strSQL = @"
-            Update YQSF_SJD set qzyjdzt='检定完毕' where qzyjs>0 and qzyjdzt<>'检定完毕' and qzyjs=(
-            select count(0)
-            FROM dbo.YQSF_SJMX AS a LEFT JOIN
-            dbo.YQSF_SJD as e on a.sjdid = e.id LEFT JOIN
-            dbo.YQSF_DPII_JDRQ as g on g.id = a.id
-            where (g.jdzt='222' or a.jdzt='检完') and a.sjdid=a.id)";
-            _sjmxDapperRepository.Execute(strSQL);
-        }
+              
 
         //重新检定
-        public void ResetJdzt(string id)
+        public int ResetJdzt(string id)
         {
-            string strSQL = "update YQSF_SJD set qzyjdzt = '正在检定',jdzt='登记' where ID = (select sjdid from YQSF_SJMX as b where b.id = " + id + ")";
+            string strSQL = "update YQSF_SJD set jdzt='在检' where ID = (select sjdid from YQSF_SJMX as b where b.id = " + id + ")";
             _sjmxDapperRepository.Execute(strSQL);
             strSQL = "Update YQSF_SJMX set jdzt='登记' where id=" + id;
             _sjmxDapperRepository.Execute(strSQL);
-            strSQL = "Update YQSF_DPII_JDRQ set jdzt=100 where id=" + id;
+            strSQL = "Update SJCL_CHYQ set JDRQ=null,jwrq=null,JDYID=null,hyy=null,HYYID=null,PZRID=null,HYYJ='',PZYJ='',PZR='',jdzt=100 where id=" + id;
             _sjmxDapperRepository.Execute(strSQL);
+
+            CZRZDto czrz = new CZRZDto();
+            czrz.CZNR = "重新检定："+id;
+            _czrzAppServices.AddtoCZRZ(czrz);
+            return 1;
         }
 
+        // 出厂编号修改
         public int UpdateCcbh(UpdateCcbhDto input) //int id, string ccbh)
         {
+            CZRZDto czrz = new CZRZDto();
+            czrz.CZNR = "修改 "+ input.ID+" 出厂编号：" + input.OCcbh + "->" + input.Ccbh;
+            czrz.BZSM = input.BZSM;
+            _czrzAppServices.AddtoCZRZ(czrz);
+
             string strSQL = "update YQSF_SJMX set ccbh = '" + input.Ccbh + "' where id = " + input.ID;
             return _sjmxDapperRepository.Execute(strSQL);
         }
-
-
+         
         /*
-         * 构造函数注入 JDRQAppService 或者在 Domain Service (Core) 处理
-        public JDRQ GetJdrq(int id)
-        {
-            string strSQL = "select * from YQSF_DPII_JDRQ where id= " + id;
-            IEnumerable<JDRQ> ret = _jdrqDapperRepository.Query(strSQL);
-            if (ret != null)
-                return ret.FirstOrDefault();
-            else
-                return null; // AddNew 
-        }
-        */
-
-
         public string GetSjmxJdzt(int id) {
             string jdzt0 = "";
             int? jdzt1 = null;
@@ -343,14 +335,16 @@ where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and a.sjdid ='{0}'
 
             return jdzt0;            
         }
+        */
 
+        /*
         public void CheckSjmxJdzt(int id)
         {
-            string strSQL = "select 0 as y, 0 as m, qzyjs as count, id as bm from YQSF_SJD where ID = (select sjdid from YQSF_SJMX as b where b.id = {0}";
+            string strSQL = "select 0 as y, 0 as m, q z yjs as count, id as bm from YQSF_SJD where ID = (select sjdid from YQSF_SJMX as b where b.id = {0}";
             STATS st = _DapperRepository.Query(string.Format(strSQL, id)).FirstOrDefault();
             int yqjs = st.count;
             int wtdid = st.bm;
-            strSQL = @"SELECT 0 as y, 0 as m, qzyjs as count, 0 as bm
+            strSQL = @"SELECT 0 as y, 0 as m, q z yjs as count, 0 as bm
         FROM dbo.YQSF_SJMX AS a LEFT JOIN
         dbo.YQSF_SJD as e on a.sjdid = e.id LEFT JOIN
         dbo.JCXX_XHGG_BM AS b ON a.XHGGBM = b.XHGGBM LEFT JOIN
@@ -364,28 +358,9 @@ where d.QJMCBM = 1000 and e.djrq>'2019-04-21' and a.sjdid ='{0}'
             int yqjs2 = st.count;
 
             if (yqjs == yqjs1 || yqjs == yqjs2) {
-                strSQL = "update YQSF_SJD set qzyjdzt = N'检定完毕' where id = {0}";                
+                strSQL = "update YQSF_SJD set q z yjdzt = N'检定完毕' where id = {0}";                
                 st = _DapperRepository.Query(string.Format(strSQL, wtdid)).FirstOrDefault();
             }
-        }
-
-        //img:  0leica 1topcon 2trimble 3sokkia 4south 5nikkom
-        public static string GetZzcImg(string zzc)
-        {
-            string img = "0";
-            if (zzc.Contains("徕卡"))
-                img = "1";
-            else if (zzc.Contains("拓普康"))
-                img = "2";
-            else if (zzc.Contains("天宝"))
-                img = "3";
-            else if (zzc.Contains("索佳"))
-                img = "4";
-            else if (zzc.Contains("南方"))
-                img = "5";
-            else if (zzc.Contains("尼康"))
-                img = "6";
-            return img;
-        }
+        } */      
     }
 }

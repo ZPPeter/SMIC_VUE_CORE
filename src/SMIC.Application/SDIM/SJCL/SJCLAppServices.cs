@@ -50,6 +50,17 @@ namespace SMIC.SDIM
             long id = (long)AbpSession.UserId;
             string roles = GetJDRoles(id);
 
+            string strSQL = @"
+            UPDATE YQSF_SJD
+            SET yqjs = (
+                SELECT COUNT(*) FROM YQSF_SJMX WHERE SJDID = YQSF_SJD.id
+            )";
+            try
+            {
+                _cntDapperRepository.Execute(strSQL); // 超时
+            }
+            catch { }
+
             //System.Diagnostics.Debug.WriteLine(id);
             //System.Diagnostics.Debug.WriteLine(roles);
 
@@ -227,7 +238,36 @@ namespace SMIC.SDIM
             IEnumerable<VW_SJCL_100> ret = _vwsjclDapperRepository.Query(strSQL);
             return ret;
         }
+        /// <summary>
+        /// 首页未完成列表
+        /// JDZT<222
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public PagedResultDto<VW_SJCL_100> GetPagedTasks(GetVwSjmxsInput input)
+        {
+            // 数据库里面必须有 SJMX 实体或者视图
+            Expression<Func<VW_SJCL_100, bool>> predicate = p => p.Id > 0;
 
+            if (!input.FilterText.IsNullOrWhiteSpace())
+            {
+                predicate = predicate.And(p => (p.DWMC.Contains(input.FilterText) || p.ccbh.Contains(input.FilterText) || p.xhggmc.Contains(input.FilterText) || p.QJMC.Contains(input.FilterText) ));
+            }
+            predicate = predicate.And(p => p.JDZT < 222);
+
+            var totalCount = _vwsjclDapperRepository.Count(predicate);
+            IEnumerable<VW_SJCL_100> ret = _vwsjclDapperRepository.GetAllPaged(
+                predicate,
+                input.SkipCount / input.MaxResultCount,
+                input.MaxResultCount,
+                input.Sorting, input.Order == "desc"); // input.Order=="asc"  true/false
+            List<VW_SJCL_100> tempList2 = ObjectMapper.Map<List<VW_SJCL_100>>(ret);
+            return new PagedResultDto<VW_SJCL_100>(
+                totalCount,
+                tempList2
+            );
+        }
+    
         /// <summary>
         /// 待检列表
         /// JDZT:100 111
@@ -242,8 +282,8 @@ namespace SMIC.SDIM
             long id = (long)AbpSession.UserId;
             var roles = GetJDRolesList(id);
 
-            //Expression<Func<VW_SJCL_100, bool>> newExp = p => p.Id > 0;
-            Expression<Func<VW_SJCL_100, bool>> newExp = p => p.JDZT < 122;
+            Expression<Func<VW_SJCL_100, bool>> newExp = p => p.Id > 0;
+            //Expression<Func<VW_SJCL_100, bool>> newExp = p => p.JDZT < 122;
             if (roles.Length > 0)
             {
                 ParameterExpression parameter = Expression.Parameter(typeof(VW_SJCL_100), "p");
@@ -279,6 +319,7 @@ namespace SMIC.SDIM
                 newExp = newExp.Or(p => (p.DWMC.Contains(input.WTDH)));
                 newExp = newExp.Or(p => (p.ccbh.Contains(input.WTDH)));
             }
+            newExp = newExp.And(p => p.JDZT < 122);
 
             var totalCount = _vwsjclDapperRepository.Count(newExp);
             IEnumerable<VW_SJCL_100> ret = _vwsjclDapperRepository.GetAllPaged(
@@ -383,9 +424,8 @@ namespace SMIC.SDIM
                 tempList2
             );
         }
-
-
-        // 1xxxx
+        
+        // 1xxxx 1000 1010 ...
         private string GetJDRoles(long userid)
         {
             var param = new { Id = userid };

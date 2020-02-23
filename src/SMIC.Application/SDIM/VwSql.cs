@@ -40,30 +40,5 @@ dbo.JCXX_QJMC_BM AS d ON b.QJMCBM = d.QJMCBM LEFT JOIN
 dbo.YQSF_DPII_JDRQ as g on g.id = a.id 											
 where d.QJMCBM = 1000 and e.djrq>'2019-04-21'
 ";
-
-        /*
-        Vw_DPII_SJMX 
-        SELECT a.sjdid,qjmc,djrq,xhggmc,b.xhggbm,ccbh,zzcnr as zzc,jdy,a.bzsm,g.jdrq,g.jwrq,f.dwmc as wtdw,DATEADD(day,14,djrq) as yqjcrq,a.jdzt as jdzt1,g.jdzt as jdzt2
-        FROM dbo.YQSF_SJMX AS a LEFT JOIN
-        dbo.YQSF_SJD as e on a.sjdid = e.id LEFT JOIN
-        dbo.YQSF_KH as f on e.khid = f.khid LEFT JOIN
-        dbo.JCXX_XHGG_BM AS b ON a.XHGGBM = b.XHGGBM LEFT JOIN
-        dbo.JCXX_ZZC_BM AS c ON b.ZZCBM = c.ZZCBM LEFT JOIN
-        dbo.JCXX_QJMC_BM AS d ON b.QJMCBM = d.QJMCBM LEFT JOIN
-        dbo.YQSF_DPII_JDRQ as g on g.id = a.id 											
-        where d.QJMCBM = 1000 and e.djrq>'2019-04-21'
-
-  
-VW_DPII_SJD
-SELECT TOP (100) PERCENT a.ID, a.sjdid as 委托单号,
-f.dwmc AS 送检单位, CONVERT(char(10), a.sjrq, 102) AS 送检日期, a.qzyjs as 仪器件数, a.qzyjdzt as 检定状态
-FROM dbo.YQSF_SJD AS a LEFT JOIN dbo.YQSF_KH AS f ON f.khid = a.khid
-where a.sjrq>'2019-04-25' and a.jdzt <>'检完' and a.qzyjs>0
-ORDER BY a.ID DESC
-          
-         
-         */
-
-
     }
 }

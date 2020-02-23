@@ -179,9 +179,9 @@ namespace SMIC.Migrations.SDIMDb
 
                     b.Property<string>("jdzt");
 
-                    b.Property<string>("qzyjdzt");
+                    //b.Property<string>("q z yjdzt");
 
-                    b.Property<int>("qzyjs");
+                    //b.Property<int>("q z yjs");
 
                     b.Property<string>("sjdid");
 

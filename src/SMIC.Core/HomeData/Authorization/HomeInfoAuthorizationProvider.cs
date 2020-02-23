@@ -36,19 +36,16 @@ namespace SMIC.HomeData.Authorization
 		public override void SetPermissions(IPermissionDefinitionContext context)
 		{
 			// 在这里配置了HomeInfo 的权限。
-			var pages = context.GetPermissionOrNull(AppPermissions.Pages) ?? context.CreatePermission(AppPermissions.Pages, L("Pages"));
+			//var pages = context.GetPermissionOrNull(AppPermissions.Pages) ?? context.CreatePermission(AppPermissions.Pages, L("Pages"));
+			//var administration = pages.Children.FirstOrDefault(p => p.Name == AppPermissions.Pages_Administration) ?? pages.CreateChildPermission(AppPermissions.Pages_Administration, L("Administration"));
 
-			var administration = pages.Children.FirstOrDefault(p => p.Name == AppPermissions.Pages_Administration) ?? pages.CreateChildPermission(AppPermissions.Pages_Administration, L("Administration"));
-
-			var entityPermission = administration.CreateChildPermission(HomeInfoPermissions.Node , L("HomeInfo"));
-			entityPermission.CreateChildPermission(HomeInfoPermissions.Query, L("QueryHomeInfo"));
-			entityPermission.CreateChildPermission(HomeInfoPermissions.Create, L("CreateHomeInfo"));
-			entityPermission.CreateChildPermission(HomeInfoPermissions.Edit, L("EditHomeInfo"));
-			entityPermission.CreateChildPermission(HomeInfoPermissions.Delete, L("DeleteHomeInfo"));
-			entityPermission.CreateChildPermission(HomeInfoPermissions.BatchDelete, L("BatchDeleteHomeInfo"));
-			entityPermission.CreateChildPermission(HomeInfoPermissions.ExportExcel, L("ExportExcelHomeInfo"));
-
-
+			//var entityPermission = administration.CreateChildPermission(HomeInfoPermissions.Node , L("HomeInfo"));
+			//entityPermission.CreateChildPermission(HomeInfoPermissions.Query, L("QueryHomeInfo"));
+			//entityPermission.CreateChildPermission(HomeInfoPermissions.Create, L("CreateHomeInfo"));
+			//entityPermission.CreateChildPermission(HomeInfoPermissions.Edit, L("EditHomeInfo"));
+			//entityPermission.CreateChildPermission(HomeInfoPermissions.Delete, L("DeleteHomeInfo"));
+			//entityPermission.CreateChildPermission(HomeInfoPermissions.BatchDelete, L("BatchDeleteHomeInfo"));
+			//entityPermission.CreateChildPermission(HomeInfoPermissions.ExportExcel, L("ExportExcelHomeInfo"));
 		}
 
 		private static ILocalizableString L(string name)

@@ -8,15 +8,13 @@ namespace SMIC.Web.Host.Hubs
 {
     public class ChatCore
     {
-
         /// <summary>
-        /// 发送聊天室消息
+        /// 发送消息
         /// </summary>
-        /// <param name="userId"></param>
+        /// <param name="messageData"></param>
         /// <param name="hub"></param>
         public static void SendMessage(MyChatHub chatHub, MessageData messageData)
-        {
-            //
+        {     
             var sendMsg = JsonConvert.SerializeObject(messageData);
             foreach (ConnectionUser user in ConnectionManager.ConnectionUsers)
             {

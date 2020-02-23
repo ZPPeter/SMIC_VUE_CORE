@@ -17,7 +17,9 @@
     <Compile Remove="Members\MemberUserCacheAppService.cs" />
     <Compile Remove="Person.cs" />
     <Compile Remove="PredicateExtensions.cs" />
+    <Compile Remove="SDIM\SJMX\JDRQAppServices.cs" />
     <Compile Remove="SDIM\SJMX\PersonAppService.cs" />
+    <Compile Remove="SDIM\VwSql.cs" />
     <Compile Remove="SwaggerFileUploadAttribute.cs" />
     <Compile Remove="SwaggerFileUploadFilter.cs" />
   </ItemGroup>

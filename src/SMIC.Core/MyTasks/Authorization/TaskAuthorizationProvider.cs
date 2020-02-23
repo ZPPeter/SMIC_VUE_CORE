@@ -36,15 +36,15 @@ namespace SMIC.MyTasks.Authorization
 		public override void SetPermissions(IPermissionDefinitionContext context)
 		{
 			// 在这里配置了Task 的权限。
-			var pages = context.GetPermissionOrNull(AppPermissions.Pages) ?? context.CreatePermission(AppPermissions.Pages, L("Pages"));
-            var administration = pages.Children.FirstOrDefault(p => p.Name == AppPermissions.Pages_Administration) ?? pages.CreateChildPermission(AppPermissions.Pages_Administration, L("Administration"));
+			//var pages = context.GetPermissionOrNull(AppPermissions.Pages) ?? context.CreatePermission(AppPermissions.Pages, L("Pages"));
+            //var administration = pages.Children.FirstOrDefault(p => p.Name == AppPermissions.Pages_Administration) ?? pages.CreateChildPermission(AppPermissions.Pages_Administration, L("Administration"));
 
-			var entityPermission = administration.CreateChildPermission(TaskPermissions.Node , L("Task"));
-			entityPermission.CreateChildPermission(TaskPermissions.Query, L("QueryTask"));
-			entityPermission.CreateChildPermission(TaskPermissions.Create, L("CreateTask"));
-			entityPermission.CreateChildPermission(TaskPermissions.Edit, L("EditTask"));
-			entityPermission.CreateChildPermission(TaskPermissions.Delete, L("DeleteTask"));
-			entityPermission.CreateChildPermission(TaskPermissions.BatchDelete, L("BatchDeleteTask"));
+			//var entityPermission = administration.CreateChildPermission(TaskPermissions.Node , L("Task"));
+			//entityPermission.CreateChildPermission(TaskPermissions.Query, L("QueryTask"));
+			//entityPermission.CreateChildPermission(TaskPermissions.Create, L("CreateTask"));
+			//entityPermission.CreateChildPermission(TaskPermissions.Edit, L("EditTask"));
+			//entityPermission.CreateChildPermission(TaskPermissions.Delete, L("DeleteTask"));
+			//entityPermission.CreateChildPermission(TaskPermissions.BatchDelete, L("BatchDeleteTask"));
 			//entityPermission.CreateChildPermission(TaskPermissions.ExportExcel, L("ExportExcelTask"));
 		}
 

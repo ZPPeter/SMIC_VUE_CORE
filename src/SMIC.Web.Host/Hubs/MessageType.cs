@@ -4,20 +4,13 @@ namespace SMIC.Web.Host.Hubs
 {
     /// <summary>
     /// 消息类型
+    /// 1.发送连接消息 2.新消息通知 3.未定义 90.首页数字刷新 98.连接回执消息
     /// </summary>
     public enum MessageType
     {
-        /// <summary>
-        /// 连接消息
-        /// </summary>
-        Line=1,
-        /// <summary>
-        /// 文字消息
-        /// </summary>
-        Text=2,
-        /// <summary>
-        /// 连接回执消息
-        /// </summary>
-        LineReceipt = 98,
+        Line = 1,             // 发送连接消息 - 上线通知
+        NewMessage = 2,       // 新消息通知
+        HomeDataChanged = 90, // 首页数字刷新
+        LineReceipt = 98,     // 连接回执消息
     }
 }

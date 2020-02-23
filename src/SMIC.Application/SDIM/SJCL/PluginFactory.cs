@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -32,8 +33,11 @@ namespace SMIC.SJCL
                     var obj = (BasePluginsService)assembly.CreateInstance("SMIC.SJCL.PluginsService");
                     if (obj != null)
                     {
-                        _cache.Set(cacheKey, obj, DateTimeOffset.Now.AddSeconds(30)); //半分钟
+                        _cache.Set(cacheKey, obj, DateTimeOffset.Now.AddSeconds(60)); //1分钟
                     }
+
+                    //Debug.WriteLine(bytes.Length);
+                    bytes = null;
 
                     return obj;
                 }

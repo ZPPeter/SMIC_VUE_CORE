@@ -33,7 +33,7 @@ using SMIC.Authorization;
 
 namespace SMIC.Common
 {
-    [AbpAuthorize(PermissionNames.Pages_ChangeAvatar)]
+    //[AbpAuthorize(PermissionNames.Pages_ChangeAvatar)]
     public class UploadAvatarAppService : SMICAppServiceBase
     {
         private readonly IAbpSession _abpSession;
@@ -81,8 +81,7 @@ namespace SMIC.Common
                 //if ((ddf & 178) == 178)
                 {
                     //定义图片数组后缀格式
-                    string[] LimitPictureType = { ".JPG", ".JPEG", ".GIF", ".PNG", ".BMP" };
-
+                    //string[] LimitPictureType = { ".JPG", ".JPEG", ".GIF", ".PNG", ".BMP" };
                     //获取图片后缀是否存在数组中
                     //string currentPictureExtension = Path.GetExtension(input.File.FileName).ToUpper();
                     //if (LimitPictureType.Contains(currentPictureExtension))
@@ -127,5 +126,30 @@ namespace SMIC.Common
             }
 
         }
+        
+        public string uploadSign(IFormFile file)
+        {
+            try
+            {
+                {
+                    long userId = _abpSession.UserId.Value;
+                    var filename = "sign_" + userId + ".png"; //文件改名                    
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/SignImages/", filename);
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                       file.CopyTo(stream);
+                    }
+                }
+                return "OK";
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.StackTrace);
+                //return Json(new { status = -3, message = "上传失败", data = ex.Message });
+                return ex.Message;
+            }
+
+        }
+
     }
 }

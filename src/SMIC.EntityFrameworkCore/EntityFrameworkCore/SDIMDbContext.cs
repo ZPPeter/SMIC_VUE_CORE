@@ -11,6 +11,8 @@ namespace SMIC.EntityFrameworkCore
         public virtual DbSet<VW_SJCL_100> VW_SJCL_100 { get; set; }
 
         public virtual DbSet<WTD> WTD { get; set; }
+        
+        public virtual DbSet<VW_CZRZ> VW_CZRZ { get; set; }
 
         public virtual DbSet<SJMX> SJMX { get; set; }
 

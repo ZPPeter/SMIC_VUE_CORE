@@ -21,6 +21,11 @@ namespace SMIC.SDIM.Dtos
 
         [Required]
         public string Ccbh { get; set; }
+
+        public string OCcbh { get; set; }
+
+        public string BZSM { get; set; }
+
     }
 
     public class AddJbcsDto

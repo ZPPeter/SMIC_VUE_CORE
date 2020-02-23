@@ -30,6 +30,9 @@
     <text name="Users" >用户</text>
     <text name="Roles" >角色</text>
     <text name="Tenants" >租户</text>
+    <text name="UsersManager" >用户应用服务</text>
+    <text name="RolesManager" >角色应用服务</text>
+    <text name="TenantsManager" >租户管理</text>    
     <text name="ChangeAvatar" >修改头像</text>    
     <text name="Logout" >注销</text>
     <text name="ManageMenu" >菜单</text>

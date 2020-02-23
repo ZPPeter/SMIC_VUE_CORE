@@ -132,9 +132,9 @@ namespace SMIC.Migrations.SDIMDb
                     dwmc = table.Column<string>(nullable: true),
                     sjrq = table.Column<DateTime>(nullable: false),
                     yqjs = table.Column<int>(nullable: false),
-                    qzyjs = table.Column<int>(nullable: false),
+                    //q zyjs = table.Column<int>(nullable: false),
                     jdzt = table.Column<string>(nullable: true),
-                    qzyjdzt = table.Column<string>(nullable: true),
+                    //q zyjdzt = table.Column<string>(nullable: true),
                     yqjcrq = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>

@@ -19,17 +19,14 @@ namespace SMIC.PhoneBooks.Persons.Authorization
         public override void SetPermissions(IPermissionDefinitionContext context)
         {
             //在这里配置了Person 的权限。
-            var pages = context.GetPermissionOrNull(AppPermissions.Pages) ?? context.CreatePermission(AppPermissions.Pages, L("Pages"));
+            //var pages = context.GetPermissionOrNull(AppPermissions.Pages) ?? context.CreatePermission(AppPermissions.Pages, L("Pages"));
+            //var administration = pages.Children.FirstOrDefault(p => p.Name == AppPermissions.Pages_Administration) ?? pages.CreateChildPermission(AppPermissions.Pages_Administration, L("Administration"));
 
-            var administration = pages.Children.FirstOrDefault(p => p.Name == AppPermissions.Pages_Administration)
-                            ?? pages.CreateChildPermission(AppPermissions.Pages_Administration, L("Administration"));
-
-            var person = administration.CreateChildPermission(PersonAppPermissions.Person, L("Person"));
-            person.CreateChildPermission(PersonAppPermissions.Person_CreatePerson, L("CreatePerson"));
-            person.CreateChildPermission(PersonAppPermissions.Person_EditPerson, L("EditPerson"));
-            person.CreateChildPermission(PersonAppPermissions.Person_DeletePerson, L("DeletePerson"));
-            person.CreateChildPermission(PersonAppPermissions.Person_BatchDeletePersons, L("BatchDeletePersons"));
-
+            //var person = administration.CreateChildPermission(PersonAppPermissions.Person, L("Person"));
+            //person.CreateChildPermission(PersonAppPermissions.Person_CreatePerson, L("CreatePerson"));
+            //person.CreateChildPermission(PersonAppPermissions.Person_EditPerson, L("EditPerson"));
+            //person.CreateChildPermission(PersonAppPermissions.Person_DeletePerson, L("DeletePerson"));
+            //person.CreateChildPermission(PersonAppPermissions.Person_BatchDeletePersons, L("BatchDeletePersons"));
         }
 
         private static ILocalizableString L(string name)

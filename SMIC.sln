@@ -41,6 +41,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		There is no permission.txt = There is no permission.txt
 		todo.txt = todo.txt
 		WebAPI路径.txt = WebAPI路径.txt
+		三层架构.txt = 三层架构.txt
 		发布.txt = 发布.txt
 		多个DbContext.txt = 多个DbContext.txt
 		比对.txt = 比对.txt
@@ -55,6 +56,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyJobPlugIn", "src\MyPlugIns\Background\MyJobPlugIn.csproj", "{134BE8BB-34DA-426F-95D1-A621D33E60B5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SMIC.SJCL", "SMIC.SJCL", "{63D2FCF5-7A7E-4E0E-AE1F-C8A3BBA77137}"
+	ProjectSection(SolutionItems) = preProject
+		Readme.txt = Readme.txt
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPlugin", "src\SMIC.SJCL\IPlugin\IPlugin.csproj", "{FE4B07F1-06DE-46C5-A837-5D7ADCAA9ACC}"
 EndProject

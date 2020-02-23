@@ -6,6 +6,9 @@ using Spire.Xls;
 using Spire.Xls.Core.Spreadsheet;
 namespace SMIC.SJCL.Common
 {
+    /// <summary>
+    /// Spire.Xls 免费版只能打印前3页，采用此模块打印全部页面
+    /// </summary>
     public class XlsPrinter
     {
         public static void Print(Stream stream) {

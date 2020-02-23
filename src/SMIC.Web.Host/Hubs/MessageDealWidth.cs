@@ -36,21 +36,31 @@ namespace SMIC.Web.Host.Hubs
                                     connectionUser.UserId = data.SendUserId;
                                     ConnectionManager.ConnectionUsers.Add(connectionUser);
                                 }
-                                //处理发送回执消息
+                                // 处理发送回执消息
                                 sendMsg = new MessageData();
                                 sendMsg.MessageBody = data.SendUserId;
-                                sendMsg.MessageType = MessageType.LineReceipt;
+                                sendMsg.MessageType = MessageType.LineReceipt; // 98 上线通知
                                 sendMsg.SendUserId = "0";
-                                //发给自己
-                                //chatHub.Clients.Client(chatHub.Context.ConnectionId).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(sendMsg));
+                                
+                                // 发给自己
+                                // chatHub.Clients.Client(chatHub.Context.ConnectionId).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(sendMsg));
+                                
+                                // 发给所有人
                                 foreach (ConnectionUser user in ConnectionManager.ConnectionUsers)
-                                {
-                                    chatHub.Clients.Client(user.ConnectionId).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(sendMsg));
-                                    //chatHub.Clients.All.SendAsync
+                                {                                    
+                                     chatHub.Clients.Client(user.ConnectionId).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(sendMsg));
                                 }
                                 break;
-                            case MessageType.Text:
-                                //处理普通文字消息
+                            case MessageType.NewMessage:
+                                // 处理新消息通知                                
+                                foreach (ConnectionUser user in ConnectionManager.ConnectionUsers)
+                                {
+                                    if (user.ConnectionId != chatHub.Context.ConnectionId) // 不发送给自己
+                                        chatHub.Clients.Client(user.ConnectionId).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(data));
+                                }
+                                break;
+                            case MessageType.HomeDataChanged:
+                                // 首页数字刷新
                                 ChatCore.SendMessage(chatHub, data);
                                 break;
                             case MessageType.LineReceipt:
